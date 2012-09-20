@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="eanMobileAPIandroid" default="all">
+    <property name="root.dir"       value="${basedir}/.."/>
+    <property name="app.dir"        value="${root.dir}/src/app"/>
+    <property name="testsrc.dir"    value="${root.dir}/src/test"/>
+    <property name="lib.dir"        value="${root.dir}/lib"/>
+    <property name="tmp.dir"        value="${root.dir}/build/tmp"/>
+    <property name="build.dir"      value="${tmp.dir}/builds"/>
+    <property name="classes.dir"    value="${build.dir}/classes"/>
+    <property name="tests.dir"      value="${build.dir}/tests"/>
+    <property name="dist.jar"       value="${tmp.dir}/${ant.project.name}.jar"/>
+    <property name="mainifest.file" value="${root.dir}/src/META-INF/MANIFEST.MF"/>
+
+    <path id="project.classpath">
+        <fileset dir="${lib.dir}"/>
+        <!-- include compiler output -->
+        <pathelement path="${classes.dir}"/>
+    </path>
+
+    <presetdef name="main.javac">
+        <javac srcdir="${app.dir}"
+               destdir="${classes.dir}"
+               debug="true"
+               deprecation="true"
+               classpathref="project.classpath"
+               includeantruntime="false"
+               target="1.6"
+               source="1.6">
+        </javac>
+    </presetdef>
+
+    <target name="compile" depends="clean">
+        <mkdir dir="${classes.dir}"/>
+        <main.javac />
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${dist.jar}" filesetmanifest="mergewithoutmain">
+          <zipfileset file="${root.dir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+          <zipfileset dir="${classes.dir}"/>
+        </jar>
+    </target>
+
+    <target name="run.jar" depends="jar">
+        <java jar="${dist.jar}"
+              fork="true"/>
+    </target>
+
+    <target name="compile.test" depends="compile">
+        <mkdir dir="${tests.dir}"/>
+        <main.javac srcdir="${testsrc.dir}"
+                               destdir="${tests.dir}"/>
+    </target>
+
+    <target name="test" depends="compile, compile.test">
+        <junit printsummary="true" errorproperty="junit.error" failureproperty="junit.failure" haltonfailure="true" showoutput="true">
+            <classpath refid="project.classpath"/>
+            <classpath location="${tests.dir}"/>
+            <batchtest>
+                <fileset dir="${tests.dir}" />
+            </batchtest>
+            <formatter type="plain" usefile="false" />
+        </junit>
+    </target>
+
+    <target name="clean">
+        <delete dir="${tmp.dir}" />
+    </target>
+
+    <target name="all" depends="clean, compile, test" />
+
+    <target name="all.jar" depends="all, jar" />
+</project>
