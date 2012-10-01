@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="eanMobileAPIandroid" default="all">
-    <property name="root.dir"       value="${basedir}/.."/>
-    <property name="app.dir"        value="${root.dir}/src/app"/>
-    <property name="testsrc.dir"    value="${root.dir}/src/test"/>
-    <property name="lib.dir"        value="${root.dir}/lib"/>
-    <property name="tmp.dir"        value="${root.dir}/build/tmp"/>
+    <property name="app.dir"        value="${basedir}/src/app"/>
+    <property name="testsrc.dir"    value="${basedir}/src/test"/>
+    <property name="lib.dir"        value="${basedir}/lib"/>
+    <property name="tmp.dir"        value="${basedir}/build/tmp"/>
     <property name="build.dir"      value="${tmp.dir}/builds"/>
-    <property name="classes.dir"    value="${build.dir}/classes"/>
-    <property name="tests.dir"      value="${build.dir}/tests"/>
+    <property name="classes.dir"    value="${basedir}/classes"/>
+    <property name="tests.dir"      value="${basedir}/tests"/>
     <property name="dist.jar"       value="${tmp.dir}/${ant.project.name}.jar"/>
-    <property name="mainifest.file" value="${root.dir}/src/META-INF/MANIFEST.MF"/>
+    <property name="mainifest.file" value="${basedir}/src/META-INF/MANIFEST.MF"/>
 
     <path id="project.classpath">
         <fileset dir="${lib.dir}"/>
@@ -36,7 +35,7 @@
 
     <target name="jar" depends="compile">
         <jar destfile="${dist.jar}" filesetmanifest="mergewithoutmain">
-          <zipfileset file="${root.dir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+          <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
           <zipfileset dir="${classes.dir}"/>
         </jar>
     </target>
