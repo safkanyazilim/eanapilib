@@ -1,3 +1,7 @@
+/*
+ * Copyright 2012 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile;
 
 import android.util.Log;

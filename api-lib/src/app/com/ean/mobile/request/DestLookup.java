@@ -1,6 +1,7 @@
-/**
- * $Copyright: Copyright 2012 EAN.com, L.P. All rights reserved. $
+/*
+ * Copyright 2012 EAN.com, L.P. All rights reserved.
  */
+
 package com.ean.mobile.request;
 
 import android.util.Log;

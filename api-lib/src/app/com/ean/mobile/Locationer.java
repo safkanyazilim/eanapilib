@@ -1,3 +1,7 @@
+/*
+ * Copyright 2012 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile;
 // found at http://stackoverflow.com/questions/3145089/what-is-the-simplest-and-most-robust-way-to-get-the-users-current-location-in-a/3145655#3145655
 import java.util.Timer;

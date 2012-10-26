@@ -1,3 +1,7 @@
+/*
+ * Copyright 2012 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile.request;
 
 import com.ean.mobile.HotelInfo;
@@ -52,7 +56,7 @@ public class ListRequest extends Request {
             }
             wrangler.setInfos(hotels);
         }
-        
+
         return wrangler;
 
     }

@@ -1,3 +1,7 @@
+/*
+ * Copyright 2012 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile;
 
 import android.app.Application;
@@ -43,34 +47,34 @@ public class HotelWrangler extends Application {
         this.selectedInfo = selectedInfo;
         return this;
     }
-    
+
     public HotelWrangler setCustomerSessionId(String id){
         this.customerSessionId = id;
         return this;
     }
-    
+
     public String getCustomerSessionId() {
         return this.customerSessionId;
     }
-    
+
     public HotelWrangler setCacheKey(String id){
         this.cacheKey = id;
         return this;
     }
-    
+
     public String getCacheKey() {
         return this.cacheKey;
     }
-    
+
     public HotelWrangler setCacheLocation(String id){
         this.cacheLocation = id;
         return this;
     }
-    
+
     public String getCacheLocation() {
         return this.cacheLocation;
     }
-    
+
     public HotelWrangler setSearchQuery(String searchQuery){
         this.searchQuery = searchQuery;
         return this;
