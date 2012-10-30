@@ -71,7 +71,7 @@
         <fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>
     </target>
 
-    <target name="compile" depends="clean, checkstyle">
+    <target name="compile" depends="clean">
         <mkdir dir="${classes.dir}"/>
         <main.javac />
     </target>

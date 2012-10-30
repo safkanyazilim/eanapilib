@@ -4,19 +4,30 @@
 
 package com.ean.mobile.request;
 
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelRoom;
-import com.ean.mobile.HotelWrangler;
+import java.io.IOException;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import com.ean.mobile.HotelInfo;
+import com.ean.mobile.HotelRoom;
+import com.ean.mobile.HotelWrangler;
 
-public class RoomAvailRequest extends Request {
+public final class RoomAvailRequest extends Request {
     private static final String URL_SUBDIR = "avail";
-    public static HotelWrangler getRoomAvailForHotel(HotelInfo hotel, HotelWrangler wrangler) throws IOException, JSONException {
-        String[][] urlPairs = {
+
+    /**
+     * Private no-op constructor to prevent instantiation.
+     */
+    private RoomAvailRequest() {
+        //see javadoc.
+    }
+
+
+    public static HotelWrangler getRoomAvailForHotel(final HotelInfo hotel, final HotelWrangler wrangler)
+            throws IOException, JSONException {
+        final String[][] urlPairs = {
             {"cid", CID},
             {"minorRev", MINOR_REV},
             {"apiKey", API_KEY},
@@ -29,7 +40,7 @@ public class RoomAvailRequest extends Request {
             {"hotelId", hotel.hotelId},
             {"room1", wrangler.getNumberOfAdults().toString() + "," + wrangler.getNumberOfChildren().toString()}
         };
-        JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
+        final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
         // TODO: handler EanWsError objects, such as sold out rooms
         JSONObject err;
         if ((err = json.optJSONObject("EanWsError")) != null) {
@@ -37,26 +48,26 @@ public class RoomAvailRequest extends Request {
             wrangler.setSelectedInfo(null);
             return wrangler;
         }
-        JSONObject resp = json.optJSONObject("HotelRoomAvailabilityResponse");
-        if(resp.optJSONArray("HotelRoomResponse") != null) {
+        final JSONObject resp = json.optJSONObject("HotelRoomAvailabilityResponse");
+        if (resp.optJSONArray("HotelRoomResponse") != null) {
             JSONArray hrr = resp.optJSONArray("HotelRoomResponse");
             hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hrr);
             if (hotel.supplierType.equals("S")) {
 
                 RateRulesRequest.getRateRulesForHotel(hotel, wrangler);
             }
-        } else if(resp.optJSONObject("HotelRoomResponse") != null) {
-            JSONObject hrr = resp.optJSONObject("HotelRoomResponse");
-            hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hrr);
+        } else if (resp.optJSONObject("HotelRoomResponse") != null) {
+            final JSONObject hotelRoomResponse = resp.optJSONObject("HotelRoomResponse");
+            hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
             if (hotel.supplierType.equals("S")) {
                 RateRulesRequest.getRateRulesForHotel(hotel, wrangler);
             }
         }
 
         if (hotel.supplierType.equals("S")) {
-            if(resp.optJSONArray("HotelRoomResponse") != null) {
+            if (resp.optJSONArray("HotelRoomResponse") != null) {
                 hotel.hotelRooms = HotelRoom.parseRoomRateDetails(resp.optJSONArray("HotelRoomResponse"));
-            } else if(resp.optJSONObject("HotelRoomResponse") != null) {
+            } else if (resp.optJSONObject("HotelRoomResponse") != null) {
                 hotel.hotelRooms = HotelRoom.parseRoomRateDetails(resp.optJSONObject("HotelRoomResponse"));
             }
         }

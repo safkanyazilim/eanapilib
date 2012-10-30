@@ -4,8 +4,14 @@
 
 package com.ean.mobile.request;
 
-import android.util.Log;
-import com.ean.mobile.EANMobileConstants;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
@@ -17,12 +23,8 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import android.util.Log;
+import com.ean.mobile.EANMobileConstants;
 
 public abstract class Request {
     protected static final String CID = "55505";
@@ -40,67 +42,62 @@ public abstract class Request {
 
     protected static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat(DATE_FORMAT_STRING);
 
-    protected static URL FULL_URL;
+    protected static final URL FULL_URL;
 
-    static{
+    static {
+        URL fullUrl = null;
         try {
-            FULL_URL = new URL(URL_PROTOCOL, URL_HOSTNAME, URL_BASEDIR);
-        } catch(MalformedURLException mue) {
+            fullUrl = new URL(URL_PROTOCOL, URL_HOSTNAME, URL_BASEDIR);
+        } catch (MalformedURLException mue) {
             Log.d(EANMobileConstants.DEBUG_TAG, "Base url is malformed");
         }
+        FULL_URL = fullUrl;
     }
 
-    protected static JSONObject getJsonFromSubdir(String urlSubdir, String[][] params) throws IOException, JSONException {
+    protected static JSONObject getJsonFromSubdir(final String urlSubdir, final String[][] params)
+        throws IOException, JSONException {
         return getJsonFromSubdir(urlSubdir, getParams(params));
     }
 
-    /**
-     * This uses an ArrayList<NameValuePair> (rather than list) because that is what URLEncodedUtils specifies
-     * @param urlSubdir
-     * @param params
-     * @return
-     * @throws IOException
-     * @throws JSONException
-     */
-    protected static JSONObject getJsonFromSubdir(String urlSubdir, ArrayList<NameValuePair> params) throws IOException, JSONException {
+    protected static JSONObject getJsonFromSubdir(final String urlSubdir, final List<NameValuePair> params)
+            throws IOException, JSONException {
         //Build the url
         String baseUrl = new URL(FULL_URL, urlSubdir).toString();
-        if(params != null && params.size() > 0){
+        if (params != null && params.size() > 0) {
             baseUrl += "?" + URLEncodedUtils.format(params, "UTF-8");
         }
-        HttpGet getRequest = new HttpGet(baseUrl);
+        final HttpGet getRequest = new HttpGet(baseUrl);
         getRequest.setHeader("Accept", "application/json, */*");
         Log.d(EANMobileConstants.DEBUG_TAG, "url: " + baseUrl);
         Log.d(EANMobileConstants.DEBUG_TAG, "getting response");
-        long startTime = System.currentTimeMillis();
-        HttpResponse response = new DefaultHttpClient().execute(getRequest);
-        Log.d(EANMobileConstants.DEBUG_TAG,"got response");
-        StatusLine statusLine = response.getStatusLine();
-        JSONObject json;
-        if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+        final long startTime = System.currentTimeMillis();
+        final HttpResponse response = new DefaultHttpClient().execute(getRequest);
+        Log.d(EANMobileConstants.DEBUG_TAG, "got response");
+        final StatusLine statusLine = response.getStatusLine();
+        final JSONObject json;
+        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
             response.getEntity().writeTo(out);
-            String jsonstr = out.toString();
+            final String jsonstr = out.toString();
             //Log.d(EANMobileConstants.DEBUG_TAG, jsonstr);
             json = new JSONObject(jsonstr);
-        } else{
-           // Closes the connection.
+        } else {
+            // Closes the connection.
             response.getEntity().getContent().close();
             throw new IOException(statusLine.getReasonPhrase());
         }
-        long timeTook = System.currentTimeMillis() - startTime;
-        Log.d(EANMobileConstants.DEBUG_TAG, "Took " + timeTook + " milliseconds." );
+        final long timeTook = System.currentTimeMillis() - startTime;
+        Log.d(EANMobileConstants.DEBUG_TAG, "Took " + timeTook + " milliseconds.");
         return json;
     }
 
-    protected static ArrayList<NameValuePair> getParams(String[][] paramsArray) {
-        ArrayList<NameValuePair> urlPairs = new ArrayList<NameValuePair>();
-        for(String[] param : paramsArray){
+    protected static List<NameValuePair> getParams(final String[][] paramsArray) {
+        final List<NameValuePair> urlPairs = new ArrayList<NameValuePair>(paramsArray.length);
+        for (String[] param : paramsArray) {
             urlPairs.add(new BasicNameValuePair(param[0], param[1]));
         }
         return urlPairs;
     }
-
 
 
 }

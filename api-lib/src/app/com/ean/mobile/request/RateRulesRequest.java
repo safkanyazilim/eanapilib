@@ -4,25 +4,38 @@
 
 package com.ean.mobile.request;
 
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelRoom;
-import com.ean.mobile.HotelWrangler;
+import java.io.IOException;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import com.ean.mobile.HotelInfo;
+import com.ean.mobile.HotelRoom;
+import com.ean.mobile.HotelWrangler;
 
-public class RateRulesRequest extends Request {
+public final class RateRulesRequest extends Request {
     private static final String URL_SUBDIR = "rules";
 
-    public static HotelWrangler getRateRulesForHotel (HotelInfo hotel, HotelWrangler wrangler) throws IOException, JSONException {
+    /**
+     * Private no-op constructor to prevent instantiation.
+     */
+    private RateRulesRequest() {
+        //see javadoc.
+    }
+
+
+    public static HotelWrangler getRateRulesForHotel(final HotelInfo hotel, final HotelWrangler wrangler)
+            throws IOException, JSONException {
         for (HotelRoom room : hotel.hotelRooms) {
             getRateRulesForRoom(hotel, wrangler, room);
         }
         return wrangler;
     }
 
-    public static HotelWrangler getRateRulesForRoom (HotelInfo hotel, HotelWrangler wrangler, HotelRoom room) throws IOException, JSONException{
+    public static HotelWrangler getRateRulesForRoom(final HotelInfo hotel,
+                                                    final HotelWrangler wrangler,
+                                                    final HotelRoom room)
+            throws IOException, JSONException {
         String[][] urlPairs = {
             {"cid", CID},
             {"minorRev", MINOR_REV},

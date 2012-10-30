@@ -4,51 +4,55 @@
 
 package com.ean.mobile;
 
-import android.app.Application;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import android.app.Application;
+
+/**
+ * This class handles all of the loaded hotels, as well as customer session information and searches.
+ * It extends Application so its data can be used globally.
+ */
 public class HotelWrangler extends Application {
-    private List<HotelInfo> infos;
+    private final List<HotelInfo> infos = new ArrayList<HotelInfo>();
     private HotelInfo selectedInfo;
 
-    private String
-        customerSessionId,
-        cacheLocation,
-        cacheKey,
-        searchQuery;
+    private String customerSessionId;
+    private String cacheLocation;
+    private String cacheKey;
+    private String searchQuery;
 
-    private Date arrivalDate, departureDate;
+    private Date arrivalDate;
+    private Date departureDate;
 
-    private Integer
-        numberOfRooms = 1,
-        numberOfAdults = 2,
-        numberOfChildren = 0;
+    private Integer numberOfRooms = 1;
+    private Integer numberOfAdults = 2;
+    private Integer numberOfChildren = 0;
 
     private HotelRoom selectedRoom;
 
-
-    public List<HotelInfo> getInfos(){
+    public List<HotelInfo> getInfos() {
         return infos;
     }
 
-    public HotelWrangler setInfos(List<HotelInfo> infos){
-        this.infos = infos;
+    public HotelWrangler setInfos(List<HotelInfo> infos) {
+        this.infos.clear();
+        this.infos.addAll(infos);
         this.selectedInfo = null;
         return this;
     }
 
-    public HotelInfo getSelectedInfo(){
+    public HotelInfo getSelectedInfo() {
         return this.selectedInfo;
     }
 
-    public HotelWrangler setSelectedInfo(HotelInfo selectedInfo){
+    public HotelWrangler setSelectedInfo(final HotelInfo selectedInfo) {
         this.selectedInfo = selectedInfo;
         return this;
     }
 
-    public HotelWrangler setCustomerSessionId(String id){
+    public HotelWrangler setCustomerSessionId(final String id) {
         this.customerSessionId = id;
         return this;
     }
@@ -57,7 +61,7 @@ public class HotelWrangler extends Application {
         return this.customerSessionId;
     }
 
-    public HotelWrangler setCacheKey(String id){
+    public HotelWrangler setCacheKey(final String id) {
         this.cacheKey = id;
         return this;
     }
@@ -66,7 +70,7 @@ public class HotelWrangler extends Application {
         return this.cacheKey;
     }
 
-    public HotelWrangler setCacheLocation(String id){
+    public HotelWrangler setCacheLocation(final String id) {
         this.cacheLocation = id;
         return this;
     }
@@ -75,7 +79,7 @@ public class HotelWrangler extends Application {
         return this.cacheLocation;
     }
 
-    public HotelWrangler setSearchQuery(String searchQuery){
+    public HotelWrangler setSearchQuery(final String searchQuery) {
         this.searchQuery = searchQuery;
         return this;
     }
@@ -88,7 +92,7 @@ public class HotelWrangler extends Application {
         return searchQuery;
     }
 
-    public HotelWrangler setArrivalDate(Date arrivalDate) {
+    public HotelWrangler setArrivalDate(final Date arrivalDate) {
         this.arrivalDate = arrivalDate;
         return this;
     }
@@ -97,7 +101,7 @@ public class HotelWrangler extends Application {
         return arrivalDate;
     }
 
-    public HotelWrangler setDepartureDate(Date departureDate) {
+    public HotelWrangler setDepartureDate(final Date departureDate) {
         this.departureDate = departureDate;
         return this;
     }
@@ -110,7 +114,7 @@ public class HotelWrangler extends Application {
         return selectedRoom;
     }
 
-    public HotelWrangler setSelectedRoom(HotelRoom selectedRoom) {
+    public HotelWrangler setSelectedRoom(final HotelRoom selectedRoom) {
         this.selectedRoom = selectedRoom;
         return this;
     }
@@ -119,7 +123,7 @@ public class HotelWrangler extends Application {
         return numberOfRooms;
     }
 
-    public void setNumberOfRooms(Integer numberOfRooms) {
+    public void setNumberOfRooms(final Integer numberOfRooms) {
         this.numberOfRooms = numberOfRooms;
     }
 
@@ -127,7 +131,7 @@ public class HotelWrangler extends Application {
         return numberOfAdults;
     }
 
-    public void setNumberOfAdults(Integer numberOfAdults) {
+    public void setNumberOfAdults(final Integer numberOfAdults) {
         this.numberOfAdults = numberOfAdults;
     }
 
@@ -135,7 +139,7 @@ public class HotelWrangler extends Application {
         return numberOfChildren;
     }
 
-    public void setNumberOfChildren(Integer numberOfChildren) {
+    public void setNumberOfChildren(final Integer numberOfChildren) {
         this.numberOfChildren = numberOfChildren;
     }
 }

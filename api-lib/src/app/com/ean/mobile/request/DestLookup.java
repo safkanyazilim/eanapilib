@@ -4,8 +4,9 @@
 
 package com.ean.mobile.request;
 
-import android.util.Log;
-import com.ean.mobile.EANMobileConstants;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
@@ -15,34 +16,43 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import android.util.Log;
+import com.ean.mobile.EANMobileConstants;
 
-public class DestLookup {
+public final class DestLookup {
     private static final String ENDPOINT_FORMAT = "http://api.ean.com/ean-services/lookup/?propertyName=%s";
 
-    public static JSONArray getDestInfos(String destinationString) throws IOException, JSONException {
+    /**
+     * Private no-op constructor to prevent instantiation.
+     */
+    private DestLookup() {
+        //see javadoc.
+    }
+
+
+    public static JSONArray getDestInfos(final String destinationString) throws IOException, JSONException {
         if ("".equals(destinationString) || destinationString == null) {
             return new JSONArray();
         }
-        String baseUrl = String.format(ENDPOINT_FORMAT, destinationString);
+        final String baseUrl = String.format(ENDPOINT_FORMAT, destinationString);
         Log.d(EANMobileConstants.DEBUG_TAG, baseUrl);
-        Log.d(EANMobileConstants.DEBUG_TAG,"getting response");
-        JSONObject json;
-        HttpResponse response
+        Log.d(EANMobileConstants.DEBUG_TAG, "getting response");
+        final JSONObject json;
+        final HttpResponse response
             = (new DefaultHttpClient())
-                .execute(new HttpGet(baseUrl));
-        Log.d(EANMobileConstants.DEBUG_TAG,"got response");
-        StatusLine statusLine = response.getStatusLine();
-        if(statusLine.getStatusCode() == HttpStatus.SC_OK){
-            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            .execute(new HttpGet(baseUrl));
+        Log.d(EANMobileConstants.DEBUG_TAG, "got response");
+        final StatusLine statusLine = response.getStatusLine();
+        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+            final ByteArrayOutputStream out = new ByteArrayOutputStream();
             response.getEntity().writeTo(out);
             out.close();
-            String jsonstr = out.toString();
+            final String jsonstr = out.toString();
             Log.d(EANMobileConstants.DEBUG_TAG, jsonstr);
             json = new JSONObject(jsonstr);
-        } else{
-           // Closes the connection.
+        } else {
+            // If we didn't get a good http status, then the connection failed.
+            // Close the connection and throw an error.
             Log.d(EANMobileConstants.DEBUG_TAG, "Connection Status not ok: " + statusLine.getStatusCode());
             response.getEntity().getContent().close();
             throw new IOException(statusLine.getReasonPhrase());
