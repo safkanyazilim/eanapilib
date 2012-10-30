@@ -4,102 +4,121 @@
 
 package com.ean.mobile;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
+/**
+ * Holds the information about rates for a particular availability. Has information about both nightly rates
+ * and surcharges, as well as the specified currency code and whether or not the rate is a promo.
+ */
+public final class RateInfo {
 
-public final class RateInfo implements List<NightlyRate> {
+    /**
+     * The list of nightly rates for the current rate. Populated with Collections.unmodifiableList();
+     */
+    public final List<NightlyRate> nightlyRates;
 
-    private final List<NightlyRate> nightlyRates = new ArrayList<NightlyRate>();
+    /**
+     * The currency code set at construction time.
+     */
+    public final String currencyCode;
 
-    public String currencyCode;
+    /**
+     * Whether or not this rate represents a promo rate.
+     */
+    public final boolean promo;
 
-    public boolean promo = false;
-
+    /**
+     * The map of surcharges (fees) and their names.
+     */
     public final Map<String, BigDecimal> surcharges;
 
-    public RateInfo(JSONObject rateInfoJson) throws  JSONException {
-        JSONObject chargeable = rateInfoJson.getJSONObject("ChargeableRateInfo");
-        this.promo = rateInfoJson.getBoolean("@promo");
-//        this.nightlyRateTotal = new BigDecimal(chargeable.getString("@nightlyRateTotal"));
-//        this.averageBaseRate = new BigDecimal(chargeable.getString("@averageBaseRate"));
-//        this.averageRate = new BigDecimal(chargeable.getString("@averageRate"));
-        this.currencyCode = chargeable.getString("@currencyCode");
-        if (chargeable.optJSONArray("NightlyRatesPerRoom") != null) {
-            this.addAll(NightlyRate.parseNightlyRates(chargeable.getJSONArray("NightlyRatesPerRoom")));
-        } else if(chargeable.optJSONObject("NightlyRatesPerRoom") != null) {
-            if(chargeable.getJSONObject("NightlyRatesPerRoom").optJSONArray("NightlyRate") != null) {
-            this.addAll(NightlyRate.parseNightlyRates(chargeable.getJSONObject("NightlyRatesPerRoom").getJSONArray("NightlyRate")));
+    /**
+     * Constructs a RateInfo from a JSONObject.
+     * @param rateInfoJson The JSONObject holding the data to construct this object with.
+     * @throws JSONException If the JSON isn't configured correctly.
+     */
+    public RateInfo(final JSONObject rateInfoJson) throws JSONException {
+        final JSONObject chargeable = rateInfoJson.getJSONObject("ChargeableRateInfo");
+
+        final String nightlyRatesPerRoom = "NightlyRatesPerRoom";
+        final String nightlyRate = "NightlyRate";
+
+        final List<NightlyRate> localNightlyRates = new ArrayList<NightlyRate>();
+
+        if (chargeable.optJSONArray(nightlyRatesPerRoom) != null) {
+            localNightlyRates.addAll(NightlyRate.parseNightlyRates(chargeable.getJSONArray(nightlyRatesPerRoom)));
+        } else if (chargeable.optJSONObject(nightlyRatesPerRoom) != null) {
+            if (chargeable.getJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate) != null) {
+                localNightlyRates.addAll(
+                    NightlyRate.parseNightlyRates(
+                        chargeable.getJSONObject(nightlyRatesPerRoom).getJSONArray(nightlyRate)));
             } else {
-                this.addAll(NightlyRate.parseNightlyRates(chargeable.getJSONObject("NightlyRatesPerRoom")));
+                localNightlyRates.addAll(NightlyRate.parseNightlyRates(chargeable.getJSONObject(nightlyRatesPerRoom)));
             }
         }
 
-        Object surchargesJson = null;
-        if ((surchargesJson = chargeable.optJSONArray("Surcharges")) != null) {
-            surcharges = new HashMap<String, BigDecimal>(((JSONArray) surchargesJson).length());
-            for (int i = 0; i < ((JSONArray) surchargesJson).length(); i++) {
-                JSONObject surchargeJson = ((JSONArray) surchargesJson).getJSONObject(i);
-                surcharges.put(surchargeJson.getString("@type"),
+        final Map<String, BigDecimal> localSurcharges = new HashMap<String, BigDecimal>();
+        if (chargeable.optJSONArray("Surcharges") != null) {
+            for (int i = 0; i < chargeable.optJSONArray("Surcharges").length(); i++) {
+                final JSONObject surchargeJson = chargeable.optJSONArray("Surcharges").getJSONObject(i);
+                localSurcharges.put(surchargeJson.getString("@type"),
                                new BigDecimal(surchargeJson.getString("@amount")));
             }
-        } else if ((surchargesJson = chargeable.optJSONObject("Surcharge")) != null) {
-            surcharges = new HashMap<String, BigDecimal>(1);
-            surcharges.put(((JSONObject) surchargesJson).getString("@type"),
-                           new BigDecimal(((JSONObject) surchargesJson).getString("@amount")));
-        } else {
-            surcharges = new HashMap<String, BigDecimal>(0);
+        } else if (chargeable.optJSONObject("Surcharge") != null) {
+            localSurcharges.put(
+                chargeable.optJSONObject("Surcharge").getString("@type"),
+                new BigDecimal(chargeable.optJSONObject("Surcharge").getString("@amount")));
         }
+
+
+        promo = rateInfoJson.getBoolean("@promo");
+        currencyCode = chargeable.getString("@currencyCode");
+        nightlyRates = Collections.unmodifiableList(localNightlyRates);
+        surcharges = Collections.unmodifiableMap(localSurcharges);
     }
 
-    public static List<RateInfo> parseRateInfos(JSONArray rateInfosJson) throws JSONException {
-        ArrayList<RateInfo> rateInfos = new ArrayList<RateInfo>(rateInfosJson.length());
-       // Log.d(EANMobileConstants.DEBUG_TAG, "parsing room rate infos");
-        for(int j=0; j < rateInfosJson.length(); j++) {
+    public static List<RateInfo> parseRateInfos(final JSONArray rateInfosJson) throws JSONException {
+        final List<RateInfo> rateInfos = new ArrayList<RateInfo>(rateInfosJson.length());
+        for (int j = 0; j < rateInfosJson.length(); j++) {
             rateInfos.add(new RateInfo(rateInfosJson.getJSONObject(j)));
         }
-       // Log.d(EANMobileConstants.DEBUG_TAG, "done parsing room rate infos");
         return rateInfos;
     }
 
-    public static List<RateInfo> parseRateInfos(JSONObject rateInfosJson) throws JSONException {
-        ArrayList<RateInfo> rateInfos = new ArrayList<RateInfo>(1);
-       // Log.d(EANMobileConstants.DEBUG_TAG, "parsing single room rate info");
-        rateInfos.add(new RateInfo(rateInfosJson.getJSONObject("RateInfo")));
-       // Log.d(EANMobileConstants.DEBUG_TAG, "done parsing single room rate info");
-        return rateInfos;
+    public static List<RateInfo> parseRateInfos(final JSONObject rateInfosJson) throws JSONException {
+        return Collections.singletonList(new RateInfo(rateInfosJson.getJSONObject("RateInfo")));
     }
 
     public BigDecimal getAverageRate() {
         BigDecimal avgRate = BigDecimal.ZERO;
-        if (this.size() == 0) {
+        if (nightlyRates.size() == 0) {
             return avgRate;
         }
         for (NightlyRate rate : nightlyRates) {
             avgRate = avgRate.add(rate.rate);
         }
-        avgRate = avgRate.divide(new BigDecimal(this.size()));
+        avgRate = avgRate.divide(new BigDecimal(nightlyRates.size()));
         return avgRate;
     }
 
     public BigDecimal getAverageBaseRate() {
         BigDecimal avgBaseRate = BigDecimal.ZERO;
-        if (this.size() == 0) {
+        if (nightlyRates.size() == 0) {
             return avgBaseRate;
         }
         for (NightlyRate rate : nightlyRates) {
             avgBaseRate = avgBaseRate.add(rate.baseRate);
         }
-        avgBaseRate = avgBaseRate.divide(new BigDecimal(this.size()));
+        avgBaseRate = avgBaseRate.divide(new BigDecimal(nightlyRates.size()));
         return avgBaseRate;
     }
 
@@ -121,190 +140,5 @@ public final class RateInfo implements List<NightlyRate> {
             outRate = outRate.add(rate.baseRate);
         }
         return outRate;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void add(int i, NightlyRate nightlyRate) {
-        nightlyRates.add(i, nightlyRate);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean add(NightlyRate nightlyRate) {
-        return nightlyRates.add(nightlyRate);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean addAll(int i, Collection<? extends NightlyRate> nightlyRates) {
-        return this.nightlyRates.addAll(i, nightlyRates);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean addAll(Collection<? extends NightlyRate> nightlyRates) {
-        return this.nightlyRates.addAll(nightlyRates);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void clear() {
-        nightlyRates.clear();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean contains(Object o) {
-        return nightlyRates.contains(o);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean containsAll(Collection<?> objects) {
-        return containsAll(objects);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NightlyRate get(int i) {
-        return nightlyRates.get(i);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int indexOf(Object o) {
-        return nightlyRates.indexOf(o);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean isEmpty() {
-        return nightlyRates.isEmpty();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Iterator<NightlyRate> iterator() {
-        return nightlyRates.iterator();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int lastIndexOf(Object o) {
-        return nightlyRates.lastIndexOf(o);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ListIterator<NightlyRate> listIterator() {
-        return nightlyRates.listIterator();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public ListIterator<NightlyRate> listIterator(int i) {
-        return nightlyRates.listIterator(i);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NightlyRate remove(int i) {
-        return nightlyRates.remove(i);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean remove(Object o) {
-        return nightlyRates.remove(o);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public boolean removeAll(Collection<?> objects) {
-        return nightlyRates.removeAll(objects);
-    }
-
-    @Override
-    public boolean retainAll(Collection<?> objects) {
-        return retainAll(objects);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public NightlyRate set(int i, NightlyRate nightlyRate) {
-        return nightlyRates.set(i, nightlyRate);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int size() {
-        return nightlyRates.size();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public List<NightlyRate> subList(int i, int i1) {
-        return nightlyRates.subList(i, i1);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Object[] toArray() {
-        return nightlyRates.toArray();
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T[] toArray(T[] ts) {
-        if (!(ts instanceof NightlyRate[])) {
-            throw new IllegalArgumentException("Argument ts must be of type NightlyRate[]!");
-        }
-        return (T[]) nightlyRates.toArray((NightlyRate[]) ts);
     }
 }
