@@ -6,7 +6,7 @@ package com.ean.mobile;
 /**
  * Container for global constants to be used by the EAN mobile SDK.
  */
-public final class EANMobileConstants {
+public final class Constants {
     /**
      * The tag to be used when using android's logging mechanism.
      */
@@ -15,7 +15,7 @@ public final class EANMobileConstants {
     /**
      * Private, no-op constructor to prevent instantiation.
      */
-    private EANMobileConstants() {
+    private Constants() {
 
     }
 }
