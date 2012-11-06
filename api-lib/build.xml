@@ -2,12 +2,12 @@
 <project name="api-lib" default="all.jar">
     <property name="src.dir"                location="${basedir}/src"/>
     <property name="app.dir"                location="${src.dir}/app"/>
+    <property name="stubs.dir"              location="${src.dir}/stubs"/>
     <property name="testsrc.dir"            location="${src.dir}/test"/>
     <property name="mainifest.file"         location="${src.dir}/META-INF/MANIFEST.MF"/>
     <property name="lib.dir"                location="${basedir}/lib"/>
     <property name="tmp.dir"                location="${basedir}/build"/>
-    <property name="tests.dir"              location="${basedir}/tests"/>
-    <property name="build.dir"              location="${tmp.dir}/builds"/>
+    <property name="tests.dir"              location="${tmp.dir}/tests"/>
     <property name="classes.dir"            location="${tmp.dir}/classes"/>
     <property name="dist.jar"               location="${tmp.dir}/${ant.project.name}.jar"/>
     <property name="checkstyle.dir"         location="${tmp.dir}/checkstyle"/>
@@ -19,7 +19,7 @@
     <property name="checkstyle.output.html" location="${checkstyle.output}.html" />
 
     <taskdef resource="checkstyletask.properties"
-             classpath="${lib.dir}/checkstyle-5.5-all.jar"/>
+             classpath="${lib.dir}/checkstyle-5.6-all.jar"/>
 
     <path id="project.classpath">
         <fileset dir="${lib.dir}"/>
@@ -34,22 +34,23 @@
     </presetdef>
 
     <presetdef name="main.javac">
-        <javac srcdir="${app.dir}"
-               destdir="${classes.dir}"
-               debug="true"
+        <javac debug="true"
                deprecation="true"
                classpathref="project.classpath"
                includeantruntime="false"
                target="1.6"
-               source="1.6">
-        </javac>
+               source="1.6" />
     </presetdef>
 
     <presetdef name="default.checkstyle">
         <checkstyle config="${checkstyle.xml}"
                     failureProperty="checkstyle.failure"
                     failOnViolation="false">
-            <fileset dir="${src.dir}" includes="**/*.java" />
+            <classpath>
+                <path location="${lib.dir}/json.jar"/>
+                <path location="${checkstyle.dir}"/>
+            </classpath>
+            <fileset dir="${src.dir}" includes="**/*.java" excludes="stubs/"/>
             <formatter type="xml" toFile="${checkstyle.output.xml}" />
         </checkstyle>
      </presetdef>
@@ -65,15 +66,21 @@
         <mkdir dir="${checkstyle.dir}" />
         <copyright.year />
         <!-- compile the exceptions so checkstyle can get them-->
-        <main.javac destdir="${checkstyle.dir}" includes="**/*Exception.java"/>
+        <main.javac srcdir="${src.dir}" destdir="${checkstyle.dir}">
+            <include name="**/*Exception.java" />
+            <include name="**/EanWsError.java" />
+        </main.javac>
         <default.checkstyle />
         <checkstyle.transform />
         <fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>
     </target>
 
-    <target name="compile" depends="clean">
+    <target name="compile" depends="clean, checkstyle">
         <mkdir dir="${classes.dir}"/>
-        <main.javac />
+        <main.javac destdir="${classes.dir}" >
+            <src path="${app.dir}"/>
+            <src path="${stubs.dir}" />
+        </main.javac>
     </target>
 
     <target name="jar" depends="compile">
@@ -90,7 +97,9 @@
 
     <target name="compile.test" depends="compile">
         <mkdir dir="${tests.dir}"/>
-        <main.javac srcdir="${testsrc.dir}" destdir="${tests.dir}"/>
+        <main.javac destdir="${tests.dir}">
+            <src path="${testsrc.dir}" />
+        </main.javac>
     </target>
 
     <target name="test" depends="compile, compile.test">

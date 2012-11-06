@@ -1,107 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="5.5">
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\EANMobileConstants.java">
+<checkstyle version="5.6">
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\Constants.java">
 </file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelImageTuple.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelInfo.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelRoom.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelWrangler.java">
-<error line="35" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="39" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="39" column="35" severity="error" message="Parameter infos should be final." source="com.puppycrawl.tools.checkstyle.checks.FinalParametersCheck"/>
-<error line="39" column="51" severity="error" message="&apos;infos&apos; hides a field." source="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck"/>
-<error line="46" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="50" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="50" column="58" severity="error" message="&apos;selectedInfo&apos; hides a field." source="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck"/>
-<error line="55" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="60" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="64" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="69" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="73" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="78" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="82" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="82" column="54" severity="error" message="&apos;searchQuery&apos; hides a field." source="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck"/>
-<error line="87" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="91" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="95" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="95" column="52" severity="error" message="&apos;arrivalDate&apos; hides a field." source="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck"/>
-<error line="100" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="104" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="104" column="54" severity="error" message="&apos;departureDate&apos; hides a field." source="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck"/>
-<error line="109" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="113" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="117" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="117" column="58" severity="error" message="&apos;selectedRoom&apos; hides a field." source="com.puppycrawl.tools.checkstyle.checks.coding.HiddenFieldCheck"/>
-<error line="122" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="126" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="130" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="134" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="138" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="142" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\ImageFetcher.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\NightlyRate.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\RateInfo.java">
-<error line="70" column="37" severity="error" message="The String &quot;Surcharges&quot; appears 3 times in the file." source="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck"/>
-<error line="73" column="61" severity="error" message="The String &quot;@type&quot; appears 2 times in the file." source="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck"/>
-<error line="74" column="71" severity="error" message="The String &quot;@amount&quot; appears 2 times in the file." source="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck"/>
-<error line="76" column="45" severity="error" message="The String &quot;Surcharge&quot; appears 3 times in the file." source="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck"/>
-<error line="89" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="97" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="101" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="113" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="125" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="129" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="137" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\package-info.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\DestLookup.java">
-<error line="22" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
-<error line="32" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\InformationRequest.java">
-<error line="23" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
-<error line="34" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="35" severity="error" message="method def throws at indentation level 12 not at correct indentation, 8" source="com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\ListRequest.java">
-<error line="18" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
-<error line="30" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="31" severity="error" message="method def throws at indentation level 12 not at correct indentation, 8" source="com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\RateRulesRequest.java">
-<error line="16" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
-<error line="27" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="28" severity="error" message="method def throws at indentation level 12 not at correct indentation, 8" source="com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck"/>
-<error line="35" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="38" severity="error" message="method def throws at indentation level 12 not at correct indentation, 8" source="com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck"/>
-<error line="39" column="20" severity="error" message="Variable &apos;urlPairs&apos; should be declared final." source="com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariableCheck"/>
-<error line="54" column="20" severity="error" message="Variable &apos;json&apos; should be declared final." source="com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariableCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\Request.java">
-<error line="29" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
-<error line="57" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="62" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="63" severity="error" message="method def throws at indentation level 12 not at correct indentation, 8" source="com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck"/>
-<error line="94" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\RoomAvailRequest.java">
-<error line="17" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocTypeCheck"/>
-<error line="28" column="5" severity="error" message="Missing a Javadoc comment." source="com.puppycrawl.tools.checkstyle.checks.javadoc.JavadocMethodCheck"/>
-<error line="29" severity="error" message="method def throws at indentation level 12 not at correct indentation, 8" source="com.puppycrawl.tools.checkstyle.checks.indentation.IndentationCheck"/>
-<error line="52" column="31" severity="error" message="The String &quot;HotelRoomResponse&quot; appears 8 times in the file." source="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck"/>
-<error line="53" column="23" severity="error" message="Variable &apos;hrr&apos; should be declared final." source="com.puppycrawl.tools.checkstyle.checks.coding.FinalLocalVariableCheck"/>
-<error line="55" column="43" severity="error" message="The String &quot;S&quot; appears 3 times in the file." source="com.puppycrawl.tools.checkstyle.checks.coding.MultipleStringLiteralsCheck"/>
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\package-info.java">
-</file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\EANMobileConstants.java">
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\EanWsError.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelImageTuple.java">
 </file>
@@ -132,5 +33,43 @@
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\RoomAvailRequest.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\package-info.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\test\int\com\ean\mobile\request\ListRequestTest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\Constants.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\EanWsError.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelImageTuple.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelInfo.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelRoom.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelWrangler.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\ImageFetcher.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\NightlyRate.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\RateInfo.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\package-info.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\DestLookup.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\InformationRequest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\ListRequest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\RateRulesRequest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\Request.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\RoomAvailRequest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\package-info.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\test\int\com\ean\mobile\request\ListRequestTest.java">
 </file>
 </checkstyle>
