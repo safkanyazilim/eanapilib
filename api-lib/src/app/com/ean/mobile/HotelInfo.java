@@ -5,6 +5,7 @@
 package com.ean.mobile;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
@@ -126,15 +127,16 @@ public final class HotelInfo {
         this.hotelId = hotelSummary.optString("hotelId");
         this.address = hotelSummary.getString("address1");
         this.city = hotelSummary.getString("city");
-        this.stateProvinceCode = hotelSummary.getString("stateProvinceCode");
+        this.stateProvinceCode = hotelSummary.optString("stateProvinceCode");
         this.shortDescription =  Html.fromHtml(hotelSummary.optString("shortDescription")).toString();
         this.locDescription = Html.fromHtml(hotelSummary.optString("locationDescription")).toString();
-        final String starRatingRaw = hotelSummary.getString("hotelRating");
+        final String starRatingRaw = hotelSummary.optString("hotelRating");
         this.starRating = null == starRatingRaw || "".equals(starRatingRaw) ? "0" : starRatingRaw;
         final String thumbnailString = hotelSummary.optString("thumbNailUrl").replace("_t.jpg", "_n.jpg");
-        this.thumbnailUrl = new URL(thumbnailString);
-        this.highPrice = new BigDecimal(hotelSummary.getString("highRate"));
-        this.lowPrice = new BigDecimal(hotelSummary.getString("lowRate"));
+        this.thumbnailUrl = ImageFetcher.getFullImageUrl(thumbnailString);
+        //TODO: figure a better way of scaling the rates.
+        this.highPrice = new BigDecimal(hotelSummary.getDouble("highRate")).setScale(2, RoundingMode.HALF_EVEN);
+        this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.currencyCode = hotelSummary.optString("rateCurrencyCode");
         this.supplierType = hotelSummary.optString("supplierType");
     }

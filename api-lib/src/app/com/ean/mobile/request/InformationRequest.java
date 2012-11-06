@@ -15,7 +15,7 @@ import org.json.JSONObject;
 
 import android.text.Html;
 import android.util.Log;
-import com.ean.mobile.EANMobileConstants;
+import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelWrangler;
@@ -65,7 +65,7 @@ public final class InformationRequest extends Request {
                         new URL(image.optString("url")),
                         image.optString("caption")));
             }
-            Log.d(EANMobileConstants.DEBUG_TAG, "Found " + hotel.images.size() + " images");
+            Log.d(Constants.DEBUG_TAG, "Found " + hotel.images.size() + " images");
         }
 
         hotel.hasRetrievedHotelInfo = true;

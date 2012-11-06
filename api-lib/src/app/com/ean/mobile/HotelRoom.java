@@ -74,11 +74,11 @@ public final class HotelRoom {
      */
     public static List<HotelRoom> parseRoomRateDetails(final JSONArray hotelRoomResponseJson) throws JSONException {
         final List<HotelRoom> hotelRooms = new ArrayList<HotelRoom>(hotelRoomResponseJson.length());
-      //  Log.d(EANMobileConstants.DEBUG_TAG, "parsing room rate details");
+      //  Log.d(Constants.DEBUG_TAG, "parsing room rate details");
         for (int j = 0; j < hotelRoomResponseJson.length(); j++) {
             hotelRooms.add(new HotelRoom(hotelRoomResponseJson.getJSONObject(j)));
         }
-      //  Log.d(EANMobileConstants.DEBUG_TAG, "done parsing room rate details");
+      //  Log.d(Constants.DEBUG_TAG, "done parsing room rate details");
 
         return hotelRooms;
     }

@@ -6,6 +6,7 @@ package com.ean.mobile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.apache.http.HttpResponse;
@@ -46,11 +47,11 @@ public final class ImageFetcher {
      * @throws IOException If an error occurred when connecting or transmitting the data from urlString.
      */
     public static InputStream fetch(final String urlString, final boolean fullURL) throws IOException {
-        Log.d(EANMobileConstants.DEBUG_TAG, urlString);
+        Log.d(Constants.DEBUG_TAG, urlString);
         final String finalUrl;
         if (!fullURL) {
             finalUrl = new URL(IMAGE_PROTOCOL, IMAGE_HOST, urlString).toString();
-            Log.d(EANMobileConstants.DEBUG_TAG, urlString);
+            Log.d(Constants.DEBUG_TAG, urlString);
         } else {
             finalUrl = urlString;
         }
@@ -80,5 +81,9 @@ public final class ImageFetcher {
      */
     public static InputStream fetch(final URL url) throws IOException {
         return fetch(url.toString(), true);
+    }
+
+    public static URL getFullImageUrl(final String partial) throws MalformedURLException {
+        return new URL(IMAGE_PROTOCOL, IMAGE_HOST, partial);
     }
 }

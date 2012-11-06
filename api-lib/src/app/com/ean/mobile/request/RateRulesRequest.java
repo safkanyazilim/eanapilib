@@ -36,7 +36,7 @@ public final class RateRulesRequest extends Request {
                                                     final HotelWrangler wrangler,
                                                     final HotelRoom room)
             throws IOException, JSONException {
-        String[][] urlPairs = {
+        final String[][] urlPairs = {
             {"cid", CID},
             {"minorRev", MINOR_REV},
             {"apiKey", API_KEY},
@@ -51,7 +51,7 @@ public final class RateRulesRequest extends Request {
             {"roomTypeCode", room.roomTypeCode},
             {"room1", wrangler.getNumberOfAdults().toString() + "," + wrangler.getNumberOfChildren().toString()},
         };
-        JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
+        final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
 
         return wrangler;
     }

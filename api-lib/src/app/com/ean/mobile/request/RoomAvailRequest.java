@@ -50,7 +50,7 @@ public final class RoomAvailRequest extends Request {
         }
         final JSONObject resp = json.optJSONObject("HotelRoomAvailabilityResponse");
         if (resp.optJSONArray("HotelRoomResponse") != null) {
-            JSONArray hrr = resp.optJSONArray("HotelRoomResponse");
+            final JSONArray hrr = resp.optJSONArray("HotelRoomResponse");
             hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hrr);
             if (hotel.supplierType.equals("S")) {
 

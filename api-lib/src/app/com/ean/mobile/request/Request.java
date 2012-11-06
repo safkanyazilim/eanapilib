@@ -24,7 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import com.ean.mobile.EANMobileConstants;
+import com.ean.mobile.Constants;
 
 public abstract class Request {
     protected static final String CID = "55505";
@@ -49,7 +49,7 @@ public abstract class Request {
         try {
             fullUrl = new URL(URL_PROTOCOL, URL_HOSTNAME, URL_BASEDIR);
         } catch (MalformedURLException mue) {
-            Log.d(EANMobileConstants.DEBUG_TAG, "Base url is malformed");
+            Log.d(Constants.DEBUG_TAG, "Base url is malformed");
         }
         FULL_URL = fullUrl;
     }
@@ -68,18 +68,18 @@ public abstract class Request {
         }
         final HttpGet getRequest = new HttpGet(baseUrl);
         getRequest.setHeader("Accept", "application/json, */*");
-        Log.d(EANMobileConstants.DEBUG_TAG, "url: " + baseUrl);
-        Log.d(EANMobileConstants.DEBUG_TAG, "getting response");
+        Log.d(Constants.DEBUG_TAG, "url: " + baseUrl);
+        Log.d(Constants.DEBUG_TAG, "getting response");
         final long startTime = System.currentTimeMillis();
         final HttpResponse response = new DefaultHttpClient().execute(getRequest);
-        Log.d(EANMobileConstants.DEBUG_TAG, "got response");
+        Log.d(Constants.DEBUG_TAG, "got response");
         final StatusLine statusLine = response.getStatusLine();
         final JSONObject json;
         if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             response.getEntity().writeTo(out);
             final String jsonstr = out.toString();
-            //Log.d(EANMobileConstants.DEBUG_TAG, jsonstr);
+            //Log.d(Constants.DEBUG_TAG, jsonstr);
             json = new JSONObject(jsonstr);
         } else {
             // Closes the connection.
@@ -87,7 +87,7 @@ public abstract class Request {
             throw new IOException(statusLine.getReasonPhrase());
         }
         final long timeTook = System.currentTimeMillis() - startTime;
-        Log.d(EANMobileConstants.DEBUG_TAG, "Took " + timeTook + " milliseconds.");
+        Log.d(Constants.DEBUG_TAG, "Took " + timeTook + " milliseconds.");
         return json;
     }
 

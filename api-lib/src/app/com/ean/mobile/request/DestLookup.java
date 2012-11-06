@@ -17,7 +17,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
-import com.ean.mobile.EANMobileConstants;
+import com.ean.mobile.Constants;
 
 public final class DestLookup {
     private static final String ENDPOINT_FORMAT = "http://api.ean.com/ean-services/lookup/?propertyName=%s";
@@ -35,25 +35,25 @@ public final class DestLookup {
             return new JSONArray();
         }
         final String baseUrl = String.format(ENDPOINT_FORMAT, destinationString);
-        Log.d(EANMobileConstants.DEBUG_TAG, baseUrl);
-        Log.d(EANMobileConstants.DEBUG_TAG, "getting response");
+        Log.d(Constants.DEBUG_TAG, baseUrl);
+        Log.d(Constants.DEBUG_TAG, "getting response");
         final JSONObject json;
         final HttpResponse response
             = (new DefaultHttpClient())
             .execute(new HttpGet(baseUrl));
-        Log.d(EANMobileConstants.DEBUG_TAG, "got response");
+        Log.d(Constants.DEBUG_TAG, "got response");
         final StatusLine statusLine = response.getStatusLine();
         if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
             final ByteArrayOutputStream out = new ByteArrayOutputStream();
             response.getEntity().writeTo(out);
             out.close();
             final String jsonstr = out.toString();
-            Log.d(EANMobileConstants.DEBUG_TAG, jsonstr);
+            Log.d(Constants.DEBUG_TAG, jsonstr);
             json = new JSONObject(jsonstr);
         } else {
             // If we didn't get a good http status, then the connection failed.
             // Close the connection and throw an error.
-            Log.d(EANMobileConstants.DEBUG_TAG, "Connection Status not ok: " + statusLine.getStatusCode());
+            Log.d(Constants.DEBUG_TAG, "Connection Status not ok: " + statusLine.getStatusCode());
             response.getEntity().getContent().close();
             throw new IOException(statusLine.getReasonPhrase());
         }

@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import android.app.Application;
-
 /**
  * This class handles all of the loaded hotels, as well as customer session information and searches.
  * It extends Application so its data can be used globally.
  */
-public class HotelWrangler extends Application {
+public class HotelWrangler {
     private final List<HotelInfo> infos = new ArrayList<HotelInfo>();
     private HotelInfo selectedInfo;
 
@@ -36,7 +34,7 @@ public class HotelWrangler extends Application {
         return infos;
     }
 
-    public HotelWrangler setInfos(List<HotelInfo> infos) {
+    public HotelWrangler setInfos(final List<HotelInfo> infos) {
         this.infos.clear();
         this.infos.addAll(infos);
         this.selectedInfo = null;

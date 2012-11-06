@@ -5,13 +5,16 @@
 package com.ean.mobile.request;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ean.mobile.EanWsError;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelWrangler;
 
@@ -28,7 +31,7 @@ public final class ListRequest extends Request {
 
 
     public static HotelWrangler searchForHotels(final String destination, final HotelWrangler wrangler)
-            throws IOException, JSONException {
+            throws IOException, JSONException, EanWsError {
 
         final String[][] urlPairs = {
             {"cid", CID},
@@ -39,12 +42,14 @@ public final class ListRequest extends Request {
             {"destinationString", destination},
             {"numberOfResults", NUMBER_OF_RESULTS},
             {"room1", wrangler.getNumberOfAdults().toString() + "," + wrangler.getNumberOfChildren().toString()},
-            {"options", "HOTEL_SUMMARY"}
+            {"arrivalDate", formatDate(wrangler.getArrivalDate())},
+            {"departureDate", formatDate(wrangler.getDepartureDate())}
         };
         final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
 
         if (json != null) {
             final JSONObject listResp = json.getJSONObject("HotelListResponse");
+
             final String cacheKey = listResp.optString("cacheKey");
             final String cacheLocation = listResp.optString("cacheLocation");
             final String customerSessionId = listResp.optString("customerSessionId");
@@ -64,5 +69,9 @@ public final class ListRequest extends Request {
 
         return wrangler;
 
+    }
+
+    private static String formatDate(final Date date) {
+        return new SimpleDateFormat("mm/dd/yyyy").format(date);
     }
 }

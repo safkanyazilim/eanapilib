@@ -8,10 +8,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.ImageView;
-
 /**
  * This holds information about each of the images to be displayed in the hotel full information. This includes
  * inner views, exterior views and so forth.
@@ -56,115 +52,47 @@ public final class HotelImageTuple {
     }
 
     /**
-     * Calls setImageDrawable on the passed ImageView with the thumbnail resource.
-     * @param thumbnailView The view to which to set the drawable.
+     * Shows without loading the image whether or not the thumbnail image has been loaded from the remote url.
+     * @return Whether or not the thumbnail has been loaded.
      */
-    public void setImageViewToThumbnail(final ImageView thumbnailView) {
+    public boolean isThumbnailLoaded() {
+        return thumbnail == null;
+    }
+
+    /**
+     * Gets the thumbnail image from the thumbnail URL. If already loaded, will simply return that which
+     * has been loaded.
+     *
+     * Unless {@link com.ean.mobile.HotelImageTuple#isThumbnailLoaded()} returns true,
+     * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
+     */
+    public Drawable getThumbnailImage() throws IOException {
         if (thumbnail == null) {
-            new ThumbnailImageLoadTask(thumbnailView).execute(thumbnailUrl);
-        } else {
-            thumbnailView.setImageDrawable(thumbnail);
+            thumbnail = Drawable.createFromStream(ImageFetcher.fetch(thumbnailUrl), "src");
         }
+        return thumbnail;
     }
 
     /**
-     * Calls setImageDrawable on the passed ImageView with the main image resource.
-     * @param mainView The view to which to set the drawable.
+     * Shows without loading the image whether or not the main image has been loaded from the remote url.
+     * @return Whether or not the main has been loaded.
      */
-    public void setImageViewToMain(final ImageView mainView) {
+    public boolean isMainImageLoaded() {
+        return main == null;
+    }
+
+    /**
+     * Gets the main image from the main URL. If already loaded, will simply return that which
+     * has been loaded.
+     *
+     * Unless {@link HotelImageTuple#isMainImageLoaded()} returns true,
+     * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
+     */
+    public Drawable getMainImage() throws IOException {
         if (main == null) {
-            new MainImageLoadTask(mainView).execute(mainUrl);
-        } else {
-            mainView.setImageDrawable(main);
+            main = Drawable.createFromStream(ImageFetcher.fetch(mainUrl), "src");
         }
+        return main;
     }
 
-    /**
-     * Base class for the different image loading tasks.
-     */
-    private abstract class ImageLoadTask extends AsyncTask<URL, Void, Drawable> {
-
-        /**
-         * The view onto which to draw the retrieved image.
-         */
-        private final ImageView viewToDraw;
-
-        /**
-         * Sets up the view onto which to draw.
-         * @param view The view to set to v
-         */
-        protected ImageLoadTask(final ImageView view) {
-            this.viewToDraw = view;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected Drawable doInBackground(final URL... urls) {
-            Drawable image = null;
-            try {
-                image = Drawable.createFromStream(ImageFetcher.fetch(urls[0].toString(), true), "src");
-            } catch (IOException e) {
-                Log.d(EANMobileConstants.DEBUG_TAG, "Exception occurred while retrieving thumbnail" + e.getMessage());
-            }
-            return image;
-        }
-
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected final void onPostExecute(final Drawable result) {
-            viewToDraw.setImageDrawable(result);
-            onPostExecuteSpecific(result);
-        }
-
-        /**
-         * The implementation analogous to onPostExecute, but with the ability to not need to know about super.
-         * @param result The result passed to onPostExecute
-         */
-        protected abstract void onPostExecuteSpecific(Drawable result);
-    }
-
-    /**
-     * The concrete implementation for loading the thumbnails.
-     */
-    private class ThumbnailImageLoadTask extends ImageLoadTask {
-        /**
-         * The necessary constructor since the default constructor is not available.
-         * @param view The view to place the thumbnail into.
-         */
-        protected ThumbnailImageLoadTask(final ImageView view) {
-            super(view);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected void onPostExecuteSpecific(final Drawable result) {
-            thumbnail = result;
-        }
-    }
-
-    /**
-     * The concrete implementation for loading the main images.
-     */
-    private class MainImageLoadTask extends ImageLoadTask {
-
-        /**
-         * The necessary constructor since the default constructor is not available.
-         * @param view The view to place the main image into.
-         */
-        protected MainImageLoadTask(final ImageView view) {
-            super(view);
-        }
-        /**
-         * {@inheritDoc}
-         */
-        @Override
-        protected void onPostExecuteSpecific(final Drawable result) {
-            main = result;
-        }
-    }
 }
