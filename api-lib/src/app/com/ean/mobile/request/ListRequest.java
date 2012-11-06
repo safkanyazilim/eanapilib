@@ -50,6 +50,11 @@ public final class ListRequest extends Request {
         if (json != null) {
             final JSONObject listResp = json.getJSONObject("HotelListResponse");
 
+            if (listResp.has("EanWsError")) {
+                throw EanWsError.fromJson(listResp.getJSONObject("EanWsError"));
+            }
+
+
             final String cacheKey = listResp.optString("cacheKey");
             final String cacheLocation = listResp.optString("cacheLocation");
             final String customerSessionId = listResp.optString("customerSessionId");
@@ -72,6 +77,6 @@ public final class ListRequest extends Request {
     }
 
     private static String formatDate(final Date date) {
-        return new SimpleDateFormat("mm/dd/yyyy").format(date);
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
     }
 }
