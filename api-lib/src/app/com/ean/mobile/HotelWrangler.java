@@ -12,7 +12,7 @@ import java.util.List;
  * This class handles all of the loaded hotels, as well as customer session information and searches.
  * It extends Application so its data can be used globally.
  */
-public class HotelWrangler {
+public final class HotelWrangler {
     private final List<HotelInfo> infos = new ArrayList<HotelInfo>();
     private HotelInfo selectedInfo;
 
