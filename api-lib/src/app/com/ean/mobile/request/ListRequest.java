@@ -14,7 +14,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.EanWsError;
+import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelWrangler;
 
@@ -47,30 +47,29 @@ public final class ListRequest extends Request {
         };
         final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
 
-        if (json != null) {
-            final JSONObject listResp = json.getJSONObject("HotelListResponse");
 
-            if (listResp.has("EanWsError")) {
-                throw EanWsError.fromJson(listResp.getJSONObject("EanWsError"));
-            }
+        final JSONObject listResp = json.getJSONObject("HotelListResponse");
 
-
-            final String cacheKey = listResp.optString("cacheKey");
-            final String cacheLocation = listResp.optString("cacheLocation");
-            final String customerSessionId = listResp.optString("customerSessionId");
-            final JSONArray hotelList = listResp
-                .getJSONObject("HotelList")
-                .getJSONArray("HotelSummary");
-            final List<HotelInfo> hotels = new ArrayList<HotelInfo>(hotelList.length());
-            for (int i = 0; i < hotelList.length(); i++) {
-                hotels.add(new HotelInfo(hotelList.getJSONObject(i)));
-            }
-
-            wrangler.setInfos(hotels);
-            wrangler.setCacheLocation(cacheLocation);
-            wrangler.setCustomerSessionId(customerSessionId);
-            wrangler.setCacheKey(cacheKey);
+        if (listResp.has("EanWsError")) {
+            throw EanWsError.fromJson(listResp.getJSONObject("EanWsError"));
         }
+
+
+        final String cacheKey = listResp.optString("cacheKey");
+        final String cacheLocation = listResp.optString("cacheLocation");
+        final String customerSessionId = listResp.optString("customerSessionId");
+        final JSONArray hotelList = listResp
+            .getJSONObject("HotelList")
+            .getJSONArray("HotelSummary");
+        final List<HotelInfo> hotels = new ArrayList<HotelInfo>(hotelList.length());
+        for (int i = 0; i < hotelList.length(); i++) {
+            hotels.add(new HotelInfo(hotelList.getJSONObject(i)));
+        }
+
+        wrangler.setInfos(hotels);
+        wrangler.setCacheLocation(cacheLocation);
+        wrangler.setCustomerSessionId(customerSessionId);
+        wrangler.setCacheKey(cacheKey);
 
         return wrangler;
 

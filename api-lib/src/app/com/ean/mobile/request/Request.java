@@ -10,6 +10,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -30,7 +31,7 @@ public abstract class Request {
     protected static final String CID = "55505";
     protected static final String MINOR_REV = "10";
     protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
-    protected static final String LOCALE = "en_US";
+    protected static final String LOCALE = "it_IT";
     protected static final String CURRENCY_CODE = "USD";
     protected static final String URL_PROTOCOL = "http";
     //protected static final String URL_HOSTNAME = "stg1-www.travelnow.com";
@@ -61,12 +62,10 @@ public abstract class Request {
 
     protected static JSONObject getJsonFromSubdir(final String urlSubdir, final List<NameValuePair> params)
             throws IOException, JSONException {
+        //TODO: This URL building is inefficient and somewhat incorrect.
         //Build the url
-        String baseUrl = new URL(FULL_URL, urlSubdir).toString();
-        if (params != null && params.size() > 0) {
-            baseUrl += "?" + URLEncodedUtils.format(params, "UTF-8");
-        }
-        final HttpGet getRequest = new HttpGet(baseUrl);
+        final String baseUrl = new URL(FULL_URL, urlSubdir).toString();
+        final HttpGet getRequest = new HttpGet(createFullUrl(baseUrl, params).toString());
         getRequest.setHeader("Accept", "application/json, */*");
         Log.d(Constants.DEBUG_TAG, "url: " + baseUrl);
         Log.d(Constants.DEBUG_TAG, "getting response");
@@ -99,5 +98,13 @@ public abstract class Request {
         return urlPairs;
     }
 
+    protected static URL createFullUrl(final String baseUrl, final List<NameValuePair> params)
+            throws MalformedURLException {
+        String queryString = "";
+        if (params != null && !params.isEmpty()) {
+            queryString = "?" + URLEncodedUtils.format(params, "UTF-8");
+        }
 
+        return new URL(baseUrl + queryString);
+    }
 }
