@@ -7,8 +7,8 @@ import java.util.Calendar;
 
 import org.junit.Test;
 
+import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.exception.DataValidationException;
-import com.ean.mobile.HotelWrangler;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
@@ -22,12 +22,9 @@ public class ListRequestTest {
         Calendar threeDaysFromNow = Calendar.getInstance();
         threeDaysFromNow.add(Calendar.DAY_OF_YEAR, 3);
 
-        HotelWrangler wrangler = new HotelWrangler();
-        wrangler.setArrivalDate(tomorrow.getTime());
-        wrangler.setDepartureDate(threeDaysFromNow.getTime());
-        ListRequest.searchForHotels("rome, it", wrangler);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", 1, 0, tomorrow, threeDaysFromNow);
 
-        assertThat(wrangler.getInfos().size(), greaterThan(0));
+        assertThat(results.size(), greaterThan(0));
     }
 
     @Test(expected = DataValidationException.class)
@@ -37,10 +34,7 @@ public class ListRequestTest {
         Calendar threeDaysAgo = Calendar.getInstance();
         threeDaysAgo.add(Calendar.DAY_OF_YEAR, -3);
 
-        HotelWrangler wrangler = new HotelWrangler();
-        wrangler.setArrivalDate(tomorrow.getTime());
-        wrangler.setDepartureDate(threeDaysAgo.getTime());
-        ListRequest.searchForHotels("rome, it", wrangler);
+        ListRequest.searchForHotels("rome, it", 1, 0, tomorrow, threeDaysAgo);
     }
 
     @Test(expected = DataValidationException.class)
@@ -50,9 +44,6 @@ public class ListRequestTest {
         Calendar threeDaysFromNow = Calendar.getInstance();
         threeDaysFromNow.add(Calendar.DAY_OF_YEAR, 3);
 
-        HotelWrangler wrangler = new HotelWrangler();
-        wrangler.setArrivalDate(tomorrow.getTime());
-        wrangler.setDepartureDate(threeDaysFromNow.getTime());
-        ListRequest.searchForHotels("sea of tranquility, moon", wrangler);
+        ListRequest.searchForHotels("sea of tranquility, moon", 1, 0, tomorrow, threeDaysFromNow);
     }
 }
