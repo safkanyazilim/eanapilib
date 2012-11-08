@@ -1,17 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="api-lib" default="all.jar">
+<project name="ean-api-lib" default="all.jar">
     <property name="src.dir"                location="${basedir}/src"/>
     <property name="app.dir"                location="${src.dir}/app"/>
     <property name="stubs.dir"              location="${src.dir}/stubs"/>
     <property name="testsrc.dir"            location="${src.dir}/test"/>
     <property name="mainifest.file"         location="${src.dir}/META-INF/MANIFEST.MF"/>
     <property name="lib.dir"                location="${basedir}/lib"/>
-    <property name="tmp.dir"                location="${basedir}/build"/>
-    <property name="tests.dir"              location="${tmp.dir}/tests"/>
-    <property name="classes.dir"            location="${tmp.dir}/classes"/>
-    <property name="dist.jar"               location="${tmp.dir}/${ant.project.name}.jar"/>
-    <property name="checkstyle.dir"         location="${tmp.dir}/checkstyle"/>
-    <property name="doc.dir"                location="${tmp.dir}/doc"/>
+    <property name="build.dir"              location="${basedir}/build"/>
+    <property name="tests.dir"              location="${build.dir}/tests"/>
+    <property name="classes.dir"            location="${build.dir}/classes"/>
+    <property name="dist.jar"               location="${build.dir}/${ant.project.name}.jar"/>
+    <property name="dist.all.jar"           location="${build.dir}/${ant.project.name}-all.jar"/>
+    <property name="checkstyle.dir"         location="${build.dir}/checkstyle"/>
+    <property name="doc.dir"                location="${build.dir}/doc"/>
     <property name="checkstyle.xml"         location="${basedir}/checkstyle.xml"/>
     <property name="checkstyle.xsl"         location="${basedir}/checkstyle.xsl"/>
     <property name="checkstyle.output"      location="${checkstyle.dir}/checkstyle_errors" />
@@ -86,13 +87,16 @@
     <target name="jar" depends="compile">
         <jar destfile="${dist.jar}" filesetmanifest="mergewithoutmain">
           <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
-          <zipfileset dir="${classes.dir}"/>
+          <zipfileset dir="${classes.dir}" excludes="android/"/>
         </jar>
     </target>
 
-    <target name="run.jar" depends="jar">
-        <java jar="${dist.jar}"
-              fork="true"/>
+    <target name="jar.all" depends="compile, javadoc">
+        <jar destfile="${dist.all.jar}" filesetmanifest="mergewithoutmain">
+            <zipfileset file="${basedir}/src/META-INF/MANIFEST.MF" prefix="META-INF"/>
+            <zipfileset dir="${classes.dir}" excludes="android/"/>
+            <zipfileset dir="${doc.dir}" prefix="doc"/>
+        </jar>
     </target>
 
     <target name="compile.test" depends="compile">
@@ -114,7 +118,7 @@
     </target>
 
     <target name="clean">
-        <delete dir="${tmp.dir}" />
+        <delete dir="${build.dir}" />
     </target>
 
 
@@ -133,8 +137,10 @@
             encoding="UTF-8"
             docencoding="UTF-8"
             verbose="false">
-            <fileset dir="${src.dir}" defaultexcludes="yes">
+            <fileset dir="${src.dir}">
                 <include name="**/*.java"/>
+                <exclude name="stubs/" />
+                <exclude name="test/" />
             </fileset>
             <doctitle><![CDATA[<h1>${javadoc.title}</h1>]]></doctitle>
             <bottom><![CDATA[<i>Copyright &#169; 2012 EAN.com, L.P. All Rights Reserved.</i>]]></bottom>
@@ -143,5 +149,5 @@
 
     <target name="all" depends="clean, compile, test" />
 
-    <target name="all.jar" depends="all, jar" />
+    <target name="all.jar" depends="all, jar, jar.all" />
 </project>

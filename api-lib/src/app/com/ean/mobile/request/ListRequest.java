@@ -5,25 +5,21 @@
 package com.ean.mobile.request;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelWrangler;
 
 public final class ListRequest extends Request {
     private static final String NUMBER_OF_RESULTS = "10";
     private static final String URL_SUBDIR = "list";
-    private static final String CALENDAR_FORMAT = "%tD";
 
     /**
      * Private no-op constructor to prevent instantiation.
@@ -71,6 +67,7 @@ public final class ListRequest extends Request {
         // within a certain threshold (maybe a day?) the search appears to be instantaneous.
         // This has the potential to be a memory hog given that the HotelImageTuples store the actual
         // bytes of the images they represent, once loaded.
+        // TODO: Support pagination via cachekey and so forth
         final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
 
 

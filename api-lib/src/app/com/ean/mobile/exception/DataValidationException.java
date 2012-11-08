@@ -10,7 +10,9 @@ public final class DataValidationException extends EanWsError {
      * @param category The "category" of the error.
      * @param presentationMessage The localized, simplified version of verboseMessage.
      */
-    public DataValidationException(final String verboseMessage, final String category, final String presentationMessage) {
+    public DataValidationException(final String verboseMessage,
+                                   final String category,
+                                   final String presentationMessage) {
         super(verboseMessage, category, presentationMessage);
     }
 }
