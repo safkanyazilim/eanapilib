@@ -2,11 +2,11 @@
 <checkstyle version="5.6">
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\Constants.java">
 </file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\EanWsError.java">
-</file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelImageTuple.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelInfo.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelInfoList.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelRoom.java">
 </file>
@@ -17,6 +17,12 @@
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\NightlyRate.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\RateInfo.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\exception\DataValidationException.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\exception\EanWsError.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\exception\package-info.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\package-info.java">
 </file>
@@ -35,14 +41,16 @@
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\package-info.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\test\int\com\ean\mobile\request\ListRequestTest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\test\int\com\ean\mobile\request\RequestTest.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\Constants.java">
 </file>
-<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\EanWsError.java">
-</file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelImageTuple.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelInfo.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelInfoList.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\HotelRoom.java">
 </file>
@@ -53,6 +61,12 @@
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\NightlyRate.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\RateInfo.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\exception\DataValidationException.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\exception\EanWsError.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\exception\package-info.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\package-info.java">
 </file>
@@ -71,5 +85,7 @@
 <file name="C:\projects\ean-android\api-lib\src\app\com\ean\mobile\request\package-info.java">
 </file>
 <file name="C:\projects\ean-android\api-lib\src\test\int\com\ean\mobile\request\ListRequestTest.java">
+</file>
+<file name="C:\projects\ean-android\api-lib\src\test\int\com\ean\mobile\request\RequestTest.java">
 </file>
 </checkstyle>
