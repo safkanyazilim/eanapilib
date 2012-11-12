@@ -1,0 +1,38 @@
+apply plugin: 'java'
+apply plugin: 'checkstyle'
+
+sourceSets.main.java.srcDirs = ['src/app', 'src/stubs']
+sourceSets.test.java.srcDirs = ['src/test']
+
+project.checkstyle {
+    configFile = ['checkstyle.xml']
+    toolVersion = '5.6'
+    configProperties = [
+        copyrightYear: Calendar.getInstance().get(Calendar.YEAR).toString(),
+        basedir: rootDir
+    ]
+}
+
+project.jar {
+    baseName = 'ean-api-lib'
+    excludes = ['android/']
+}
+
+project.javadoc {
+    excludes = ['android/']
+    title = "EAN Mobile Docs"
+}
+
+repositories { 
+    mavenCentral() 
+} 
+
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-core:2.1.0'
+    compile 'commons-logging:commons-logging:1.1.1'
+    compile 'org.apache.httpcomponents:httpclient:4.2.1'
+    compile 'org.apache.httpcomponents:httpcore:4.2.2'
+    compile 'org.json:json:20090211'
+    compile 'junit:junit:4.10'
+    compile 'org.hamcrest:hamcrest-all:1.3'
+}

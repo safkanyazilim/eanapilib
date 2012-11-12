@@ -54,7 +54,7 @@
     <!-- See http://checkstyle.sf.net/config_header.html   -->
     <module name="Header">
         <property name="header"
-                  value="/*\n * Copyright ${copyright.year} EAN.com, L.P. All rights reserved.\n */" />
+                  value="/*\n * Copyright ${copyrightYear} EAN.com, L.P. All rights reserved.\n */" />
     </module>
 
     <module name="SuppressionFilter">
@@ -180,7 +180,6 @@
         <module name="IllegalThrows"/>
         <module name="JUnitTestCase"/>
         <module name="MagicNumber"/>
-        <module name="RedundantThrows"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>
