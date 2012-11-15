@@ -39,8 +39,7 @@ public final class DestLookup {
         Log.d(Constants.DEBUG_TAG, "getting response");
         final JSONObject json;
         final HttpResponse response
-            = (new DefaultHttpClient())
-            .execute(new HttpGet(baseUrl));
+            = new DefaultHttpClient().execute(new HttpGet(baseUrl));
         Log.d(Constants.DEBUG_TAG, "got response");
         final StatusLine statusLine = response.getStatusLine();
         if (statusLine.getStatusCode() == HttpStatus.SC_OK) {

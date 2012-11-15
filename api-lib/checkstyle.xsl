@@ -80,8 +80,7 @@
                     </tr>
                     <tr>
                         <td>
-                            Designed for use with <a href='http://checkstyle.sourceforge.net/'>CheckStyle</a>
-                            and <a href='http://jakarta.apache.org'>Ant</a>.
+                            Designed for use with <a href='http://checkstyle.sourceforge.net/'>CheckStyle</a>.
                         </td>
                     </tr>
                     <tr>

@@ -45,7 +45,7 @@ public class RequestTest {
         URL createdURL = Request.createFullUrl(
             "http://hello",
             Collections.<NameValuePair>singletonList(new BasicNameValuePair("hi", null)));
-        assertEquals("http://hello?hi=", createdURL.toString());
+        assertEquals("http://hello?hi", createdURL.toString());
     }
 
     @Test
