@@ -55,7 +55,7 @@ public abstract class Request {
     }
 
     protected static JSONObject getJsonFromSubdir(final String urlSubdir, final String[][] params)
-        throws IOException, JSONException {
+            throws IOException, JSONException {
         return getJsonFromSubdir(urlSubdir, getParams(params));
     }
 

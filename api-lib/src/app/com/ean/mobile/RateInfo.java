@@ -100,7 +100,7 @@ public final class RateInfo {
 
     public BigDecimal getAverageRate() {
         BigDecimal avgRate = BigDecimal.ZERO;
-        if (nightlyRates.size() == 0) {
+        if (nightlyRates.isEmpty()) {
             return avgRate;
         }
         for (NightlyRate rate : nightlyRates) {
