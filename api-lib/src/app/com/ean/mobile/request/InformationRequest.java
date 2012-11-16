@@ -8,7 +8,11 @@ package com.ean.mobile.request;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,24 +37,23 @@ public final class InformationRequest extends Request {
 
     public static HotelWrangler getHotelInformation(final HotelInfo hotel, final HotelWrangler wrangler)
             throws IOException, JSONException {
-        final String[][] urlPairs = {
-            {"cid", CID},
-            {"minorRev", MINOR_REV},
-            {"apiKey", API_KEY},
-            {"customerSessionId", wrangler.getCustomerSessionId()},
-            {"locale", LOCALE},
-            {"currencyCode", CURRENCY_CODE},
-            {"hotelId", hotel.hotelId},
-            {"options", "HOTEL_DETAILS,HOTEL_IMAGES"}
-        };
-        final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
+        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
+            new BasicNameValuePair("cid", CID),
+            new BasicNameValuePair("minorRev", MINOR_REV),
+            new BasicNameValuePair("apiKey", API_KEY),
+            new BasicNameValuePair("customerSessionId", wrangler.getCustomerSessionId()),
+            new BasicNameValuePair("locale", LOCALE),
+            new BasicNameValuePair("currencyCode", CURRENCY_CODE),
+            new BasicNameValuePair("hotelId", hotel.hotelId),
+            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+        );
+        final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 
         if (json != null) {
             final JSONObject infoResp = json.getJSONObject("HotelInformationResponse");
             final JSONObject details = infoResp.getJSONObject("HotelDetails");
             final JSONArray images = infoResp.getJSONObject("HotelImages")
                 .getJSONArray("HotelImage");
-
 
             hotel.longDescription = Html.fromHtml(details.optString("propertyDescription")).toString();
 

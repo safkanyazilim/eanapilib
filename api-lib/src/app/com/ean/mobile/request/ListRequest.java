@@ -6,9 +6,12 @@ package com.ean.mobile.request;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -50,38 +53,36 @@ public final class ListRequest extends Request {
                                                 final Calendar departureDate)
             throws IOException, JSONException, EanWsError {
 
-        final String[][] urlPairs = {
-            {"cid", CID},
-            {"minorRev", MINOR_REV},
-            {"apiKey", API_KEY},
-            {"locale", LOCALE},
-            {"currencyCode", CURRENCY_CODE},
-            {"destinationString", destination},
-            {"numberOfResults", NUMBER_OF_RESULTS},
-            {"room1", String.format("%d,%d", numberOfAdults, numberOfChildren)},
-            {"arrivalDate", String.format("%tD", arrivalDate)},
-            {"departureDate", String.format("%tD", departureDate)}
-        };
+        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
+            new BasicNameValuePair("cid", CID),
+            new BasicNameValuePair("minorRev", MINOR_REV),
+            new BasicNameValuePair("apiKey", API_KEY),
+            new BasicNameValuePair("locale", LOCALE),
+            new BasicNameValuePair("currencyCode", CURRENCY_CODE),
+            new BasicNameValuePair("destinationString", destination),
+            new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
+            new BasicNameValuePair("room1", String.format("%d,%d", numberOfAdults, numberOfChildren)),
+            new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
+            new BasicNameValuePair("departureDate", formatApiDate(departureDate))
+        );
 
         // TODO: Possibly cache the HotelInfoLists (factory?) such that if the request is performed again
         // within a certain threshold (maybe a day?) the search appears to be instantaneous.
         // This has the potential to be a memory hog given that the HotelImageTuples store the actual
         // bytes of the images they represent, once loaded.
         // TODO: Support pagination via cachekey and so forth
-        final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
+        final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 
+        final JSONObject listResponse = json.getJSONObject("HotelListResponse");
 
-        final JSONObject listResp = json.getJSONObject("HotelListResponse");
-
-        if (listResp.has("EanWsError")) {
-            throw EanWsError.fromJson(listResp.getJSONObject("EanWsError"));
+        if (listResponse.has("EanWsError")) {
+            throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
         }
 
-
-        final String cacheKey = listResp.optString("cacheKey");
-        final String cacheLocation = listResp.optString("cacheLocation");
-        final String customerSessionId = listResp.optString("customerSessionId");
-        final JSONArray hotelList = listResp
+        final String cacheKey = listResponse.optString("cacheKey");
+        final String cacheLocation = listResponse.optString("cacheLocation");
+        final String customerSessionId = listResponse.optString("customerSessionId");
+        final JSONArray hotelList = listResponse
             .getJSONObject("HotelList")
             .getJSONArray("HotelSummary");
         final List<HotelInfo> hotels = new ArrayList<HotelInfo>(hotelList.length());

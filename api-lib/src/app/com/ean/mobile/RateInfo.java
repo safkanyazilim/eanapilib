@@ -5,6 +5,7 @@
 package com.ean.mobile;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -112,13 +113,13 @@ public final class RateInfo {
 
     public BigDecimal getAverageBaseRate() {
         BigDecimal avgBaseRate = BigDecimal.ZERO;
-        if (nightlyRates.size() == 0) {
+        if (nightlyRates.isEmpty()) {
             return avgBaseRate;
         }
         for (NightlyRate rate : nightlyRates) {
             avgBaseRate = avgBaseRate.add(rate.baseRate);
         }
-        avgBaseRate = avgBaseRate.divide(new BigDecimal(nightlyRates.size()));
+        avgBaseRate = avgBaseRate.divide(new BigDecimal(nightlyRates.size()), 2, RoundingMode.HALF_EVEN);
         return avgBaseRate;
     }
 
@@ -127,18 +128,18 @@ public final class RateInfo {
     }
 
     public BigDecimal getRateTotal() {
-        BigDecimal outRate = BigDecimal.ZERO;
+        BigDecimal rateTotal = BigDecimal.ZERO;
         for (NightlyRate rate : nightlyRates) {
-            outRate = outRate.add(rate.rate);
+            rateTotal = rateTotal.add(rate.rate);
         }
-        return outRate;
+        return rateTotal;
     }
 
     public BigDecimal getBaseRateTotal() {
-        BigDecimal outRate = BigDecimal.ZERO;
+        BigDecimal baseRateTotal = BigDecimal.ZERO;
         for (NightlyRate rate : nightlyRates) {
-            outRate = outRate.add(rate.baseRate);
+            baseRateTotal = baseRateTotal.add(rate.baseRate);
         }
-        return outRate;
+        return baseRateTotal;
     }
 }

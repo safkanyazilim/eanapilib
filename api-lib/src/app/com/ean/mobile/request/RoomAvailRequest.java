@@ -5,7 +5,11 @@
 package com.ean.mobile.request;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -13,6 +17,7 @@ import org.json.JSONObject;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.HotelWrangler;
+import com.ean.mobile.exception.EanWsError;
 
 public final class RoomAvailRequest extends Request {
     private static final String URL_SUBDIR = "avail";
@@ -26,49 +31,46 @@ public final class RoomAvailRequest extends Request {
 
 
     public static HotelWrangler getRoomAvailForHotel(final HotelInfo hotel, final HotelWrangler wrangler)
-            throws IOException, JSONException {
-        final String[][] urlPairs = {
-            {"cid", CID},
-            {"minorRev", MINOR_REV},
-            {"apiKey", API_KEY},
-            {"locale", LOCALE},
-            {"currencyCode", CURRENCY_CODE},
-            {"arrivalDate", DATE_FORMAT.format(wrangler.getArrivalDate())},
-            {"departureDate", DATE_FORMAT.format(wrangler.getDepartureDate())},
-            {"includeDetails", "true"},
-            {"customerSessionId", wrangler.getCustomerSessionId()},
-            {"hotelId", hotel.hotelId},
-            {"room1", wrangler.getNumberOfAdults().toString() + "," + wrangler.getNumberOfChildren().toString()}
-        };
-        final JSONObject json = getJsonFromSubdir(URL_SUBDIR, urlPairs);
+            throws IOException, JSONException, EanWsError {
+        final String room1Occupancy
+            = wrangler.getNumberOfAdults().toString() + "," + wrangler.getNumberOfChildren().toString();
+        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
+            new BasicNameValuePair("cid", CID),
+            new BasicNameValuePair("minorRev", MINOR_REV),
+            new BasicNameValuePair("apiKey", API_KEY),
+            new BasicNameValuePair("locale", LOCALE),
+            new BasicNameValuePair("currencyCode", CURRENCY_CODE),
+            new BasicNameValuePair("arrivalDate", formatApiDate(wrangler.getArrivalDate())),
+            new BasicNameValuePair("departureDate", formatApiDate(wrangler.getDepartureDate())),
+            new BasicNameValuePair("includeDetails", "true"),
+            new BasicNameValuePair("customerSessionId", wrangler.getCustomerSessionId()),
+            new BasicNameValuePair("hotelId", hotel.hotelId),
+            new BasicNameValuePair("room1", room1Occupancy)
+        );
+        final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
         // TODO: handler EanWsError objects, such as sold out rooms
-        JSONObject err;
-        if ((err = json.optJSONObject("EanWsError")) != null) {
-            wrangler.getInfos().remove(hotel);
-            wrangler.setSelectedInfo(null);
-            return wrangler;
+        if (json.has("EanWsError")) {
+            throw EanWsError.fromJson(json.getJSONObject("EanWsError"));
         }
-        final JSONObject resp = json.optJSONObject("HotelRoomAvailabilityResponse");
-        if (resp.optJSONArray("HotelRoomResponse") != null) {
-            final JSONArray hotelRoomResponse = resp.optJSONArray("HotelRoomResponse");
-            hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
-            if (hotel.supplierType.equals("S")) {
-
-                RateRulesRequest.getRateRulesForHotel(hotel, wrangler);
+        final JSONObject response = json.optJSONObject("HotelRoomAvailabilityResponse");
+        if (response.has("HotelRoomResponse")) {
+            if (response.optJSONArray("HotelRoomResponse") != null) {
+                final JSONArray hotelRoomResponse = response.optJSONArray("HotelRoomResponse");
+                hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
+            } else if (response.optJSONObject("HotelRoomResponse") != null) {
+                final JSONObject hotelRoomResponse = response.optJSONObject("HotelRoomResponse");
+                hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
             }
-        } else if (resp.optJSONObject("HotelRoomResponse") != null) {
-            final JSONObject hotelRoomResponse = resp.optJSONObject("HotelRoomResponse");
-            hotel.hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
             if (hotel.supplierType.equals("S")) {
                 RateRulesRequest.getRateRulesForHotel(hotel, wrangler);
             }
         }
 
         if (hotel.supplierType.equals("S")) {
-            if (resp.optJSONArray("HotelRoomResponse") != null) {
-                hotel.hotelRooms = HotelRoom.parseRoomRateDetails(resp.optJSONArray("HotelRoomResponse"));
-            } else if (resp.optJSONObject("HotelRoomResponse") != null) {
-                hotel.hotelRooms = HotelRoom.parseRoomRateDetails(resp.optJSONObject("HotelRoomResponse"));
+            if (response.optJSONArray("HotelRoomResponse") != null) {
+                hotel.hotelRooms = HotelRoom.parseRoomRateDetails(response.optJSONArray("HotelRoomResponse"));
+            } else if (response.optJSONObject("HotelRoomResponse") != null) {
+                hotel.hotelRooms = HotelRoom.parseRoomRateDetails(response.optJSONObject("HotelRoomResponse"));
             }
         }
 
