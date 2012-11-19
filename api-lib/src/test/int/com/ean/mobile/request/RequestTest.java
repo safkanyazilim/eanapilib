@@ -4,6 +4,7 @@
 package com.ean.mobile.request;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Collections;
 
@@ -12,55 +13,69 @@ import org.apache.http.message.BasicNameValuePair;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class RequestTest {
 
-    @Test(expected = MalformedURLException.class)
-    public void testCreateFullUrlNullBaseNullParams() throws Exception {
-        Request.createFullUrl(null, null);
+    @Test
+    public void testCreateFullUriNullBaseNullParams() throws Exception {
+        assertNull(Request.createFullUri(null, null, null));
     }
 
     @Test
-    public void testCreateFullUrlNullParams() throws Exception {
-        URL createdURL = Request.createFullUrl("http://hello", null);
-        assertEquals("http://hello", createdURL.toString());
+    public void testCreateFullUriNullParams() throws Exception {
+        URI createdURI = Request.createFullUri(new URI("http://hello"), null, null);
+        assertEquals("http://hello", createdURI.toString());
     }
 
     @Test
-    public void testCreateFullUrlEmptyParams() throws Exception {
-        URL createdURL = Request.createFullUrl("http://hello", Collections.<NameValuePair>emptyList());
-        assertEquals("http://hello", createdURL.toString());
+    public void testCreateFullUriEmptyParams() throws Exception {
+        URI createdURI = Request.createFullUri(new URI("http://hello"),null, Collections.<NameValuePair>emptyList());
+        assertEquals("http://hello", createdURI.toString());
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void testCreateFullUrlSingletonNullParams() throws Exception {
-        URL createdURL = Request.createFullUrl(
-            "http://hello",
+    public void testCreateFullUriSingletonNullParams() throws Exception {
+        URI createdURI = Request.createFullUri(
+            new URI("http://hello"),
+            null,
             Collections.<NameValuePair>singletonList(new BasicNameValuePair(null, null)));
-        assertEquals("http://hello", createdURL.toString());
+        assertEquals("http://hello", createdURI.toString());
     }
 
     @Test
-    public void testCreateFullUrlSingletonParamsNullValue() throws Exception {
-        URL createdURL = Request.createFullUrl(
-            "http://hello",
+    public void testCreateFullUriSingletonParamsNullValue() throws Exception {
+        URI createdURI = Request.createFullUri(
+            new URI("http://hello"),
+            null,
             Collections.<NameValuePair>singletonList(new BasicNameValuePair("hi", null)));
-        assertEquals("http://hello?hi", createdURL.toString());
+        assertEquals("http://hello?hi=", createdURI.toString());
     }
 
     @Test
-    public void testCreateFullUrlSingletonParams() throws Exception {
-        URL createdURL = Request.createFullUrl(
-            "http://hello",
+    public void testCreateFullUriSingletonParams() throws Exception {
+        URI createdURI = Request.createFullUri(
+            new URI("http://hello"),
+            null,
             Collections.<NameValuePair>singletonList(new BasicNameValuePair("hi", "bye")));
-        assertEquals("http://hello?hi=bye", createdURL.toString());
+        assertEquals("http://hello?hi=bye", createdURI.toString());
     }
 
     @Test
-    public void testCreateFullUrlSingletonParamsEscapableCharacters() throws Exception {
-        URL createdURL = Request.createFullUrl(
-            "http://hello",
+    public void testCreateFullUriSingletonParamsEscapableCharacters() throws Exception {
+        URI createdURI = Request.createFullUri(
+            new URI("http://hello"),
+            null,
             Collections.<NameValuePair>singletonList(new BasicNameValuePair("hi", "what's that? A BIRD!")));
-        assertEquals("http://hello?hi=what%27s+that%3F+A+BIRD%21", createdURL.toString());
+        assertEquals("http://hello?hi=what's%20that?%20A%20BIRD!", createdURI.toURL().toString());
+    }
+
+    @Test
+    public void testCreateFullUriSingletonParamsNull() throws Exception {
+        URI createdURI = Request.createFullUri(
+            new URI("http://hello"),
+            null,
+            Collections.<NameValuePair>singletonList(null));
+        assertEquals("http://hello", createdURI.toURL().toString());
     }
 }

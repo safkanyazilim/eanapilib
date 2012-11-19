@@ -30,7 +30,7 @@ import com.ean.mobile.exception.UriCreationException;
 public abstract class Request {
     //TODO: These should be defined in a .properties file.
     protected static final String CID = "55505";
-    protected static final String MINOR_REV = "10";
+    protected static final String MINOR_REV = "20";
     protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
     protected static final String LOCALE = "it_IT";
     protected static final String CURRENCY_CODE = "USD";
@@ -41,7 +41,7 @@ public abstract class Request {
     //protected static final String URI_HOST = "xml.travelnow.com";
     protected static final String URI_HOST = "mobile.eancdn.com";
     protected static final String URI_BASE_PATH = "/ean-services/rs/hotel/v3/";
-    protected static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
+    protected static final String DATE_FORMAT_STRING = "%1$tm/%1$td/%1$tY";
 
 
     protected static final URI FULL_URI;
@@ -49,7 +49,7 @@ public abstract class Request {
     static {
         URI fullUri = null;
         try {
-            fullUri = new URI(URI_SCHEME, URI_HOST, URI_BASE_PATH, null);
+            fullUri = new URI(URI_SCHEME, URI_HOST, URI_BASE_PATH, null, null);
         } catch (URISyntaxException use) {
             Log.d(Constants.DEBUG_TAG, "Base uri is malformed");
         }
@@ -58,7 +58,6 @@ public abstract class Request {
 
     protected static JSONObject performApiRequest(final String relativePath, final List<NameValuePair> params)
             throws IOException, JSONException {
-        //TODO: This URL building is inefficient and somewhat incorrect.
         //Build the url
         final HttpGet getRequest = new HttpGet(createFullUri(FULL_URI, relativePath, params));
         getRequest.setHeader("Accept", "application/json, */*");
@@ -90,23 +89,44 @@ public abstract class Request {
     protected static URI createFullUri(final URI baseUri,
                                        final String relativePath,
                                        final List<NameValuePair> params) {
-        final URI relativeUri = baseUri.resolve(relativePath);
+        if (baseUri == null) {
+            return null;
+        }
+        final URI relativeUri;
+        if (relativePath == null) {
+            relativeUri = baseUri;
+        } else {
+            relativeUri = baseUri.resolve(relativePath);
+        }
         String queryString = null;
         if (params != null && !params.isEmpty()) {
-            queryString = URLEncodedUtils.format(params, "UTF-8");
+            StringBuilder sb = new StringBuilder(params.size() * 10);
+            for (NameValuePair param : params) {
+                if (param == null) {
+                    continue;
+                }
+                sb.append(param.getName());
+                sb.append("=");
+                sb.append(param.getValue() == null ? "" : param.getValue());
+                sb.append("&");
+            }
+            String potentialQueryString = sb.toString();
+            if (potentialQueryString.length() == 0) {
+                potentialQueryString = null;
+            } else if (potentialQueryString.endsWith("&")) {
+                potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
+            }
+            queryString = potentialQueryString;
+            //queryString = URLEncodedUtils.format(params, "UTF-8").replace("%", "\\%");
         }
         try {
-            return new URI(relativeUri.getScheme(), null, relativeUri.getHost(), relativeUri.getPath(), queryString);
+            return new URI(relativeUri.getScheme(), relativeUri.getHost(), relativeUri.getPath(), queryString, null);
         } catch (URISyntaxException use) {
             throw new UriCreationException("Full URI could not be created for the request.", use);
         }
     }
 
-    public static String formatApiDate(Date date) {
-        return new SimpleDateFormat(DATE_FORMAT_STRING).format(date);
-    }
-
     public static String formatApiDate(Calendar cal) {
-        return String.format("%tD", cal);
+        return String.format(DATE_FORMAT_STRING, cal);
     }
 }
