@@ -96,10 +96,6 @@ public final class HotelInfo {
      */
     public boolean hasRetrievedHotelInfo;
 
-    /**
-     * Whether or not the room avail information for this hotel has been retrieved.
-     */
-    public boolean hasRetrievedRoomAvail;
 
     /**
      * The list of hotel images for this hotel.
