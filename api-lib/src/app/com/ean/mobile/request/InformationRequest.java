@@ -23,6 +23,7 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelWrangler;
+import com.ean.mobile.exception.EanWsError;
 
 public final class InformationRequest extends Request {
     private static final String URL_SUBDIR = "info";
@@ -36,7 +37,7 @@ public final class InformationRequest extends Request {
 
 
     public static HotelWrangler getHotelInformation(final HotelInfo hotel, final HotelWrangler wrangler)
-            throws IOException, JSONException {
+            throws IOException, JSONException, EanWsError {
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("cid", CID),
             new BasicNameValuePair("minorRev", MINOR_REV),

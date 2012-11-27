@@ -3,9 +3,7 @@
  */
 package com.ean.mobile.request;
 
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URL;
 import java.util.Collections;
 
 import org.apache.http.NameValuePair;
@@ -30,7 +28,7 @@ public class RequestTest {
 
     @Test
     public void testCreateFullUriEmptyParams() throws Exception {
-        URI createdURI = Request.createFullUri(new URI("http://hello"),null, Collections.<NameValuePair>emptyList());
+        URI createdURI = Request.createFullUri(new URI("http://hello"), null, Collections.<NameValuePair>emptyList());
         assertEquals("http://hello", createdURI.toString());
     }
 

@@ -8,9 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -18,13 +16,13 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
 import com.ean.mobile.Constants;
+import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UriCreationException;
 
 public abstract class Request {
@@ -56,7 +54,7 @@ public abstract class Request {
         FULL_URI = fullUri;
     }
 
-    protected static JSONObject performApiRequest(final String relativePath, final List<NameValuePair> params)
+    private static String performApiRequestForString(final String relativePath, final List<NameValuePair> params)
             throws IOException, JSONException {
         //Build the url
         final HttpGet getRequest = new HttpGet(createFullUri(FULL_URI, relativePath, params));
@@ -67,14 +65,14 @@ public abstract class Request {
         final HttpResponse response = new DefaultHttpClient().execute(getRequest);
         Log.d(Constants.DEBUG_TAG, "got response");
         final StatusLine statusLine = response.getStatusLine();
-        final JSONObject json;
+        final String jsonString;
         try {
             if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
                 final ByteArrayOutputStream out = new ByteArrayOutputStream();
                 response.getEntity().writeTo(out);
-                final String jsonstr = out.toString();
-                json = new JSONObject(jsonstr);
+                jsonString = out.toString();
             } else {
+                jsonString = null;
                 throw new IOException(statusLine.getReasonPhrase());
             }
         } finally {
@@ -83,7 +81,25 @@ public abstract class Request {
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
         Log.d(Constants.DEBUG_TAG, "Took " + timeTaken + " milliseconds.");
-        return json;
+        return jsonString;
+    }
+
+    /**
+     * Performs an API request.
+     * @param relativePath The relative path on which to perform the query.
+     * @param params The URI parameters to attach to the URI. Used as parameters to the request.
+     * @return The JSONObject that represents the content returned by the API
+     * @throws IOException If there is a network issue, or the network stream cannot otherwise be read.
+     * @throws JSONException If the response does not contain valid JSON
+     * @throws EanWsError If the response contains an EanWsError element
+     */
+    protected static JSONObject performApiRequest(final String relativePath, final List<NameValuePair> params)
+            throws IOException, JSONException, EanWsError {
+        final JSONObject response = new JSONObject(performApiRequestForString(relativePath, params));
+        if (response.has("EanWsError")) {
+            throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
+        }
+        return response;
     }
 
     protected static URI createFullUri(final URI baseUri,
@@ -92,15 +108,20 @@ public abstract class Request {
         if (baseUri == null) {
             return null;
         }
-        final URI relativeUri;
-        if (relativePath == null) {
-            relativeUri = baseUri;
-        } else {
-            relativeUri = baseUri.resolve(relativePath);
+        final URI relativeUri = relativePath == null ? baseUri : baseUri.resolve(relativePath);
+        final String queryString = createQueryString(params);
+
+        try {
+            return new URI(relativeUri.getScheme(), relativeUri.getHost(), relativeUri.getPath(), queryString, null);
+        } catch (URISyntaxException use) {
+            throw new UriCreationException("Full URI could not be created for the request.", use);
         }
+    }
+
+    private static String createQueryString(final List<NameValuePair> params) {
         String queryString = null;
         if (params != null && !params.isEmpty()) {
-            StringBuilder sb = new StringBuilder(params.size() * 10);
+            final StringBuilder sb = new StringBuilder(params.size() * 10);
             for (NameValuePair param : params) {
                 if (param == null) {
                     continue;
@@ -119,14 +140,10 @@ public abstract class Request {
             queryString = potentialQueryString;
             //queryString = URLEncodedUtils.format(params, "UTF-8").replace("%", "\\%");
         }
-        try {
-            return new URI(relativeUri.getScheme(), relativeUri.getHost(), relativeUri.getPath(), queryString, null);
-        } catch (URISyntaxException use) {
-            throw new UriCreationException("Full URI could not be created for the request.", use);
-        }
+        return queryString;
     }
 
-    public static String formatApiDate(Calendar cal) {
+    public static String formatApiDate(final Calendar cal) {
         return String.format(DATE_FORMAT_STRING, cal);
     }
 }

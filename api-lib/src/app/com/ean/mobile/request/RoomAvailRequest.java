@@ -18,7 +18,6 @@ import org.json.JSONObject;
 
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelRoom;
-import com.ean.mobile.HotelWrangler;
 import com.ean.mobile.exception.EanWsError;
 
 public final class RoomAvailRequest extends Request {
