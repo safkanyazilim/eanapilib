@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project name="checkstyle">
     <property file="ant.properties" />
     <property name="checkstyle.xml"         location="checkstyle.xml"/>
     <property name="checkstyle.xsl"         location="checkstyle.xsl"/>
@@ -18,7 +18,7 @@
               includes="*.xml" />
     </presetdef>
 
-    <target name="checkstyle">
+    <target name="check">
         <depend srcDir="${src.dir}"
                 destDir="${build.dir}/"
                 cache="${build.dir}/.depend"/>

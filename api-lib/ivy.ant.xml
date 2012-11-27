@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:ivy="antlib:org.apache.ivy.ant">
+<project name="ivy" xmlns:ivy="antlib:org.apache.ivy.ant">
 
-    <property name="ivy.install.version"    value="2.2.0" />
     <property file="ant.properties" />
+    <property name="ivy.install.version"    value="2.2.0" />
     <property name="ivy.jar.dir"            location="${lib.dir}/ivy" />
     <property name="ivy.jar.file"           location="${ivy.jar.dir}/ivy.jar" />
     <property name="ivy.build.dir"          location="${build.dir}/ivy"/>
 
-    <target name="ivy.download" unless="skip.download">
+    <target name="download" unless="skip.download">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
         <echo message="Installing Ivy. This should only happen if you don't have the Ivy JAR file in your lib."/>
@@ -15,7 +15,7 @@
              dest="${ivy.jar.file}" usetimestamp="true"/>
     </target>
 
-    <target name="ivy.install" depends="ivy.download">
+    <target name="install" depends="download">
         <!-- try to load ivy here from local ivy dir, in case the user has not already dropped
                 it into ant's lib dir (note that the latter copy will always take precedence).
                 We will not fail as long as local lib dir exists (it may be empty) and
@@ -27,13 +27,13 @@
                  uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
     </target>
 
-    <target name="ivy.resolve" depends="ivy.install">
+    <target name="resolve" depends="ivy.install">
         <ivy:resolve file="ivy.xml"
                      conf="lib, JUnit, check"/>
     </target>
 
     <target name="resolve.dependencies" description="Retrieve dependencies with Ivy"
-            depends="ivy.install, ivy.resolve">
+            depends="install, resolve">
         <ivy:retrieve conf="lib" pattern="${lib.dir}/[artifact]-[revision].[ext]"/>
         <ivy:retrieve conf="JUnit" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
         <ivy:retrieve conf="check" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
@@ -42,7 +42,7 @@
         <ivy:report todir="${ivy.build.dir}" graph="false"/>
     </target>
 
-    <target name="clean.ivy.cache" description="Clean the Ivy cache" depends="ivy.install">
+    <target name="clean.cache" description="Clean the Ivy cache" depends="install">
         <ivy:cleancache/>
     </target>
 </project>
