@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ean-api-lib" default="all.jar">
     <property file="ant.properties" />
-
-    
     <import file="ivy.ant.xml" />
     <import file="checkstyle.ant.xml" />
 
@@ -27,7 +25,7 @@
                source="1.6" />
     </presetdef>
 
-    <target name="compile" depends="clean, resolve.dependencies, checkstyle">
+    <target name="compile" depends="clean, ivy.resolve.dependencies, checkstyle.check">
         <mkdir dir="${classes.dir}"/>
         <main.javac destdir="${classes.dir}" >
             <src path="${app.dir}"/>
