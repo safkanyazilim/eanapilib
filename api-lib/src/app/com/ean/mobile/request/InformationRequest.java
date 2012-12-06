@@ -22,7 +22,6 @@ import android.util.Log;
 import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelWrangler;
 import com.ean.mobile.exception.EanWsError;
 
 public final class InformationRequest extends Request {
@@ -36,13 +35,13 @@ public final class InformationRequest extends Request {
     }
 
 
-    public static HotelWrangler getHotelInformation(final HotelInfo hotel, final HotelWrangler wrangler)
+    public static void getHotelInformation(final HotelInfo hotel, final String customerSessionId)
             throws IOException, JSONException, EanWsError {
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("cid", CID),
             new BasicNameValuePair("minorRev", MINOR_REV),
             new BasicNameValuePair("apiKey", API_KEY),
-            new BasicNameValuePair("customerSessionId", wrangler.getCustomerSessionId()),
+            new BasicNameValuePair("customerSessionId", customerSessionId),
             new BasicNameValuePair("locale", LOCALE),
             new BasicNameValuePair("currencyCode", CURRENCY_CODE),
             new BasicNameValuePair("hotelId", hotel.hotelId),
@@ -73,6 +72,5 @@ public final class InformationRequest extends Request {
         }
 
         hotel.hasRetrievedHotelInfo = true;
-        return wrangler;
     }
 }

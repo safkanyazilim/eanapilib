@@ -13,7 +13,7 @@ import com.ean.mobile.exception.DataValidationException;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
-public class ListRequestTest {
+public class ListRequestIntTest {
 
     @Test
     public void testSearchForHotelsHappy() throws Exception {

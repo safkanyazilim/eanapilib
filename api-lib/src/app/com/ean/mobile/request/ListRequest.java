@@ -61,7 +61,7 @@ public final class ListRequest extends Request {
             new BasicNameValuePair("currencyCode", CURRENCY_CODE),
             new BasicNameValuePair("destinationString", destination),
             new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
-            new BasicNameValuePair("room1", String.format("%d,%d", numberOfAdults, numberOfChildren)),
+            new BasicNameValuePair("room1", formatRoomOccupancy(numberOfAdults, numberOfChildren)),
             new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
             new BasicNameValuePair("departureDate", formatApiDate(departureDate))
         );

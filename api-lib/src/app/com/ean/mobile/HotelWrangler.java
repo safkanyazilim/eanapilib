@@ -4,21 +4,13 @@
 
 package com.ean.mobile;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
  * This class handles all of the loaded hotels, as well as customer session information and searches.
  * It extends Application so its data can be used globally.
  */
 public final class HotelWrangler {
-    private final List<HotelInfo> infos = new ArrayList<HotelInfo>();
-    private HotelInfo selectedInfo;
-
-    private String customerSessionId;
-    private String cacheLocation;
-    private String cacheKey;
     private String searchQuery;
 
     private Date arrivalDate;
@@ -29,53 +21,6 @@ public final class HotelWrangler {
     private Integer numberOfChildren = 0;
 
     private HotelRoom selectedRoom;
-
-    public List<HotelInfo> getInfos() {
-        return infos;
-    }
-
-    public HotelWrangler setInfos(final List<HotelInfo> infos) {
-        this.infos.clear();
-        this.infos.addAll(infos);
-        this.selectedInfo = null;
-        return this;
-    }
-
-    public HotelInfo getSelectedInfo() {
-        return this.selectedInfo;
-    }
-
-    public HotelWrangler setSelectedInfo(final HotelInfo selectedInfo) {
-        this.selectedInfo = selectedInfo;
-        return this;
-    }
-
-    public HotelWrangler setCustomerSessionId(final String id) {
-        this.customerSessionId = id;
-        return this;
-    }
-
-    public String getCustomerSessionId() {
-        return this.customerSessionId;
-    }
-
-    public HotelWrangler setCacheKey(final String id) {
-        this.cacheKey = id;
-        return this;
-    }
-
-    public String getCacheKey() {
-        return this.cacheKey;
-    }
-
-    public HotelWrangler setCacheLocation(final String id) {
-        this.cacheLocation = id;
-        return this;
-    }
-
-    public String getCacheLocation() {
-        return this.cacheLocation;
-    }
 
     public HotelWrangler setSearchQuery(final String searchQuery) {
         this.searchQuery = searchQuery;

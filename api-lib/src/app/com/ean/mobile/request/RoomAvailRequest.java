@@ -31,11 +31,11 @@ public final class RoomAvailRequest extends Request {
     }
 
     public static List<HotelRoom> getRoomAvailForHotel(final HotelInfo hotel,
-                                                     final int numberOfAdults,
-                                                     final int numberOfChildren,
-                                                     final Calendar arrivalDate,
-                                                     final Calendar departureDate,
-                                                     final String customerSessionId)
+                                                       final int numberOfAdults,
+                                                       final int numberOfChildren,
+                                                       final Calendar arrivalDate,
+                                                       final Calendar departureDate,
+                                                       final String customerSessionId)
             throws IOException, JSONException, EanWsError {
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("cid", CID),
@@ -48,8 +48,9 @@ public final class RoomAvailRequest extends Request {
             new BasicNameValuePair("includeDetails", "true"),
             new BasicNameValuePair("customerSessionId", customerSessionId),
             new BasicNameValuePair("hotelId", hotel.hotelId),
-            new BasicNameValuePair("room1", String.format("%d,%d", numberOfAdults, numberOfChildren))
+            new BasicNameValuePair("room1", formatRoomOccupancy(numberOfAdults, numberOfChildren))
         );
+
         final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
         // TODO: handler EanWsError objects, such as sold out rooms
         if (json.has("EanWsError")) {
@@ -58,7 +59,10 @@ public final class RoomAvailRequest extends Request {
         final JSONObject response = json.optJSONObject("HotelRoomAvailabilityResponse");
 
         final List<HotelRoom> hotelInfos;
-        if (response.has("HotelRoomResponse")) {
+        if (response != null && response.has("HotelRoomResponse")) {
+            // we know that it has HotelRoomResponse, just don't know if it'll be
+            // parsed as an object or as an array. If there's only one in the collection,
+            // it'll be parsed as a singular object, otherwise it'll be an array.
             if (response.optJSONArray("HotelRoomResponse") != null) {
                 final JSONArray hotelRoomResponse = response.optJSONArray("HotelRoomResponse");
                 hotelInfos = HotelRoom.parseRoomRateDetails(hotelRoomResponse);

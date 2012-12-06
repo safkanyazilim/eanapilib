@@ -146,4 +146,11 @@ public abstract class Request {
     public static String formatApiDate(final Calendar cal) {
         return String.format(DATE_FORMAT_STRING, cal);
     }
+
+    public static String formatRoomOccupancy(final int numberOfAdults, final int numberOfChildren) {
+        if (numberOfChildren > 0) {
+            return String.format("%d,%d", numberOfAdults, numberOfChildren);
+        }
+        return Integer.toString(numberOfAdults);
+    }
 }
