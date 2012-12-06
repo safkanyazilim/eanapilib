@@ -28,7 +28,7 @@
     <target name="compile" depends="clean, ivy.resolve.dependencies, checkstyle.check">
         <mkdir dir="${classes.dir}"/>
         <main.javac destdir="${classes.dir}" >
-            <src path="${app.dir}"/>
+            <src path="${main.dir}/java"/>
             <src path="${stubs.dir}" />
         </main.javac>
     </target>
@@ -43,7 +43,7 @@
         <jar destfile="${dist.all.jar}" filesetmanifest="mergewithoutmain">
             <zipfileset dir="${classes.dir}" excludes="android/"/>
             <zipfileset dir="${doc.dir}" prefix="doc"/>
-            <zipfileset dir="src/app" prefix="src" />
+            <zipfileset dir="${main.dir}" prefix="src" />
         </jar>
     </target>
 
