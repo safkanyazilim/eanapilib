@@ -25,7 +25,10 @@
                source="1.6" />
     </presetdef>
 
-    <target name="compile" depends="clean, ivy.resolve.dependencies, checkstyle.check">
+    <target name="compile" depends="ivy.resolve.dependencies, checkstyle.check">
+        <depend srcDir="${src.dir}"
+                destDir="${build.dir}/"
+                cache="${build.dir}/.depend"/>
         <mkdir dir="${classes.dir}"/>
         <main.javac destdir="${classes.dir}" >
             <src path="${main.dir}/java"/>

@@ -4,7 +4,7 @@
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
     <info organisation="ean-android" module="api-lib"/>
     <configurations defaultconfmapping="*->default">
-        <conf name="lib" description="Dependencies that go in the root of the lib directory" transitive="false" visibility="private"/>
+        <conf name="build" description="Dependencies that go in the root of the lib directory" transitive="false" visibility="private"/>
         <conf name="JUnit" description="Dependencies needed for our tests" transitive="false" visibility="private"/>
         <conf name="check" description="Dependencies needed for checkstyle" transitive="false" visibility="private"/>
     </configurations>
@@ -15,11 +15,11 @@
         At this time, this is the case for this example -->
     </publications>
     <dependencies>
-        <dependency conf="lib" org="com.fasterxml.jackson.core" name="jackson-core" rev="2.1.0"/>
-        <dependency conf="lib" org="commons-logging" name="commons-logging" rev="1.1.1"/>
-        <dependency conf="lib" org="org.apache.httpcomponents" name="httpclient" rev="4.2.1"/>
-        <dependency conf="lib" org="org.apache.httpcomponents" name="httpcore" rev="4.2.2"/>
-        <dependency conf="lib" org="org.json" name="json" rev="20090211"/>
+        <dependency conf="build" org="com.fasterxml.jackson.core" name="jackson-core" rev="2.1.0"/>
+        <dependency conf="build" org="commons-logging" name="commons-logging" rev="1.1.1"/>
+        <dependency conf="build" org="org.apache.httpcomponents" name="httpclient" rev="4.2.1"/>
+        <dependency conf="build" org="org.apache.httpcomponents" name="httpcore" rev="4.2.2"/>
+        <dependency conf="build" org="org.json" name="json" rev="20090211"/>
         
         <dependency conf="JUnit" org="junit" name="junit" rev="4.10"/>
         <dependency conf="JUnit" org="org.hamcrest" name="hamcrest-all" rev="1.3"/>

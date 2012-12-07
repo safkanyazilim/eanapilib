@@ -8,20 +8,12 @@
     <property name="checkstyle.output.xml"  location="${checkstyle.output}.xml" />
     <property name="checkstyle.output.html" location="${checkstyle.output}.html" />
 
-    
-
-             
-    <presetdef name="checkstyle.transform">
-        <xslt basedir="${checkstyle.dir}"
-              destdir="${checkstyle.dir}"
-              style="${checkstyle.xsl}"
-              includes="*.xml" />
-    </presetdef>
-
     <target name="check">
+        <!-- We add a depend so that if the source hasn't changed, then we don't have to run the check. -->
         <depend srcDir="${src.dir}"
                 destDir="${build.dir}/"
                 cache="${build.dir}/.depend"/>
+
         <taskdef resource="checkstyletask.properties">
             <classpath>
                 <fileset dir="${lib.dir}/check">
@@ -29,13 +21,16 @@
                 </fileset>
             </classpath>
         </taskdef>
+
         <mkdir dir="${checkstyle.dir}" />
         <copyright.year />
+
         <!-- compile the exceptions so checkstyle can get them-->
         <main.javac srcdir="${src.dir}" destdir="${checkstyle.dir}">
             <include name="**/*Exception.java" />
             <include name="**/EanWsError.java" />
         </main.javac>
+
         <checkstyle config="${checkstyle.xml}"
                     failureProperty="checkstyle.failure"
                     failOnViolation="false">
@@ -48,7 +43,11 @@
             <fileset dir="${src.dir}" includes="**/*.java" excludes="stubs/"/>
             <formatter type="xml" toFile="${checkstyle.output.xml}" />
         </checkstyle>
-        <checkstyle.transform />
+
+        <xslt basedir="${checkstyle.dir}"
+              destdir="${checkstyle.dir}"
+              style="${checkstyle.xsl}"
+              includes="*.xml" />
         <fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>
     </target>
 </project>

@@ -4,15 +4,24 @@
     <property file="ant.properties" />
     <property name="ivy.install.version"    value="2.2.0" />
     <property name="ivy.jar.dir"            location="${lib.dir}/ivy" />
-    <property name="ivy.jar.file"           location="${ivy.jar.dir}/ivy.jar" />
-    <property name="ivy.build.dir"          location="${build.dir}/ivy"/>
+    <property name="ivy.repo"               value="http://repo1.maven.org/maven2/org/apache/ivy/ivy"/>
+    <property name="ivy.jar.filename"       value="ivy-${ivy.install.version}.jar"/>
+    <property name="ivy.jar.file"           location="${ivy.jar.dir}/${ivy.jar.filename}" />
+    <property name="ivy.report.dir"         location="${build.dir}/ivy"/>
 
-    <target name="download" unless="skip.download">
+    <target name="check">
+        <condition property="skip.download">
+            <available file="${ivy.jar.file}"/>
+        </condition>
+    </target>
+    
+    <target name="download" depends="check" unless="skip.download">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
         <echo message="Installing Ivy. This should only happen if you don't have the Ivy JAR file in your lib."/>
-        <get src="http://repo1.maven.org/maven2/org/apache/ivy/ivy/${ivy.install.version}/ivy-${ivy.install.version}.jar"
-             dest="${ivy.jar.file}" usetimestamp="true"/>
+        <get src="${ivy.repo}/${ivy.install.version}/${ivy.jar.filename}"
+             dest="${ivy.jar.file}"
+             usetimestamp="true"/>
     </target>
 
     <target name="install" depends="download">
@@ -20,26 +29,26 @@
                 it into ant's lib dir (note that the latter copy will always take precedence).
                 We will not fail as long as local lib dir exists (it may be empty) and
                 ivy is in at least one of ant's lib dir or the local lib dir. -->
-        <path id="ivy.lib.path">
-            <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
-        </path>
-        <taskdef resource="org/apache/ivy/ant/antlib.xml"
-                 uri="antlib:org.apache.ivy.ant" classpathref="ivy.lib.path"/>
+        <taskdef resource="org/apache/ivy/ant/antlib.xml" uri="antlib:org.apache.ivy.ant">
+            <classpath>
+                <fileset dir="${ivy.jar.dir}" includes="*.jar"/>
+            </classpath>
+        </taskdef>
     </target>
 
-    <target name="resolve" depends="ivy.install">
+    <target name="resolve" depends="install">
         <ivy:resolve file="ivy.xml"
-                     conf="lib, JUnit, check"/>
+                     conf="build, JUnit, check"/>
     </target>
 
-    <target name="resolve.dependencies" description="Retrieve dependencies with Ivy"
+    <target name="resolve.dependencies"
+            description="Retrieve dependencies with Ivy"
             depends="install, resolve">
-        <ivy:retrieve conf="lib" pattern="${lib.dir}/[artifact]-[revision].[ext]"/>
-        <ivy:retrieve conf="JUnit" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
-        <ivy:retrieve conf="check" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
-        <delete dir="${ivy.build.dir}" failonerror="false"/>
-        <mkdir dir="${ivy.build.dir}"/>
-        <ivy:report todir="${ivy.build.dir}" graph="false"/>
+        <ivy:retrieve conf="build" pattern="${lib.dir}/[artifact]-[revision].[ext]"/>
+        <ivy:retrieve conf="JUnit,check" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
+        <delete dir="${ivy.report.dir}" failonerror="false"/>
+        <mkdir dir="${ivy.report.dir}"/>
+        <ivy:report todir="${ivy.report.dir}"/>
     </target>
 
     <target name="clean.cache" description="Clean the Ivy cache" depends="install">
