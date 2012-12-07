@@ -19,6 +19,9 @@ import org.json.JSONObject;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.exception.EanWsError;
 
+/**
+ * The class to use to get specific availability of rooms for a particular hotel, occupancy, and occupancy dates.
+ */
 public final class RoomAvailRequest extends Request {
     private static final String URL_SUBDIR = "avail";
 
@@ -29,12 +32,30 @@ public final class RoomAvailRequest extends Request {
         //see javadoc.
     }
 
-    public static List<HotelRoom> getRoomAvailForHotel(final long hotelId,
-                                                       final int numberOfAdults,
-                                                       final int numberOfChildren,
-                                                       final Calendar arrivalDate,
-                                                       final Calendar departureDate,
-                                                       final String customerSessionId)
+    /**
+     * Gets the room availability for the specified information.
+     *
+     * THIS SHOULD NOT BE RUN ON THE MAIN THREAD. It is a long-running network process and so might cause
+     * force close dialogs.
+     *
+     * @param hotelId The hotel to search for availability in.
+     * @param numberOfAdults The number of adults to search for.
+     * @param numberOfChildren The number of children to search for.
+     * @param arrivalDate The date of arrival, specified as a Calendar object.
+     * @param departureDate The date of departure (from the hotel), specified as a Calendar object.
+     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
+     *                          Can be null.
+     * @return The list of HotelRoom objects returned by the API request.
+     * @throws IOException If there is a communication issue while getting the response.
+     * @throws JSONException If the json returned is malformed somehow.
+     * @throws EanWsError If there is an error in the API that was returned.
+     */
+    public static List<HotelRoom> getRoomAvail(final long hotelId,
+                                               final int numberOfAdults,
+                                               final int numberOfChildren,
+                                               final Calendar arrivalDate,
+                                               final Calendar departureDate,
+                                               final String customerSessionId)
             throws IOException, JSONException, EanWsError {
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("cid", CID),

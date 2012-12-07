@@ -3,6 +3,10 @@
  */
 package com.ean.mobile.exception;
 
+/**
+ * The exception that is thrown when the API returns a DataValidationException.
+ * Usually indicates a problem with the data passed to the API, often date issues.
+ */
 public final class DataValidationException extends EanWsError {
     /**
      * The main constructor. The verbose message is used as the exception's main message.

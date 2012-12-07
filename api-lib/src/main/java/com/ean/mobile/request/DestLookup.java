@@ -19,6 +19,9 @@ import org.json.JSONObject;
 import android.util.Log;
 import com.ean.mobile.Constants;
 
+/**
+ * Looks up possible destinations based on the destinationString passed to getDestInfos.
+ */
 public final class DestLookup {
     private static final String ENDPOINT_FORMAT = "http://api.ean.com/ean-services/lookup/?propertyName=%s";
 
@@ -29,7 +32,13 @@ public final class DestLookup {
         //see javadoc.
     }
 
-
+    /**
+     * Looks up possible destinations using the destinationString. Will return an array of suggestions.
+     * @param destinationString The string passed in by the user.
+     * @return The array of possible destinations meant by the destinationString
+     * @throws IOException If there is a problem communicating on the network.
+     * @throws JSONException If the JSON returned is malformed somehow.
+     */
     public static JSONArray getDestInfos(final String destinationString) throws IOException, JSONException {
         if ("".equals(destinationString) || destinationString == null) {
             return new JSONArray();

@@ -83,6 +83,13 @@ public final class ImageFetcher {
         return fetch(url.toString(), true);
     }
 
+    /**
+     * Gets the full image url, based simply on the partial url which does not include the protocol or host.
+     * @param partial The partial url, excluding the host and previous
+     * @return The full url to the image.
+     * @throws MalformedURLException If the default IMAGE_PROTOCOL and IMAGE_HOST, combined with partial do not
+     *  create a valid URL.
+     */
     public static URL getFullImageUrl(final String partial) throws MalformedURLException {
         return new URL(IMAGE_PROTOCOL, IMAGE_HOST, partial);
     }

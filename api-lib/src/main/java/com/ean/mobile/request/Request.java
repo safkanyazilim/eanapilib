@@ -25,6 +25,10 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UriCreationException;
 
+/**
+ * The base class for all of the API requests that are implemented. Provides some easy-to use methods for performing
+ * requests.
+ */
 public abstract class Request {
     //TODO: These should be defined in a .properties file.
     protected static final String CID = "55505";
@@ -54,8 +58,15 @@ public abstract class Request {
         FULL_URI = fullUri;
     }
 
+    /**
+     * Performs an api request at the specified path with the parameters listed.
+     * @param relativePath The path on which to perform the request.
+     * @param params The URI parameters to pass in the request.
+     * @return The String representation of the JSON returned from the request.
+     * @throws IOException If there is a network error or some other connection issue.
+     */
     private static String performApiRequestForString(final String relativePath, final List<NameValuePair> params)
-            throws IOException, JSONException {
+            throws IOException {
         //Build the url
         final HttpGet getRequest = new HttpGet(createFullUri(FULL_URI, relativePath, params));
         getRequest.setHeader("Accept", "application/json, */*");
@@ -102,6 +113,13 @@ public abstract class Request {
         return response;
     }
 
+    /**
+     * Creates a full url based on the baseuri, the relative path and the uri parameters to pass.
+     * @param baseUri The URI to use as the base.
+     * @param relativePath The relative path from the base uri to finally request.
+     * @param params The URI parameters to include in the query string.
+     * @return The fully-formed URI based on the inputs.
+     */
     protected static URI createFullUri(final URI baseUri,
                                        final String relativePath,
                                        final List<NameValuePair> params) {
@@ -118,6 +136,11 @@ public abstract class Request {
         }
     }
 
+    /**
+     * Creates the query portion of a URI based on a list of NameValuePairs.
+     * @param params The parameters to turn into a query string.
+     * @return The requested string.
+     */
     private static String createQueryString(final List<NameValuePair> params) {
         String queryString = null;
         if (params != null && !params.isEmpty()) {
@@ -138,15 +161,25 @@ public abstract class Request {
                 potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
             }
             queryString = potentialQueryString;
-            //queryString = URLEncodedUtils.format(params, "UTF-8").replace("%", "\\%");
         }
         return queryString;
     }
 
+    /**
+     * Formats a Calendar object as a date string expected by the API.
+     * @param cal The Calendar object to format.
+     * @return The date string for the API.
+     */
     public static String formatApiDate(final Calendar cal) {
         return String.format(DATE_FORMAT_STRING, cal);
     }
 
+    /**
+     * Gets a string containing the simplified specification for the number of adults and children requested for a room.
+     * @param numberOfAdults The number of adults to be in the room.
+     * @param numberOfChildren The number of children (as specified by the EAN API) to be included in the request.
+     * @return The requested string.
+     */
     public static String formatRoomOccupancy(final int numberOfAdults, final int numberOfChildren) {
         if (numberOfChildren > 0) {
             return String.format("%d,%d", numberOfAdults, numberOfChildren);

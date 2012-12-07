@@ -20,6 +20,9 @@ import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.exception.EanWsError;
 
+/**
+ * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
+ */
 public final class ListRequest extends Request {
     private static final String NUMBER_OF_RESULTS = "10";
     private static final String URL_SUBDIR = "list";

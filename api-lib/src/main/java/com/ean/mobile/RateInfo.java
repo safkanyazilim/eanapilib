@@ -87,6 +87,12 @@ public final class RateInfo {
         surcharges = Collections.unmodifiableMap(localSurcharges);
     }
 
+    /**
+     * Parses a list of RateInfo objects from a JSONArray representing their data.
+     * @param rateInfosJson The json from which to parse
+     * @return The RateInfo objects represented by the JSONArray.
+     * @throws JSONException If the JSON in the JSONArray is not formatted in the way expected by the parser
+     */
     public static List<RateInfo> parseRateInfos(final JSONArray rateInfosJson) throws JSONException {
         final List<RateInfo> rateInfos = new ArrayList<RateInfo>(rateInfosJson.length());
         for (int j = 0; j < rateInfosJson.length(); j++) {
@@ -95,10 +101,21 @@ public final class RateInfo {
         return rateInfos;
     }
 
+    /**
+     * Parses a singleton list of rateinfo from a JSONObject. Needed because when there is only one RateInfo,
+     * the RateInfos get represented as a single RateInfo object rather than an array of size one.
+     * @param rateInfosJson The json from which to parse.
+     * @return The singletonList of the RateInfo represented by the JSON
+     * @throws JSONException If the JSON is not as expected.
+     */
     public static List<RateInfo> parseRateInfos(final JSONObject rateInfosJson) throws JSONException {
         return Collections.singletonList(new RateInfo(rateInfosJson.getJSONObject("RateInfo")));
     }
 
+    /**
+     * Gets the average rate of all of the nightly rates.
+     * @return The average rate calculated from all the nightly rates.
+     */
     public BigDecimal getAverageRate() {
         BigDecimal avgRate = BigDecimal.ZERO;
         if (nightlyRates.isEmpty()) {
@@ -111,6 +128,10 @@ public final class RateInfo {
         return avgRate;
     }
 
+    /**
+     * Gets the average base rate of all of the nightly rates.
+     * @return The average base rate calculated from all the nightly rates.
+     */
     public BigDecimal getAverageBaseRate() {
         BigDecimal avgBaseRate = BigDecimal.ZERO;
         if (nightlyRates.isEmpty()) {
@@ -123,10 +144,18 @@ public final class RateInfo {
         return avgBaseRate;
     }
 
+    /**
+     * Determines whether the average rate and the average base rate are equal.
+     * @return Whether or not the average rates are equal.
+     */
     public boolean areAverageRatesEqual() {
         return this.getAverageRate().equals(this.getAverageBaseRate());
     }
 
+    /**
+     * Gets the total of all of the nightly rates.
+     * @return The total.
+     */
     public BigDecimal getRateTotal() {
         BigDecimal rateTotal = BigDecimal.ZERO;
         for (NightlyRate rate : nightlyRates) {
@@ -135,6 +164,10 @@ public final class RateInfo {
         return rateTotal;
     }
 
+    /**
+     * Gets the total of all of the base nightly rates.
+     * @return The total.
+     */
     public BigDecimal getBaseRateTotal() {
         BigDecimal baseRateTotal = BigDecimal.ZERO;
         for (NightlyRate rate : nightlyRates) {

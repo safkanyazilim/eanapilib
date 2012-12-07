@@ -65,6 +65,8 @@ public final class HotelImageTuple {
      *
      * Unless {@link com.ean.mobile.HotelImageTuple#isThumbnailLoaded()} returns true,
      * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
+     * @return An image that can be drawn to the screen using the android SDK
+     * @throws IOException If there is an exception when loading the image.
      */
     public Drawable getThumbnailImage() throws IOException {
         if (thumbnail == null) {
@@ -87,6 +89,8 @@ public final class HotelImageTuple {
      *
      * Unless {@link HotelImageTuple#isMainImageLoaded()} returns true,
      * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
+     * @return An image that can be drawn to the screen using the android SDK
+     * @throws IOException If there is an exception when loading the image.
      */
     public Drawable getMainImage() throws IOException {
         if (main == null) {

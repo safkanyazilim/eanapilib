@@ -24,6 +24,10 @@ import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.exception.EanWsError;
 
+/**
+ * Uses getHotelInformation to get the rest of the hotel's information, including images
+ * and the hotel's full description.
+ */
 public final class InformationRequest extends Request {
     private static final String URL_SUBDIR = "info";
 
@@ -34,7 +38,14 @@ public final class InformationRequest extends Request {
         //see javadoc.
     }
 
-
+    /**
+     * Gets the rest of the information about a hotel not included in previous calls.
+     * @param hotel The hotel for which to gather more information.
+     * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
+     * @throws IOException If there is an error communicating on the network.
+     * @throws JSONException If the json returned is malformed somehow
+     * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
+     */
     public static void getHotelInformation(final HotelInfo hotel, final String customerSessionId)
             throws IOException, JSONException, EanWsError {
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
