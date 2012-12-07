@@ -15,4 +15,14 @@ public final class Log {
         LOG.debug(tag + " : " + message);
         return 0;
     }
+
+    public static int e(final String tag, final String message) {
+        LOG.error(tag + " : " + message);
+        return 0;
+    }
+
+    public static int wtf(final String tag, final String message) {
+        LOG.fatal(tag + " : " + message);
+        return 0;
+    }
 }

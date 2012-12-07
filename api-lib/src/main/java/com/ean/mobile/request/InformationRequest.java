@@ -44,7 +44,7 @@ public final class InformationRequest extends Request {
             new BasicNameValuePair("customerSessionId", customerSessionId),
             new BasicNameValuePair("locale", LOCALE),
             new BasicNameValuePair("currencyCode", CURRENCY_CODE),
-            new BasicNameValuePair("hotelId", hotel.hotelId),
+            new BasicNameValuePair("hotelId", Long.toString(hotel.hotelId)),
             new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
         final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);

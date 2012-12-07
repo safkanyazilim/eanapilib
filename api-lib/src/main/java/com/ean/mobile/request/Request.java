@@ -30,7 +30,7 @@ public abstract class Request {
     protected static final String CID = "55505";
     protected static final String MINOR_REV = "20";
     protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
-    protected static final String LOCALE = "it_IT";
+    protected static final String LOCALE = "en_US";
     protected static final String CURRENCY_CODE = "USD";
 
     protected static final String URI_SCHEME = "http";
@@ -49,7 +49,7 @@ public abstract class Request {
         try {
             fullUri = new URI(URI_SCHEME, URI_HOST, URI_BASE_PATH, null, null);
         } catch (URISyntaxException use) {
-            Log.d(Constants.DEBUG_TAG, "Base uri is malformed");
+            Log.wtf(Constants.DEBUG_TAG, "Base uri is malformed");
         }
         FULL_URI = fullUri;
     }

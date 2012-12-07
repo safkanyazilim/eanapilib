@@ -17,33 +17,24 @@ public class ListRequestIntTest {
 
     @Test
     public void testSearchForHotelsHappy() throws Exception {
-        Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        Calendar threeDaysFromNow = Calendar.getInstance();
-        threeDaysFromNow.add(Calendar.DAY_OF_YEAR, 3);
+        Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", 1, 0, tomorrow, threeDaysFromNow);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", 1, 0, calendars[0], calendars[1]);
 
         assertThat(results.size(), greaterThan(0));
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsCauseError() throws Exception {
-        Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        Calendar threeDaysAgo = Calendar.getInstance();
-        threeDaysAgo.add(Calendar.DAY_OF_YEAR, -3);
+        Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, -3);
 
-        ListRequest.searchForHotels("rome, it", 1, 0, tomorrow, threeDaysAgo);
+        ListRequest.searchForHotels("rome, it", 1, 0, calendars[0], calendars[1]);
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {
-        Calendar tomorrow = Calendar.getInstance();
-        tomorrow.add(Calendar.DAY_OF_YEAR, 1);
-        Calendar threeDaysFromNow = Calendar.getInstance();
-        threeDaysFromNow.add(Calendar.DAY_OF_YEAR, 3);
+        Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, 3);
 
-        ListRequest.searchForHotels("sea of tranquility, moon", 1, 0, tomorrow, threeDaysFromNow);
+        ListRequest.searchForHotels("sea of tranquility, moon", 1, 0, calendars[0], calendars[1]);
     }
 }

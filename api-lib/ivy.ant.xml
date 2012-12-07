@@ -9,13 +9,13 @@
     <property name="ivy.jar.file"           location="${ivy.jar.dir}/${ivy.jar.filename}" />
     <property name="ivy.report.dir"         location="${build.dir}/ivy"/>
 
-    <target name="check">
+    <target name="check.download">
         <condition property="skip.download">
             <available file="${ivy.jar.file}"/>
         </condition>
     </target>
     
-    <target name="download" depends="check" unless="skip.download">
+    <target name="download" depends="check.download" unless="skip.download">
         <mkdir dir="${ivy.jar.dir}"/>
         <!-- download Ivy from web site so that it can be used even without any special installation -->
         <echo message="Installing Ivy. This should only happen if you don't have the Ivy JAR file in your lib."/>

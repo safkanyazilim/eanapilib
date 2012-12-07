@@ -59,7 +59,7 @@ public final class HotelInfo {
     /**
      * The ean id of this hotel.
      */
-    public final String hotelId;
+    public final long hotelId;
 
     /**
      * The street address of this hotel.
@@ -120,7 +120,7 @@ public final class HotelInfo {
      */
     public HotelInfo(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
         this.name = Html.fromHtml(hotelSummary.optString("name")).toString();
-        this.hotelId = hotelSummary.optString("hotelId");
+        this.hotelId = hotelSummary.optLong("hotelId");
         this.address = hotelSummary.getString("address1");
         this.city = hotelSummary.getString("city");
         this.stateProvinceCode = hotelSummary.optString("stateProvinceCode");

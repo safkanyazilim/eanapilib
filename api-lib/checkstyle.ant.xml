@@ -10,9 +10,6 @@
 
     <target name="check">
         <!-- We add a depend so that if the source hasn't changed, then we don't have to run the check. -->
-        <depend srcDir="${src.dir}"
-                destDir="${build.dir}/"
-                cache="${build.dir}/.depend"/>
 
         <taskdef resource="checkstyletask.properties">
             <classpath>

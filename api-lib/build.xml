@@ -38,15 +38,15 @@
 
     <target name="jar" depends="compile">
         <jar destfile="${dist.jar}" filesetmanifest="mergewithoutmain">
-          <zipfileset dir="${classes.dir}" excludes="android/"/>
+          <zipfileset dir="${classes.dir}" excludes="android/,**/*.iml"/>
         </jar>
     </target>
 
-    <target name="jar.all" depends="compile, javadoc">
-        <jar destfile="${dist.all.jar}" filesetmanifest="mergewithoutmain">
+    <target name="jar.full" depends="compile, javadoc">
+        <jar destfile="${dist.full.jar}" filesetmanifest="mergewithoutmain">
             <zipfileset dir="${classes.dir}" excludes="android/"/>
             <zipfileset dir="${doc.dir}" prefix="doc"/>
-            <zipfileset dir="${main.dir}" prefix="src" />
+            <zipfileset dir="${main.dir}" prefix="src" excludes="**/*.iml" />
         </jar>
     </target>
 
@@ -55,14 +55,18 @@
         <main.javac destdir="${tests.dir}">
             <src path="${testsrc.dir}" />
         </main.javac>
+        <copy todir="${test.resource.dir}" failonerror="false">
+            <fileset dir="${testsrc.dir}/resources"/>
+        </copy>
     </target>
 
     <target name="test" depends="compile, compile.test">
         <junit printsummary="true" errorproperty="junit.error" failureproperty="junit.failure" haltonfailure="true" showoutput="true">
             <classpath refid="project.classpath"/>
             <classpath location="${tests.dir}"/>
+            <classpath location="${test.resource.dir}"/>
             <batchtest>
-                <fileset dir="${tests.dir}" />
+                <fileset dir="${tests.dir}" includes="**/*Test.*" />
             </batchtest>
             <formatter type="plain" usefile="false" />
         </junit>
@@ -100,5 +104,5 @@
 
     <target name="all" depends="clean, compile, test" />
 
-    <target name="all.jar" depends="all, jar, jar.all" />
+    <target name="all.jar" depends="all, jar, jar.full" />
 </project>

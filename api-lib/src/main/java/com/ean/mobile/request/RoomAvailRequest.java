@@ -16,7 +16,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.exception.EanWsError;
 
@@ -30,7 +29,7 @@ public final class RoomAvailRequest extends Request {
         //see javadoc.
     }
 
-    public static List<HotelRoom> getRoomAvailForHotel(final HotelInfo hotel,
+    public static List<HotelRoom> getRoomAvailForHotel(final long hotelId,
                                                        final int numberOfAdults,
                                                        final int numberOfChildren,
                                                        final Calendar arrivalDate,
@@ -47,7 +46,7 @@ public final class RoomAvailRequest extends Request {
             new BasicNameValuePair("departureDate", formatApiDate(departureDate)),
             new BasicNameValuePair("includeDetails", "true"),
             new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("hotelId", hotel.hotelId),
+            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
             new BasicNameValuePair("room1", formatRoomOccupancy(numberOfAdults, numberOfChildren))
         );
 
@@ -58,22 +57,24 @@ public final class RoomAvailRequest extends Request {
         }
         final JSONObject response = json.optJSONObject("HotelRoomAvailabilityResponse");
 
-        final List<HotelRoom> hotelInfos;
+        final List<HotelRoom> hotelRooms;
         if (response != null && response.has("HotelRoomResponse")) {
             // we know that it has HotelRoomResponse, just don't know if it'll be
             // parsed as an object or as an array. If there's only one in the collection,
             // it'll be parsed as a singular object, otherwise it'll be an array.
             if (response.optJSONArray("HotelRoomResponse") != null) {
                 final JSONArray hotelRoomResponse = response.optJSONArray("HotelRoomResponse");
-                hotelInfos = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
+                hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
             } else {
                 final JSONObject hotelRoomResponse = response.optJSONObject("HotelRoomResponse");
-                hotelInfos = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
+                hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
             }
+        } else if (response != null && response.has("EanWsError")) {
+            throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         } else {
-            hotelInfos = Collections.emptyList();
+            hotelRooms = Collections.emptyList();
         }
 
-        return hotelInfos;
+        return hotelRooms;
     }
 }
