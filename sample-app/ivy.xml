@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ivy-module version="2.0"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
+    <info organisation="ean-android" module="sample-app"/>
+    <configurations defaultconfmapping="*->default">
+        <conf name="build" description="Dependencies that go in the root of the lib directory" transitive="false" visibility="private"/>
+        <conf name="JUnit" description="Dependencies needed for our tests" transitive="false" visibility="private"/>
+        <conf name="check" description="Dependencies needed for checkstyle" transitive="false" visibility="private"/>
+    </configurations>
+    <publications>
+        <!-- If this container is not present, it is assumed that the module has one artifact, with the same name as
+        the module, and published in all module configurations. Thus if you have a module which publishes no artifacts,
+        we have to include a publications element with no artifact sub element.
+        At this time, this is the case for this example -->
+    </publications>
+    <dependencies>
+        <dependency conf="build" org="ean-android" name="api-lib" rev="latest.integration"/>
+        
+        <dependency conf="JUnit" org="junit" name="junit" rev="4.10"/>
+        <dependency conf="JUnit" org="org.hamcrest" name="hamcrest-all" rev="1.3"/>
+        <dependency conf="JUnit" org="org.powermock" name="powermock-module-junit4" rev="1.5"/>
+        <dependency conf="JUnit" org="org.powermock" name="powermock-api-mockito" rev="1.5"/>
+        
+        <dependency conf="check" org="com.puppycrawl.tools" name="checkstyle" rev="5.6"/>
+        <dependency conf="check" org="com.google.collections" name="google-collections" rev="1.0"/>
+        <dependency conf="check" org="antlr" name="antlr" rev="2.7.7"/>
+        <dependency conf="check" org="commons-beanutils" name="commons-beanutils" rev="1.8.3"/>
+        <dependency conf="check" org="commons-cli" name="commons-cli" rev="1.2"/>
+        <dependency conf="check" org="commons-logging" name="commons-logging" rev="1.1.1"/>
+    </dependencies>
+</ivy-module>
