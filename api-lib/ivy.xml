@@ -13,8 +13,8 @@
         the module, and published in all module configurations. Thus if you have a module which publishes no artifacts,
         we have to include a publications element with no artifact sub element.
         At this time, this is the case for this example -->
-        <artifact name="standard"/>
-        <artifact name="all"/>
+        <artifact name="${dist.jar.name}"/>
+        <artifact name="${dist.full.jar.name}"/>
     </publications>
     <dependencies>
         <dependency conf="build" org="commons-logging" name="commons-logging" rev="1.1.1"/>
