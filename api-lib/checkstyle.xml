@@ -211,7 +211,7 @@
         <module name="IllegalType">
             <property name="illegalClassNames" value="java.lang.StringBuffer;junit.framework.Assert"/>
         </module>
-        <module name="Indentation"/>
+        <!-- <module name="Indentation"/> -->
         <module name="InnerTypeLast"/>
         <!--<module name="MultipleStringLiterals"/>-->
         <module name="MultipleVariableDeclarations"/>
