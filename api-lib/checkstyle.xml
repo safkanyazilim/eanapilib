@@ -74,11 +74,11 @@
         <module name="JavadocVariable">
            <property name="scope" value="public"/>
         </module>
-        <!--<module name="JavadocMethod"/>-->
+        <module name="JavadocMethod"/>
         <module name="JavadocStyle">
             <property name="checkEmptyJavadoc" value="true" />
         </module>
-        <!--<module name="JavadocType"/>-->
+        <module name="JavadocType"/>
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
@@ -167,15 +167,16 @@
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
         <module name="EqualsAvoidNull"/>
-        <!--<module name="HiddenField">-->
-            <!--<property name="ignoreSetter" value="true" />-->
-            <!--<property name="ignoreConstructorParameter" value="true" />-->
-        <!--</module>-->
+        <module name="HiddenField">
+            <property name="ignoreSetter" value="true" />
+            <property name="ignoreConstructorParameter" value="true" />
+        </module>
         <module name="IllegalCatch"/>
         <module name="IllegalInstantiation"/>
         <module name="IllegalThrows"/>
         <module name="JUnitTestCase"/>
         <module name="MagicNumber"/>
+        <module name="RedundantThrows"/>
         <module name="SimplifyBooleanExpression"/>
         <module name="SimplifyBooleanReturn"/>
         <module name="StringLiteralEquality"/>
@@ -210,7 +211,7 @@
         <module name="IllegalType">
             <property name="illegalClassNames" value="java.lang.StringBuffer;junit.framework.Assert"/>
         </module>
-        <!--<module name="Indentation"/>-->
+        <module name="Indentation"/>
         <module name="InnerTypeLast"/>
         <!--<module name="MultipleStringLiterals"/>-->
         <module name="MultipleVariableDeclarations"/>

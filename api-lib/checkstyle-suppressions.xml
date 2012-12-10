@@ -7,6 +7,8 @@
 <suppressions>
     <suppress files="[\\/]stubs[\\/]" checks="[a-zA-Z0-9]*"/>
     <suppress checks="JavadocPackage" files="test/*"/>
+    <suppress checks="JavadocMethod" files="test/*"/>
+    <suppress checks="JavadocType" files="test/*"/>
     <suppress checks="FinalLocalVariableCheck" files="test/*"/>
     <suppress checks="MagicNumber" files="test/*"/>
 </suppressions>

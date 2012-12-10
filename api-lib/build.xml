@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ean-api-lib" default="all.jar">
+    <property file="ant.properties" />
+
+    <!-- Import the auxiliary ant files -->
+    <import file="ivy.ant.xml" />
+    <import file="checkstyle.ant.xml" />
+
+    <path id="project.classpath">
+        <fileset dir="${lib.dir}"/>
+        <!-- include compiler output -->
+        <pathelement path="${classes.dir}"/>
+    </path>
+
+    <presetdef name="copyright.year">
+        <tstamp>
+            <format property="copyrightYear" pattern="yyyy" />
+        </tstamp>
+    </presetdef>
+
+    <presetdef name="main.javac">
+        <javac debug="true"
+               deprecation="true"
+               classpathref="project.classpath"
+               includeantruntime="false"
+               target="1.6"
+               source="1.6" />
+    </presetdef>
+
+    <target name="compile" depends="ivy.resolve.dependencies, checkstyle.check">
+        <depend srcDir="${src.dir}"
+                destDir="${build.dir}/"
+                cache="${build.dir}/.depend"/>
+        <mkdir dir="${classes.dir}"/>
+        <main.javac destdir="${classes.dir}" >
+            <src path="${main.dir}/java"/>
+            <src path="${stubs.dir}" />
+        </main.javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <jar destfile="${dist.jar}" filesetmanifest="mergewithoutmain">
+          <zipfileset dir="${classes.dir}" excludes="android/,**/*.iml"/>
+        </jar>
+    </target>
+
+    <target name="jar.full" depends="compile, javadoc">
+        <jar destfile="${dist.full.jar}" filesetmanifest="mergewithoutmain">
+            <zipfileset dir="${classes.dir}" excludes="android/"/>
+            <zipfileset dir="${doc.dir}" prefix="doc"/>
+            <zipfileset dir="${main.dir}" prefix="src" excludes="**/*.iml" />
+        </jar>
+    </target>
+
+    <target name="compile.test" depends="compile">
+        <mkdir dir="${tests.dir}"/>
+        <main.javac destdir="${tests.dir}">
+            <src path="${testsrc.dir}" />
+        </main.javac>
+        <copy todir="${test.resource.dir}" failonerror="false">
+            <fileset dir="${testsrc.dir}/resources"/>
+        </copy>
+    </target>
+
+    <target name="test" depends="compile, compile.test">
+        <junit printsummary="true" errorproperty="junit.error" failureproperty="junit.failure" haltonfailure="true" showoutput="true">
+            <classpath refid="project.classpath"/>
+            <classpath location="${tests.dir}"/>
+            <classpath location="${test.resource.dir}"/>
+            <batchtest>
+                <fileset dir="${tests.dir}" includes="**/*Test.*" />
+            </batchtest>
+            <formatter type="plain" usefile="false" />
+        </junit>
+    </target>
+
+    <target name="clean">
+        <delete dir="${build.dir}" />
+    </target>
+
+
+    <target name="javadoc">
+        <mkdir dir="${doc.dir}"/>
+        <copyright.year />
+        <property name="javadoc.title" value="EAN Mobile ${ant.project.name} Docs"/>
+        <javadoc
+            destdir="${doc.dir}"
+            author="false"
+            version="false"
+            use="true"
+            windowtitle="${javadoc.title}"
+            classpathref="project.classpath"
+            failonerror="true"
+            encoding="UTF-8"
+            docencoding="UTF-8"
+            verbose="false">
+            <fileset dir="${src.dir}">
+                <include name="**/*.java"/>
+                <exclude name="stubs/" />
+                <exclude name="test/" />
+            </fileset>
+            <doctitle><![CDATA[<h1>${javadoc.title}</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; ${copyrightYear} EAN.com, L.P. All Rights Reserved.</i>]]></bottom>
+        </javadoc>
+    </target>
+
+    <target name="all" depends="clean, compile, test" />
+
+    <target name="all.jar" depends="all, jar, jar.full" />
+</project>

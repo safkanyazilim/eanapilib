@@ -12,10 +12,11 @@
 bin/
 gen/
 build/
+lib/
 .idea/
 *.iml
 atlassian-ide-plugin.xml
 .gradle/
-
+out/
 # Local configuration file (sdk path, etc)
 local.properties
