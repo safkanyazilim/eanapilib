@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="ean-api-lib" default="all.jar">
     <property file="ant.properties" />
+
+    <!-- Import the auxiliary ant files -->
     <import file="ivy.ant.xml" />
     <import file="checkstyle.ant.xml" />
 

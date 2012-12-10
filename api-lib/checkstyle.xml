@@ -167,10 +167,10 @@
         <module name="EmptyStatement"/>
         <module name="EqualsHashCode"/>
         <module name="EqualsAvoidNull"/>
-        <!--<module name="HiddenField">-->
-            <!--<property name="ignoreSetter" value="true" />-->
-            <!--<property name="ignoreConstructorParameter" value="true" />-->
-        <!--</module>-->
+        <module name="HiddenField">
+            <property name="ignoreSetter" value="true" />
+            <property name="ignoreConstructorParameter" value="true" />
+        </module>
         <module name="IllegalCatch"/>
         <module name="IllegalInstantiation"/>
         <module name="IllegalThrows"/>
@@ -211,7 +211,7 @@
         <module name="IllegalType">
             <property name="illegalClassNames" value="java.lang.StringBuffer;junit.framework.Assert"/>
         </module>
-        <!--<module name="Indentation"/>-->
+        <module name="Indentation"/>
         <module name="InnerTypeLast"/>
         <!--<module name="MultipleStringLiterals"/>-->
         <module name="MultipleVariableDeclarations"/>

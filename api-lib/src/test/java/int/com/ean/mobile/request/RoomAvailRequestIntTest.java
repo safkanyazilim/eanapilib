@@ -19,10 +19,7 @@ public class RoomAvailRequestIntTest {
     @Test
     public void testGetGoodAvail() throws Exception {
         Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, 3);
-
-        List<HotelRoom> rooms
-                = RoomAvailRequest.getRoomAvail(106347L, 1, 0, calendars[0], calendars[1], "");
-
+        List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(106347L, 1, 0, calendars[0], calendars[1], "");
         assertThat(rooms.size(), greaterThan(0));
     }
 
