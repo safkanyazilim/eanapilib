@@ -4,7 +4,6 @@
 
 package com.ean.mobile.request;
 
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -58,6 +57,7 @@ public final class InformationRequest extends Request {
             new BasicNameValuePair("hotelId", Long.toString(hotel.hotelId)),
             new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
+
         final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 
         if (json != null) {
