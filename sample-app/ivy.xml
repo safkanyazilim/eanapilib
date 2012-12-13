@@ -15,7 +15,9 @@
         At this time, this is the case for this example -->
     </publications>
     <dependencies>
-        <dependency conf="build" org="ean-android" name="api-lib" rev="latest.integration"/>
+        <dependency conf="build" org="ean-android" name="api-lib" rev="latest.integration">
+            <artifact name="ean-api-lib" type="jar" />
+        </dependency>
         
         <dependency conf="JUnit" org="junit" name="junit" rev="4.10"/>
         <dependency conf="JUnit" org="org.hamcrest" name="hamcrest-all" rev="1.3"/>
