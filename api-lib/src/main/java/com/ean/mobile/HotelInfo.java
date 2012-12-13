@@ -96,7 +96,6 @@ public final class HotelInfo {
      */
     public boolean hasRetrievedHotelInfo;
 
-
     /**
      * The list of hotel images for this hotel.
      */

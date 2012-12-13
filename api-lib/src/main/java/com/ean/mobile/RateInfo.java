@@ -124,7 +124,7 @@ public final class RateInfo {
         for (NightlyRate rate : nightlyRates) {
             avgRate = avgRate.add(rate.rate);
         }
-        avgRate = avgRate.divide(new BigDecimal(nightlyRates.size()));
+        avgRate = avgRate.divide(new BigDecimal(nightlyRates.size()), 2, RoundingMode.HALF_EVEN);
         return avgRate;
     }
 
