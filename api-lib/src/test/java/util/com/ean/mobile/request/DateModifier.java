@@ -3,7 +3,7 @@
  */
 package com.ean.mobile.request;
 
-import java.util.Calendar;
+import org.joda.time.DateTime;
 
 public final class DateModifier {
 
@@ -15,16 +15,15 @@ public final class DateModifier {
     }
 
     /**
-     * Gets an array of Calendar objects in the same order and the same offsets from today as specified in offsets.
+     * Gets an array of DateTime objects in the same order and the same offsets from today as specified in offsets.
      * In this case an offset is a number of days (positive or negative) from today.
-     * @param offsets The days offset from today for which to make calendar objects.
-     * @return The Calendar objects which represent the days offset from today as specified by the passed offsets.
+     * @param offsets The days offset from today for which to make DateTime objects.
+     * @return The DateTime objects which represent the days offset from today as specified by the passed offsets.
      */
-    public static Calendar[] getAnArrayOfCalendarsWithOffsets(final int... offsets) {
-        Calendar[] calendars = new Calendar[offsets.length];
+    public static DateTime[] getAnArrayOfDateTimesWithOffsets(final int... offsets) {
+        DateTime[] calendars = new DateTime[offsets.length];
         for (int i = 0; i < calendars.length; i++) {
-            calendars[i] = Calendar.getInstance();
-            calendars[i].add(Calendar.DAY_OF_YEAR, offsets[i]);
+            calendars[i] = DateTime.now().plusDays(offsets[i]);
         }
         return calendars;
     }

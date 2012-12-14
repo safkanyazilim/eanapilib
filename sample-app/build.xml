@@ -83,4 +83,6 @@
     <import file="${sdk.dir}/tools/ant/build.xml" />
 
     <import file="ivy.ant.xml" />
+    
+   <target name="build.with.dependencies" depends="ivy.resolve.dependencies, debug"/>
 </project>

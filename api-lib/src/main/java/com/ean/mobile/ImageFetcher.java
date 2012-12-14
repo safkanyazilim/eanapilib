@@ -48,6 +48,9 @@ public final class ImageFetcher {
      */
     public static InputStream fetch(final String urlString, final boolean fullURL) throws IOException {
         Log.d(Constants.DEBUG_TAG, urlString);
+        if (urlString == null) {
+            return null;
+        }
         final String finalUrl;
         if (!fullURL) {
             finalUrl = new URL(IMAGE_PROTOCOL, IMAGE_HOST, urlString).toString();
@@ -91,6 +94,6 @@ public final class ImageFetcher {
      *  create a valid URL.
      */
     public static URL getFullImageUrl(final String partial) throws MalformedURLException {
-        return new URL(IMAGE_PROTOCOL, IMAGE_HOST, partial);
+        return partial == null ? null : new URL(IMAGE_PROTOCOL, IMAGE_HOST, partial);
     }
 }

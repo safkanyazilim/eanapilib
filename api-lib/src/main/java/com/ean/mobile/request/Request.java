@@ -8,7 +8,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -17,6 +16,9 @@ import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -43,8 +45,7 @@ public abstract class Request {
     //protected static final String URI_HOST = "xml.travelnow.com";
     protected static final String URI_HOST = "mobile.eancdn.com";
     protected static final String URI_BASE_PATH = "/ean-services/rs/hotel/v3/";
-    protected static final String DATE_FORMAT_STRING = "%1$tm/%1$td/%1$tY";
-
+    protected static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
 
     protected static final URI FULL_URI;
 
@@ -57,6 +58,8 @@ public abstract class Request {
         }
         FULL_URI = fullUri;
     }
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
     /**
      * Performs an api request at the specified path with the parameters listed.
@@ -88,7 +91,9 @@ public abstract class Request {
             }
         } finally {
             // Always close the connection.
-            response.getEntity().getContent().close();
+            if (response.getEntity().isStreaming()) {
+                response.getEntity().getContent().close();
+            }
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
         Log.d(Constants.DEBUG_TAG, "Took " + timeTaken + " milliseconds.");
@@ -166,12 +171,12 @@ public abstract class Request {
     }
 
     /**
-     * Formats a Calendar object as a date string expected by the API.
-     * @param cal The Calendar object to format.
+     * Formats a DateTime object as a date string expected by the API.
+     * @param dateTime The DateTime object to format.
      * @return The date string for the API.
      */
-    public static String formatApiDate(final Calendar cal) {
-        return String.format(DATE_FORMAT_STRING, cal);
+    public static String formatApiDate(final DateTime dateTime) {
+        return DATE_TIME_FORMATTER.print(dateTime);
     }
 
     /**

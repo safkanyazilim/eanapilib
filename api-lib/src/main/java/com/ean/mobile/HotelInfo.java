@@ -7,13 +7,10 @@ package com.ean.mobile;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.graphics.drawable.Drawable;
 import android.text.Html;
 
 /**
@@ -32,11 +29,6 @@ public final class HotelInfo {
     public final String shortDescription;
 
     /**
-     * The long description of this hotel.
-     */
-    public String longDescription;
-
-    /**
      * The location description of this hotel.
      */
     public final String locDescription;
@@ -47,9 +39,9 @@ public final class HotelInfo {
     public final String starRating;
 
     /**
-     * The url of the thumbnail of this hotel.
+     * The main HotelImageTuple for this hotel.
      */
-    public final URL thumbnailUrl;
+    public final HotelImageTuple mainHotelImageTuple;
 
     /**
      * The currency code used for the price of this hotel.
@@ -84,32 +76,12 @@ public final class HotelInfo {
     /**
      * The high price of the hotel, in the currency specified by {currencyCode}.
      */
-    public BigDecimal highPrice;
+    public final BigDecimal highPrice;
 
     /**
      * The low price found for the hotel, in the currency specified by {currencyCode}.
      */
-    public BigDecimal lowPrice;
-
-    /**
-     * Whether or not the full hotel's information has been retrieved.
-     */
-    public boolean hasRetrievedHotelInfo;
-
-    /**
-     * The list of hotel images for this hotel.
-     */
-    public List<HotelImageTuple> images;
-
-    /**
-     * The list of hotel rooms for this hotel.
-     */
-    public List<HotelRoom> hotelRooms;
-
-    /**
-     * The drawable resource for this hotel's thumbnail.
-     */
-    private Drawable thumbnail;
+    public final BigDecimal lowPrice;
 
     /**
      * The constructor that constructs the hotel info from a JSONObject.
@@ -128,7 +100,7 @@ public final class HotelInfo {
         final String starRatingRaw = hotelSummary.optString("hotelRating");
         this.starRating = null == starRatingRaw || "".equals(starRatingRaw) ? "0" : starRatingRaw;
         final String thumbnailString = hotelSummary.optString("thumbNailUrl").replace("_t.jpg", "_n.jpg");
-        this.thumbnailUrl = ImageFetcher.getFullImageUrl(thumbnailString);
+        this.mainHotelImageTuple = new HotelImageTuple(ImageFetcher.getFullImageUrl(thumbnailString), null, null);
         //TODO: figure a better way of scaling the rates.
         this.highPrice = new BigDecimal(hotelSummary.getDouble("highRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);

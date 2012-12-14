@@ -3,10 +3,11 @@ package com.ean.mobile.activity;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,16 +17,23 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import com.ean.mobile.HotelWrangler;
 import com.ean.mobile.R;
-import com.ean.mobile.request.DestLookup;
+import com.ean.mobile.SampleApp;
+import com.ean.mobile.SampleConstants;
+import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.request.ListRequest;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
+import java.io.IOException;
 
 public class StartupSearch extends Activity {
+
+
+    private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
+
 
     private ProgressDialog searchingDialog;
 
@@ -35,14 +43,7 @@ public class StartupSearch extends Activity {
         setContentView(R.layout.startupsearch);
 
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
-        Button arrivalDate = (Button) findViewById(R.id.arrival_date_picker);
-        Button departureDate = (Button) findViewById(R.id.departure_date_picker);
-        Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
-        Spinner childrenSpinner = (Spinner) findViewById(R.id.children_spinner);
 
-//        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-//        Location l = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//        searchBox.setText(l.toString());
         searchBox.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 // If the event is a key-down event on the "enter" button
@@ -52,146 +53,172 @@ public class StartupSearch extends Activity {
                     searchingDialog = ProgressDialog.show(StartupSearch.this, "", "Searching", true);
                     performSearch(searchBox.getText().toString().trim());
                     return true;
-                } else {;
-                    new Thread() {
-                        public void run() {
-                            try {
-                               Log.d("EANDebug", DestLookup.getDestInfos(searchBox.getText().toString()).toString());
-                            } catch (Exception e) {
-                                Log.d("EANDebug", e.getMessage());
-                                // we'll deal with this later.
-                            }
-                        }
-                    }.start();
-
                 }
                 return false;
             }
         });
 
-        // add a click listener to the button
-        arrivalDate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                showDialog(R.id.arrival_date_picker);
-            }
-        });
-
-        departureDate.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                showDialog(R.id.departure_date_picker);
-            }
-        });
-
         // get the current date
-        final Calendar c = Calendar.getInstance();
-        updateDateDisplay(arrivalDate, c);
-        c.set(Calendar.DAY_OF_YEAR, c.get(Calendar.DAY_OF_YEAR) + 1);
-        updateDateDisplay(departureDate, c);
+        DateTime now = DateTime.now();
+        SampleApp.arrivalDate = now;
+        SampleApp.departureDate = now.plusDays(1);
 
-        adultsSpinner.setAdapter(ArrayAdapter.createFromResource(
-            this, R.array.number_of_people_array, android.R.layout.simple_spinner_item));
-        ((ArrayAdapter<CharSequence>)adultsSpinner.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        
-        adultsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-                HotelWrangler wrangler = (HotelWrangler) getApplicationContext();
-                wrangler.setNumberOfAdults(Integer.parseInt(adapterView.getItemAtPosition(pos).toString()));
-            }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                //do nothing because you can't
-            }
-        });
-        
-        childrenSpinner.setAdapter(ArrayAdapter.createFromResource(
-            this, R.array.number_of_people_array, android.R.layout.simple_spinner_item));
-        ((ArrayAdapter<CharSequence>)childrenSpinner.getAdapter()).setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        childrenSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-                HotelWrangler wrangler = (HotelWrangler) getApplicationContext();
-                wrangler.setNumberOfChildren(Integer.parseInt(adapterView.getItemAtPosition(pos).toString()));
-            }
+        Button arrivalDate = (Button) findViewById(R.id.arrival_date_picker);
+        Button departureDate = (Button) findViewById(R.id.departure_date_picker);
+        // set the date on the button
+        arrivalDate.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
+        departureDate.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-                //do nothing because you can't
-            }
-        });
+        ArrayAdapter<CharSequence> adultsSpinnerAdapter
+                = ArrayAdapter.createFromResource(this, R.array.number_of_people_array, android.R.layout.simple_spinner_item);
+        adultsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+
+        Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        adultsSpinner.setAdapter(adultsSpinnerAdapter);
+        adultsSpinner.setOnItemSelectedListener(new PeopleSpinnerListener(true));
+
+        ArrayAdapter<CharSequence> childrenSpinnerAdapter
+                = ArrayAdapter.createFromResource(this, R.array.number_of_people_array, android.R.layout.simple_spinner_item);
+        childrenSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        Spinner childrenSpinner = (Spinner) findViewById(R.id.children_spinner);
+        childrenSpinner.setAdapter(childrenSpinnerAdapter);
+        childrenSpinner.setOnItemSelectedListener(new PeopleSpinnerListener(false));
 
     }
 
-    //TODO: onResume that sets up the adults/children.
-
-    @Override
-    protected Dialog onCreateDialog(final int id) {
-        if (id != R.id.arrival_date_picker && id != R.id.departure_date_picker) {
-            return null;
-        }
-        Calendar c = Calendar.getInstance();
-        return new DatePickerDialog(this,
-                    new DatePickerDialog.OnDateSetListener() {
-                        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                            Calendar c = Calendar.getInstance();
-                            c.set(year, monthOfYear, dayOfMonth);
-                            updateDateDisplay((Button) findViewById(id), c);
-                        }
-                    },
-                    c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-
+    public void showDatePickerDialog(View view) {
+        new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
+
+    private void preSearch() {
+        SampleApp.searchQuery = null;
+        SampleApp.numberOfAdults = 0;
+        SampleApp.numberOfChildren = 0;
+        SampleApp.arrivalDate = null;
+        SampleApp.departureDate = null;
+        SampleApp.foundHotels = null;
+
+        SampleApp.selectedHotel = null;
+
+        SampleApp.selectedRoom = null;
+
+        SampleApp.EXTENDED_INFOS.clear();
+
+        SampleApp.HOTEL_ROOMS.clear();
+    }
+
 
     private void performSearch(final String searchQuery) {
-        Thread requestThread = new Thread() {
-            public void run() {
-                try {
-                    Looper.prepare();
-                    HotelWrangler wrangler = (HotelWrangler) getApplicationContext();
-                    wrangler.setSearchQuery(searchQuery);
-                    wrangler.setArrivalDate(new Date(((Button) findViewById(R.id.arrival_date_picker)).getText().toString()));
-                    wrangler.setDepartureDate(new Date(((Button) findViewById(R.id.departure_date_picker)).getText().toString()));
-                    //number of adults/children set with the onitemselectedlisteners.
-                    ListRequest.searchForHotels(searchQuery, wrangler);
-                    Log.d("EANDebug", wrangler.getCacheKey());
-                    runOnUiThread(
-                        new Runnable() {
-                            public void run() {
-                                Intent intent = new Intent(StartupSearch.this, HotelList.class);
-                                startActivity(intent);
-                            }
-                        }
-                    );
-                } catch (Exception e) {
-                    Log.d("EANDebug", " An exception occurred: " + e.getMessage());
-                } finally {
-                     runOnUiThread(
-                        new Runnable() {
-                            public void run() {
-                                StartupSearch.this.searchingDialog.dismiss();
-                            }
-                        }
-                     );
-                }
-            }
-        };
-        requestThread.start();
+        preSearch();
+        SampleApp.searchQuery = searchQuery;
+        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseDateTime(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
+        SampleApp.departureDate = DATE_TIME_FORMATTER.parseDateTime(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
+        new PerformSearchTask().execute((Void) null);
     }
 
-    private void updateDateDisplay(Button dd, Calendar c) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        dd.setText(dateFormat.format(c.getTime()));
-        HotelWrangler wrangler = (HotelWrangler) getApplicationContext();
-        switch(dd.getId()) {
-            case R.id.arrival_date_picker:
-                wrangler.setArrivalDate(c.getTime());
-                break;
-            case R.id.departure_date_picker:
-                wrangler.setDepartureDate(c.getTime());
-                break;
-            default:
-                break;
+    private class PeopleSpinnerListener implements AdapterView.OnItemSelectedListener {
+
+        private final boolean adults;
+
+        /**
+         * This is the main constructor.
+         * @param adults Whether or not the spinner is the adults spinner. If false, assumes the children spinner.
+         */
+        public PeopleSpinnerListener(boolean adults) {
+            this.adults = adults;
+        }
+
+        @Override
+        public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
+            final int count = Integer.parseInt(adapterView.getItemAtPosition(pos).toString());
+            if (adults) {
+                SampleApp.numberOfAdults = count;
+            } else {
+                SampleApp.numberOfChildren = count;
+            }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> adapterView) {
+            //do nothing because you can't
+        }
+    }
+
+    private class PerformSearchTask extends AsyncTask<Void, Integer, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.numberOfAdults, SampleApp.numberOfChildren, SampleApp.arrivalDate, SampleApp.departureDate);
+            } catch (IOException e) {
+                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
+            } catch (EanWsError ewe) {
+                //TODO: This should be handled better. If this exception occurs, it's likely an input error and
+                // should be recoverable.
+                Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+            }
+            return null;
+        }
+
+
+        @Override
+        protected void onPostExecute(Void aLong) {
+            Intent intent = new Intent(StartupSearch.this, HotelList.class);
+            startActivity(intent);
+            try {
+                StartupSearch.this.searchingDialog.dismiss();
+            } catch (IllegalArgumentException iae) {
+                // just ignore it... it's because the window rotated at an inopportune time.
+            }
+        }
+
+        @Override
+        protected void onCancelled() {
+            StartupSearch.this.searchingDialog.dismiss();
+        }
+    }
+
+    public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+
+        private final int pickerId;
+
+        private final Button pickerButton;
+
+        public DatePickerFragment(final int pickerId, final Button pickerButton) {
+            super();
+            this.pickerId = pickerId;
+            this.pickerButton = pickerButton;
+        }
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            final DateTime date;
+            if (pickerId == R.id.arrival_date_picker) {
+                date = SampleApp.arrivalDate;
+            } else {
+                date = SampleApp.departureDate;
+            }
+
+            return new DatePickerDialog(getActivity(), this, date.getYear(), date.getMonthOfYear() - 1, date.getDayOfMonth());
+        }
+
+        @Override
+        public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
+            DateTime chosenDate = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0);
+            pickerButton.setText(DATE_TIME_FORMATTER.print(chosenDate));
+            switch(pickerId) {
+                case R.id.arrival_date_picker:
+                    SampleApp.arrivalDate = chosenDate;
+                    break;
+                case R.id.departure_date_picker:
+                    SampleApp.departureDate = chosenDate;
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

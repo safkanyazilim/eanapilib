@@ -20,8 +20,9 @@ import android.text.Html;
 import android.util.Log;
 import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
-import com.ean.mobile.HotelInfo;
+import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.JsonParsingException;
 
 /**
  * Uses getHotelInformation to get the rest of the hotel's information, including images
@@ -39,14 +40,14 @@ public final class InformationRequest extends Request {
 
     /**
      * Gets the rest of the information about a hotel not included in previous calls.
-     * @param hotel The hotel for which to gather more information.
+     * @param hotelId The hotelId for which to gather more information.
      * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
      * @throws IOException If there is an error communicating on the network.
-     * @throws JSONException If the json returned is malformed somehow
      * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
+     * @return Returns the extended hotel information that was requested.
      */
-    public static void getHotelInformation(final HotelInfo hotel, final String customerSessionId)
-            throws IOException, JSONException, EanWsError {
+    public static HotelInfoExtended getHotelInformation(final long hotelId, final String customerSessionId)
+            throws IOException, EanWsError {
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("cid", CID),
             new BasicNameValuePair("minorRev", MINOR_REV),
@@ -54,34 +55,40 @@ public final class InformationRequest extends Request {
             new BasicNameValuePair("customerSessionId", customerSessionId),
             new BasicNameValuePair("locale", LOCALE),
             new BasicNameValuePair("currencyCode", CURRENCY_CODE),
-            new BasicNameValuePair("hotelId", Long.toString(hotel.hotelId)),
+            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
             new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
+        try {
+            final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 
-        final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
+            if (json == null) {
+                return null;
+            }
 
-        if (json != null) {
             final JSONObject infoResp = json.getJSONObject("HotelInformationResponse");
             final JSONObject details = infoResp.getJSONObject("HotelDetails");
             final JSONArray images = infoResp.getJSONObject("HotelImages")
                 .getJSONArray("HotelImage");
 
-            hotel.longDescription = Html.fromHtml(details.optString("propertyDescription")).toString();
 
-            hotel.images = new ArrayList<HotelImageTuple>();
+
+            final String longDescription = Html.fromHtml(details.optString("propertyDescription")).toString();
+
+            final List<HotelImageTuple> imageTuples = new ArrayList<HotelImageTuple>();
 
             JSONObject image;
             for (int i = 0; i < images.length(); i++) {
                 image = images.getJSONObject(i);
-                hotel.images.add(
+                imageTuples.add(
                     new HotelImageTuple(
                         new URL(image.optString("thumbnailUrl")),
                         new URL(image.optString("url")),
                         image.optString("caption")));
             }
-            Log.d(Constants.DEBUG_TAG, "Found " + hotel.images.size() + " images");
+            Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
+            return new HotelInfoExtended(hotelId, longDescription, imageTuples);
+        } catch (JSONException jse) {
+            throw new JsonParsingException(jse);
         }
-
-        hotel.hasRetrievedHotelInfo = true;
     }
 }

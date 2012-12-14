@@ -41,7 +41,7 @@ public final class HotelRoom {
     /**
      * The rate information about this room.
      */
-    public RateInfo rate;
+    public final RateInfo rate;
 
     /**
      * The main constructor that creates HotelRooms from JSONObjects.
@@ -59,10 +59,12 @@ public final class HotelRoom {
             this.rate = RateInfo.parseRateInfos(roomRateDetail.getJSONArray(rateInfoId)).get(0);
         } else if (roomRateDetail.optJSONObject(rateInfoId) != null) {
             this.rate = RateInfo.parseRateInfos(roomRateDetail.getJSONObject(rateInfoId)).get(0);
+        } else {
+            // if neither of the if/else above, then this was a sabre response that
+            // requires ANOTHER call to get the rate information but that is handled
+            // by the RoomAvail request, so we do nothing with the rates.
+            this.rate = null;
         }
-        // if neither of the if/else above, then this was a sabre response that
-        // requires ANOTHER call to get the rate information but that is handled
-        // by the RoomAvail request, so we do nothing with the rates.
 
     }
 
