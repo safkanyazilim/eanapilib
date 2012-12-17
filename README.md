@@ -5,36 +5,26 @@ This project intends to:
 - Provide a sample android app demonstrating use of this library.
 
 ##Building both the Library and the App
-It is possible to build the library and the app in a single step using the parent build.xml at the root of ean-android. This will build the library, publish it to a local repository, then resolve the dependencies of the android project. Once those steps have completed, the final step of updating the project for your local environment will still need to occur.
+It is possible to build the library and the app in a single step using the parent build.xml at the root of ean-android. This will build the library, publish it to a local repository, then resolve the dependencies of the android project and fix up the local android files and build the debug configuration of sample-app.
 
-These steps assume familiarity with the command line, ant, and file paths.
 ###Requirements
 - Java JDK (1.6+)
 - Apache Ant (1.7+)
-- Android sdk on path, with api at least level 14 installed
+- Android sdk on path, with api at least level 14 (Android 4.0) installed
 
 ###Steps
 1. Clone the repository
 2. cd to the newly cloned directory (ean-android)
-3. Now run the ant target to build the api-lib and resolve the dependencies for sample-app
+3. Now run the ant target to build the api-lib and sample-app
 
-        ant resolve
-    - The library has now been built, published, and the app has had its dependencies resolved.
-4. cd to sample-app
-5. Create the local files required for using ant on the sample-app, as specified by the android sdk.
-
-        android update project -p ./
-    - This will set up the environment-specific files for the project.
-6. Now sample-app can be built using
-
-        ant debug
-    the built project will be output to
+        ant inital-build
+    - The library has now been built, published, and the app has had its dependencies resolved and has been built in the debug configuration.
+4. The output apk can be found at
 
         ean-android/sample-app/bin/sample-app-debug.apk
-    and can then be pushed to an android device or vm with
+    and can be installed using
 
         adb install ean-android/sample-app/bin/sample-app-debug.apk
-
 
 ##Building The Library
 
@@ -52,8 +42,8 @@ These steps assume familiarity with the command line, ant, and file paths.
 
         cd /path/to/ean-android
         cd api-lib
-        ant
-3. You have now built the api-lib.
+        ant publish
+3. You have now built the api-lib and published it to the local repository.
 
 The build (assuming it worked properly) will have resolved dependencies (creating and populating a lib/ folder in the process), checked the project for style issues, run junit tests, built the javadoc, and built jars to the build/ directory.
         
@@ -68,29 +58,38 @@ The build (assuming it worked properly) will have resolved dependencies (creatin
                     
 ean-api-lib.jar contains the minimal set of classes to use the library, whereas ean-api-lib-full.jar contains not only the classes, but their sources and the generated javadoc as well.
 
-To publish the newly built jars to a local repository so that the sample-app can access them in its build script run
-
-        ant publish
-instead of
+To build without publishing, just run the default ant target:
 
         ant
-to build, test, and deploy the newly made jars to a local repository where it can be accessed by the sample-app build script.
-
 ##Building The Sample App
 
 ###Requirements
 
 - Java JDK (1.6+)
 - Apache Ant (1.7+)
-- Android sdk on path, with api at least level 14 installed
+- Android sdk on path, with api at least level 14 (Android 4.0) installed
 
 ###Steps
 1. Download the source code
     - If you downloaded the libarary, you already have the source
     - Otherwise, follow the same download instructions as the libarary above.
-2. In a terminal, cd to the sample app's main directory (ean-android/sample-app).
+2. Ensure the library has been published as described above.
+3. In a terminal, cd to the sample app's main directory (ean-android/sample-app).
 
-3. Follow the instructions from steps 5 and 6 of the "Building the Library and the App" section above.
+        cd ean-android/sample-app
+4. Create the local files required for using ant on the sample-app, as specified by the android sdk.
+
+        android update project -p ./
+    - This will set up the environment-specific files for the project.
+5. Now sample-app can be built using
+
+        ant debug
+    the built project will be output to
+
+        ean-android/sample-app/bin/sample-app-debug.apk
+    and can then be pushed to an android device or vm with
+
+        adb install ean-android/sample-app/bin/sample-app-debug.apk
 
 
 ##IDE Setup Tips
