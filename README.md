@@ -16,12 +16,12 @@ These steps assume familiarity with the command line, ant, and file paths.
 ###Steps
 1. Clone the repository
 2. cd to the newly cloned directory (ean-android)
-3.
+3. Now run the ant target to build the api-lib and resolve the dependencies for sample-app
 
         ant resolve
     - The library has now been built, published, and the app has had its dependencies resolved.
 4. cd to sample-app
-5.
+5. Create the local files required for using ant on the sample-app, as specified by the android sdk.
 
         android update project -p ./
     - This will set up the environment-specific files for the project.
