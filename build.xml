@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ean-android" default="resolve">
+
+    <property name="api-lib.buildfile"      location="api-lib/build.xml" />
+    <property name="sample-app.buildfile"      location="sample-app/build.xml" />
+
+    <target name="resolve">
+        <exec executable="ant" dir="api-lib">
+            <arg value="-f"/>
+            <arg value="${api-lib.buildfile}"/>
+            <arg value="ivy.publish"/>
+        </exec>
+        <exec executable="ant" dir="sample-app">
+            <arg value="-f"/>
+            <arg value="${sample-app.buildfile}"/>
+            <arg value="ivy.resolve.dependencies"/>
+        </exec>
+    </target>
+</project>
