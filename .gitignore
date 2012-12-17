@@ -13,10 +13,14 @@ bin/
 gen/
 build/
 lib/
+libs/
 .idea/
 *.iml
 atlassian-ide-plugin.xml
 .gradle/
 out/
+sdcard.*
 # Local configuration file (sdk path, etc)
 local.properties
+
+.DS_Store

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Dakkar</string>
+    <string name="search_bar_autotext">Please enter a city</string>
+    <string name="from">from</string>
+    <string name="loading_address">loading address…</string>
+    <string name="loading_descriptions">loading description…</string>
+    <string name="loading_rooms">loading rooms…</string>
+    <string name="no_rooms_available">There are no rooms available for the search parameters.</string>
+    <string name="arrival">Check in:</string>
+    <string name="departure">Check out:</string>
+    <string name="adults">Adults:</string>
+    <string name="children">Children:</string>
+    <string name="guests">Guests:</string>
+    <string name="room_type">Room Type:</string>
+    <string name="bed_type">Bed Type:</string>
+    <string name="book">Book</string>
+    <string name="price_details">Price Details</string>
+    <string name="total_charges">Total Charges</string>
+    <string name="security_notice_title">Secure Booking</string>
+    <string name="security_notice_text">We keep all your personal information secure and encrypted.\nWe won\'t share or sell your personal inforrmation.</string>
+    <string name="guest_information">Guest Information:</string>
+    <string name="guest_first_name">First Name</string>
+    <string name="guest_last_name">Last Name</string>
+    <string name="guest_phone">Phone</string>
+    <string name="guest_email">Email for Confirmation</string>
+    <string name="billing_information">Billing Information:</string>
+    <string name="billing_address_1">Address Line 1</string>
+    <string name="billing_address_2">Address Line 2</string>
+    <string name="billing_city">City</string>
+    <string name="billing_state">State</string>
+    <string name="billing_country">Country</string>
+    <string name="billing_zip">Zip</string>
+    <string name="billing_cc_num">Credit Card Num</string>
+    <string name="billing_cc_expmo">MO</string>
+    <string name="billing_cc_expyr">YR</string>
+    <string name="billing_cc_security">Security Code (See back of credit card)</string>
+    <string name="billing_legal_disclaimer">Legal stuff and junk goes here that includes links to the <u>Privacy Policy</u> and <u>Terms of Use</u> on a web page. Those pages will need to be built.</string>
+    <string name="number_of_adults_prompt">Select number of adults</string>
+    <string name="number_of_children_prompt">Select number of children</string>
+    <string-array name="number_of_people_array">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
+    <string name="taxes_and_fees">Taxes &amp; Fees</string>
+</resources>

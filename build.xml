@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="ean-android" default="inital-build">
+
+    <property name="api-lib.dir"          location="api-lib" />
+    <property name="api-lib.buildfile"    location="${api-lib.dir}/build.xml" />
+    <property name="sample-app.dir"       location="sample-app" />
+    <property name="sample-app.buildfile" location="${sample-app.dir}/build.xml" />
+
+    <target name="inital-build">
+        <exec executable="ant" dir="${api-lib.dir}">
+            <arg value="-f"/>
+            <arg value="${api-lib.buildfile}"/>
+            <arg value="ivy.publish"/>
+        </exec>
+        <exec executable="ant" dir="${sample-app.dir}">
+            <arg value="-f"/>
+            <arg value="${sample-app.buildfile}"/>
+            <arg value="ivy.resolve.dependencies"/>
+        </exec>
+        <exec executable="android" dir="${sample-app.dir}">
+            <arg value="update" />
+            <arg value="project" />
+            <arg value="-p" />
+            <arg value="./" />
+        </exec>
+        <exec executable="ant" dir="${sample-app.dir}">
+            <arg value="-f"/>
+            <arg value="${sample-app.buildfile}"/>
+            <arg value="debug"/>
+        </exec>
+    </target>
+</project>

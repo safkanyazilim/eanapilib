@@ -18,6 +18,7 @@ import org.json.JSONObject;
 
 import android.util.Log;
 import com.ean.mobile.Constants;
+import com.ean.mobile.exception.JsonParsingException;
 
 /**
  * Looks up possible destinations based on the destinationString passed to getDestInfos.
@@ -37,9 +38,8 @@ public final class DestLookup {
      * @param destinationString The string passed in by the user.
      * @return The array of possible destinations meant by the destinationString
      * @throws IOException If there is a problem communicating on the network.
-     * @throws JSONException If the JSON returned is malformed somehow.
      */
-    public static JSONArray getDestInfos(final String destinationString) throws IOException, JSONException {
+    public static JSONArray getDestInfos(final String destinationString) throws IOException {
         if ("".equals(destinationString) || destinationString == null) {
             return new JSONArray();
         }
@@ -51,20 +51,24 @@ public final class DestLookup {
             = new DefaultHttpClient().execute(new HttpGet(baseUrl));
         Log.d(Constants.DEBUG_TAG, "got response");
         final StatusLine statusLine = response.getStatusLine();
-        if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            response.getEntity().writeTo(out);
-            out.close();
-            final String jsonstr = out.toString();
-            Log.d(Constants.DEBUG_TAG, jsonstr);
-            json = new JSONObject(jsonstr);
-        } else {
-            // If we didn't get a good http status, then the connection failed.
-            // Close the connection and throw an error.
-            Log.d(Constants.DEBUG_TAG, "Connection Status not ok: " + statusLine.getStatusCode());
-            response.getEntity().getContent().close();
-            throw new IOException(statusLine.getReasonPhrase());
+        try {
+            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
+                final ByteArrayOutputStream out = new ByteArrayOutputStream();
+                response.getEntity().writeTo(out);
+                out.close();
+                final String jsonstr = out.toString();
+                Log.d(Constants.DEBUG_TAG, jsonstr);
+                json = new JSONObject(jsonstr);
+            } else {
+                // If we didn't get a good http status, then the connection failed.
+                // Close the connection and throw an error.
+                Log.d(Constants.DEBUG_TAG, "Connection Status not ok: " + statusLine.getStatusCode());
+                response.getEntity().getContent().close();
+                throw new IOException(statusLine.getReasonPhrase());
+            }
+            return json.getJSONArray("items");
+        } catch (JSONException jse) {
+            throw new JsonParsingException(jse);
         }
-        return json.getJSONArray("items");
     }
 }

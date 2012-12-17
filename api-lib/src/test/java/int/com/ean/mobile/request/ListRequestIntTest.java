@@ -3,8 +3,7 @@
  */
 package com.ean.mobile.request;
 
-import java.util.Calendar;
-
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 import com.ean.mobile.HotelInfoList;
@@ -17,24 +16,24 @@ public class ListRequestIntTest {
 
     @Test
     public void testSearchForHotelsHappy() throws Exception {
-        Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, 3);
+        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", 1, 0, calendars[0], calendars[1]);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", 1, 0, dateTimes[0], dateTimes[1]);
 
         assertThat(results.size(), greaterThan(0));
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsCauseError() throws Exception {
-        Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, -3);
+        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, -3);
 
-        ListRequest.searchForHotels("rome, it", 1, 0, calendars[0], calendars[1]);
+        ListRequest.searchForHotels("rome, it", 1, 0, dateTimes[0], dateTimes[1]);
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {
-        Calendar[] calendars = DateModifier.getAnArrayOfCalendarsWithOffsets(1, 3);
+        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
 
-        ListRequest.searchForHotels("sea of tranquility, moon", 1, 0, calendars[0], calendars[1]);
+        ListRequest.searchForHotels("sea of tranquility, moon", 1, 0, dateTimes[0], dateTimes[1]);
     }
 }
