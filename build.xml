@@ -35,7 +35,6 @@
         <echo message="Updating and building sample-app"/>
         <update-android-project script="android.bat" osfamily="windows" />
         <update-android-project script="android.sh" osfamily="unix" />
-        <ant dir="${sample-app.dir}" target="ivy.resolve.dependencies" />
         <ant dir="${sample-app.dir}" target="debug" />
     </target>
 </project>
