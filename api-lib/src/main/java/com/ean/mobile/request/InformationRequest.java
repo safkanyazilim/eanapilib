@@ -22,7 +22,6 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.JsonParsingException;
 
 /**
  * Uses getHotelInformation to get the rest of the hotel's information, including images
@@ -88,7 +87,7 @@ public final class InformationRequest extends Request {
             Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
             return new HotelInfoExtended(hotelId, longDescription, imageTuples);
         } catch (JSONException jse) {
-            throw new JsonParsingException(jse);
+            return null;
         }
     }
 }

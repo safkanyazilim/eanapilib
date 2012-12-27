@@ -18,8 +18,8 @@ import org.json.JSONObject;
 
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
+import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.JsonParsingException;
 
 /**
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
@@ -41,8 +41,7 @@ public final class ListRequest extends Request {
      * THIS SHOULD NOT BE RUN ON THE MAIN THREAD. It is a long-running network process and so might cause
      * force close dialogs.
      * @param destination The destination to search for hotel availability.
-     * @param numberOfAdults The number of adults for the request.
-     * @param numberOfChildren The number of children for the request.
+     * @param occupancy The stated occupancy to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
      * @return The list of HotelInfo that were requested by the search parameters.
@@ -50,8 +49,7 @@ public final class ListRequest extends Request {
      * @throws EanWsError If the API encountered an error and was unable to return results.
      */
     public static HotelInfoList searchForHotels(final String destination,
-                                                final int numberOfAdults,
-                                                final int numberOfChildren,
+                                                final RoomOccupancy occupancy,
                                                 final DateTime arrivalDate,
                                                 final DateTime departureDate)
             throws IOException, EanWsError {
@@ -64,7 +62,7 @@ public final class ListRequest extends Request {
             new BasicNameValuePair("currencyCode", CURRENCY_CODE),
             new BasicNameValuePair("destinationString", destination),
             new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
-            new BasicNameValuePair("room1", formatRoomOccupancy(numberOfAdults, numberOfChildren)),
+            new BasicNameValuePair("room1", occupancy.asAbbreviatedRequestString()),
             new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
             new BasicNameValuePair("departureDate", formatApiDate(departureDate))
         );
@@ -96,7 +94,7 @@ public final class ListRequest extends Request {
 
             return new HotelInfoList(hotels, cacheKey, cacheLocation, customerSessionId);
         } catch (JSONException jse) {
-            throw new JsonParsingException(jse);
+            return HotelInfoList.empty();
         }
 
     }

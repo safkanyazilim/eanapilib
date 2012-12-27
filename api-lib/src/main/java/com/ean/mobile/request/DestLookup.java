@@ -18,7 +18,6 @@ import org.json.JSONObject;
 
 import android.util.Log;
 import com.ean.mobile.Constants;
-import com.ean.mobile.exception.JsonParsingException;
 
 /**
  * Looks up possible destinations based on the destinationString passed to getDestInfos.
@@ -68,7 +67,7 @@ public final class DestLookup {
             }
             return json.getJSONArray("items");
         } catch (JSONException jse) {
-            throw new JsonParsingException(jse);
+            return null;
         }
     }
 }

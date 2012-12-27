@@ -99,7 +99,9 @@
         <module name="AvoidStaticImport">
             <property name="excludes" value="org.junit.Assert.*"/>
             <property name="excludes" value="org.mockito.Mockito.*"/>
+            <property name="excludes" value="org.mockito.Matchers.*"/>
             <property name="excludes" value="org.hamcrest.Matchers.*"/>
+            <property name="excludes" value="org.powermock.api.mockito.PowerMockito.mockStatic"/>
         </module>
         <module name="IllegalImport">
             <property name="illegalPkgs" value="junit.framework" />

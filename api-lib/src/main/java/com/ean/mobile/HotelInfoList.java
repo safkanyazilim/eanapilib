@@ -5,6 +5,7 @@ package com.ean.mobile;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * The holder for a list of hotels, used as the return value from the list call.
@@ -43,5 +44,13 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
         this.cacheKey = cacheKey;
         this.cacheLocation = cacheLocation;
         this.customerSessionId = customerSessionId;
+    }
+
+    /**
+     * Similar to {@link java.util.Collections#emptyList()} but for HotelInfoList.
+     * @return An empty hotel info list whose fields are all null.
+     */
+    public static HotelInfoList empty() {
+        return new HotelInfoList(Collections.<HotelInfo>emptyList(), null, null, null);
     }
 }
