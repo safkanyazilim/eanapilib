@@ -39,9 +39,20 @@ public final class HotelRoom {
     public final String roomTypeCode;
 
     /**
-     * The rate information about this room.
+     * The string representing the smoking preference allowed in this room.
      */
-    public final RateInfo rate;
+    public final String smokingPreference;
+
+    /**
+     * The bedTypeId to be used to book this room.
+     */
+    public final String bedTypeId;
+
+    /**
+     * The all of the information that is available about the rates charged..
+     */
+    public final Rate rate;
+
 
     /**
      * The main constructor that creates HotelRooms from JSONObjects.
@@ -54,18 +65,21 @@ public final class HotelRoom {
         this.rateCode = roomRateDetail.optString("rateCode", "");
         this.roomTypeCode = roomRateDetail.optString("roomTypeCode");
         this.promoDescription = roomRateDetail.optString("promoDescription");
+        this.smokingPreference = roomRateDetail.optString("smokingPreference");
+        this.bedTypeId = roomRateDetail.optString("bedTypeId");
         final String rateInfoId = "RateInfos";
         if (roomRateDetail.optJSONArray(rateInfoId) != null) {
-            this.rate = RateInfo.parseRateInfos(roomRateDetail.getJSONArray(rateInfoId)).get(0);
+            final JSONArray rateInfos = roomRateDetail.getJSONArray(rateInfoId);
+            this.rate = Rate.parseRates(rateInfos).get(0);
         } else if (roomRateDetail.optJSONObject(rateInfoId) != null) {
-            this.rate = RateInfo.parseRateInfos(roomRateDetail.getJSONObject(rateInfoId)).get(0);
+            final JSONObject rateInfo = roomRateDetail.getJSONObject(rateInfoId);
+            this.rate = Rate.parseRates(rateInfo).get(0);
         } else {
             // if neither of the if/else above, then this was a sabre response that
             // requires ANOTHER call to get the rate information but that is handled
             // by the RoomAvail request, so we do nothing with the rates.
             this.rate = null;
         }
-
     }
 
     /**
@@ -98,7 +112,7 @@ public final class HotelRoom {
      * @return The base total.
      */
     public BigDecimal getTotalBaseRate() {
-        return rate.getBaseRateTotal();
+        return rate.chargeable.getBaseRateTotal();
     }
 
     /**
@@ -106,7 +120,7 @@ public final class HotelRoom {
      * @return The net total.
      */
     public BigDecimal getTotalRate() {
-        return rate.getRateTotal();
+        return rate.chargeable.getRateTotal();
     }
 
     /**

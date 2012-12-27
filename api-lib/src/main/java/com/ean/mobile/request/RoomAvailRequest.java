@@ -5,10 +5,12 @@
 package com.ean.mobile.request;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.ean.mobile.request.data.RoomOccupancy;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
@@ -40,8 +42,7 @@ public final class RoomAvailRequest extends Request {
      * force close dialogs.
      *
      * @param hotelId The hotel to search for availability in.
-     * @param numberOfAdults The number of adults to search for.
-     * @param numberOfChildren The number of children to search for.
+     * @param rooms The list of room occupancies to search for.
      * @param arrivalDate The date of arrival, specified as a DateTime object.
      * @param departureDate The date of departure (from the hotel), specified as a DateTime object.
      * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
@@ -51,13 +52,12 @@ public final class RoomAvailRequest extends Request {
      * @throws EanWsError If there is an error in the API that was returned.
      */
     public static List<HotelRoom> getRoomAvail(final long hotelId,
-                                               final int numberOfAdults,
-                                               final int numberOfChildren,
+                                               final List<RoomOccupancy> rooms,
                                                final DateTime arrivalDate,
                                                final DateTime departureDate,
                                                final String customerSessionId)
             throws IOException, EanWsError {
-        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
+        final List<NameValuePair> baseUrlParams = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("cid", CID),
             new BasicNameValuePair("minorRev", MINOR_REV),
             new BasicNameValuePair("apiKey", API_KEY),
@@ -67,9 +67,19 @@ public final class RoomAvailRequest extends Request {
             new BasicNameValuePair("departureDate", formatApiDate(departureDate)),
             new BasicNameValuePair("includeDetails", "true"),
             new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-            new BasicNameValuePair("room1", formatRoomOccupancy(numberOfAdults, numberOfChildren))
+            new BasicNameValuePair("hotelId", Long.toString(hotelId))
         );
+
+        final List<NameValuePair> roomPairs = new ArrayList<NameValuePair>(rooms.size());
+        for (RoomOccupancy occupancy : rooms) {
+            roomPairs.add(new BasicNameValuePair(
+                    "room" + roomPairs.size(),
+                    formatRoomOccupancy(occupancy.numberOfAdults, occupancy.childAges.size())));
+        }
+
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>(baseUrlParams.size() + roomPairs.size());
+        urlParameters.addAll(baseUrlParams);
+        urlParameters.addAll(roomPairs);
 
         try {
             final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);

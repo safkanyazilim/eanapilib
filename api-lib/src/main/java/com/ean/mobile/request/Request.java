@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -15,7 +16,9 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -49,6 +52,8 @@ public abstract class Request {
 
     protected static final URI FULL_URI;
 
+    protected static final List<NameValuePair> BASIC_URL_PARAMETERS;
+
     static {
         URI fullUri = null;
         try {
@@ -57,6 +62,13 @@ public abstract class Request {
             Log.wtf(Constants.DEBUG_TAG, "Base uri is malformed");
         }
         FULL_URI = fullUri;
+        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("cid", CID),
+                new BasicNameValuePair("minorRev", MINOR_REV),
+                new BasicNameValuePair("apiKey", API_KEY),
+                new BasicNameValuePair("locale", LOCALE),
+                new BasicNameValuePair("currencyCode", CURRENCY_CODE));
+        BASIC_URL_PARAMETERS = urlParameters;
     }
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
@@ -71,12 +83,12 @@ public abstract class Request {
     private static String performApiRequestForString(final String relativePath, final List<NameValuePair> params)
             throws IOException {
         //Build the url
-        final HttpGet getRequest = new HttpGet(createFullUri(FULL_URI, relativePath, params));
-        getRequest.setHeader("Accept", "application/json, */*");
-        Log.d(Constants.DEBUG_TAG, "uri: " + getRequest.getURI());
+        final HttpRequestBase request = new HttpGet(createFullUri(FULL_URI, relativePath, params));
+        request.setHeader("Accept", "application/json, */*");
+        Log.d(Constants.DEBUG_TAG, "uri: " + request.getURI());
         Log.d(Constants.DEBUG_TAG, "getting response");
         final long startTime = System.currentTimeMillis();
-        final HttpResponse response = new DefaultHttpClient().execute(getRequest);
+        final HttpResponse response = new DefaultHttpClient().execute(request);
         Log.d(Constants.DEBUG_TAG, "got response");
         final StatusLine statusLine = response.getStatusLine();
         final String jsonString;
@@ -190,5 +202,20 @@ public abstract class Request {
             return String.format("%d,%d", numberOfAdults, numberOfChildren);
         }
         return Integer.toString(numberOfAdults);
+    }
+
+    /**
+     * Turns the passed string into xml. Takes roughly the form of  &lt;nodeName&gt;nodeValue&lt;/nodeName&gt;.
+     * @param nodeName The name of the xml node.
+     * @param nodeValue The value of the xml node.
+     * @return The string of xml as requested.
+     */
+    public static String xmlIfy(final String nodeName, final String nodeValue) {
+        if (nodeName == null) {
+            return "";
+        } else if (nodeValue == null || "".equals(nodeValue)) {
+            return "<" + nodeName + " />";
+        }
+        return "<" + nodeName + ">" + nodeValue + "</" + nodeName + ">";
     }
 }

@@ -33,6 +33,18 @@ public class RoomAvailRequestIntTest {
         }
     }
 
+    @Test
+    public void testMultiRoomAvail() {
+        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        try {
+            List<HotelRoom> rooms
+                    = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, 1, 0, dateTimes[0], dateTimes[1], "");
+            assertThat(rooms.size(), greaterThan(0));
+        } catch (EanWsError ewe) {
+            assertEquals("SOLD_OUT", ewe.category);
+        }
+    }
+
     @Test(expected = DataValidationException.class)
     public void testGetAvailWrongDates() throws Exception {
         DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, -3);
