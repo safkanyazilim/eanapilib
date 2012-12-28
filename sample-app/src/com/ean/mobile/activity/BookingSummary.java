@@ -73,12 +73,11 @@ public class BookingSummary extends Activity {
         }
 
         View view;
-        LayoutInflater inflater;
+        final LayoutInflater inflater = getLayoutInflater();
         DateTimeFormatter nightlyRateFormatter = DateTimeFormat.forPattern("MM-dd-yyyy");
 
         DateTime currentDate = SampleApp.arrivalDate.minusDays(1);
-        for (NightlyRate rate : SampleApp.selectedRoom.rate.nightlyRates) {
-            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        for (NightlyRate rate : SampleApp.selectedRoom.rate.chargeable.nightlyRates) {
             view = inflater.inflate(R.layout.pricebreakdownlayout, null);
             TextView date = (TextView) view.findViewById(R.id.priceBreakdownDate);
             TextView highPrice = (TextView) view.findViewById(R.id.priceBreakdownHighPrice);

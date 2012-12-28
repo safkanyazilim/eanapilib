@@ -32,4 +32,8 @@ public class SampleApp extends Application {
 
     public static final Map<Long, List<HotelRoom>> HOTEL_ROOMS
             = Collections.synchronizedMap(new HashMap<Long, List<HotelRoom>>());
+
+    public static RoomOccupancy occupancy() {
+        return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
+    }
 }

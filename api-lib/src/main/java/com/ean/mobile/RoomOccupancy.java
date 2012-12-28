@@ -13,6 +13,12 @@ import java.util.List;
 public final class RoomOccupancy {
 
     /**
+     * The maximum number of children specifiable by the numberOfChildren parameter of
+     * {@link RoomOccupancy#RoomOccupancy(int, int)}.
+     */
+    private static final int MAX_CHILDREN = 20;
+
+    /**
      * The number of adults expected to occupy the room.
      */
     public final int numberOfAdults;
@@ -33,6 +39,31 @@ public final class RoomOccupancy {
                 = childAges == null
                 ? Collections.<Integer>emptyList()
                 : Collections.unmodifiableList(childAges);
+    }
+
+    /**
+     * This constructor builds a new room occupancy using simple numbers of children and sets
+     * {@link RoomOccupancy#childAges} to be a list of 0s, as long as numberOfChildren, with a maximum size of 20
+     * to prevent memory overloads.
+     * Practically, number of children shouldn't exceed 5, nor should the sum of adults and children exceed 5, although
+     * some leeway is given.
+     * @param numberOfAdults The number of adults in this occupancy.
+     * @param numberOfChildren The number of children in this occupancy.
+     */
+    public RoomOccupancy(final int numberOfAdults, final int numberOfChildren) {
+        //We don't want to make too large of a list, so we limit the numberOfChildren to 20.
+        this(numberOfAdults, Collections.nCopies(Math.min(MAX_CHILDREN, numberOfChildren), 0));
+    }
+
+    /**
+     * A constructor to upgrade a RoomOccupancy to have the particular child ages specified. This is intended
+     * to upgrade a RoomOccupancy object constructed with the {@link RoomOccupancy#RoomOccupancy(int, int)} constructor
+     * to have the full list of childAges associated.
+     * @param baseOccupancy The base occupancy.
+     * @param childAges The children's ages to integrate.
+     */
+    public RoomOccupancy(final RoomOccupancy baseOccupancy, final List<Integer> childAges) {
+        this(baseOccupancy.numberOfAdults, childAges);
     }
 
 

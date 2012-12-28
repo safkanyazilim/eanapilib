@@ -18,6 +18,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import com.ean.mobile.R;
+import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
@@ -152,7 +153,7 @@ public class StartupSearch extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.numberOfAdults, SampleApp.numberOfChildren, SampleApp.arrivalDate, SampleApp.departureDate);
+                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate);
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {

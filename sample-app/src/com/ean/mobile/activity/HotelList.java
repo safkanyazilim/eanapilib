@@ -44,8 +44,7 @@ public class HotelList extends Activity {
     private class HotelListAdapterListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             SampleApp.selectedHotel = (HotelInfo) parent.getItemAtPosition(position);
-            Intent intent = new Intent(HotelList.this, HotelFullInfo.class);
-            startActivity(intent);
+            startActivity(new Intent(HotelList.this, HotelFullInfo.class));
         }
     }
 
