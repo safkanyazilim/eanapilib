@@ -10,10 +10,6 @@
         <conf name="default" description="Output configuration" transitive="false"/>
     </configurations>
     <publications>
-        <!-- If this container is not present, it is assumed that the module has one artifact, with the same name as
-        the module, and published in all module configurations. Thus if you have a module which publishes no artifacts,
-        we have to include a publications element with no artifact sub element.
-        At this time, this is the case for this example -->
         <artifact name="${dist.jar.name}"/>
         <artifact name="${dist.full.jar.name}"/>
     </publications>

@@ -63,7 +63,12 @@
     </target>
 
     <target name="test" depends="compile, compile.test">
-        <junit printsummary="true" errorproperty="junit.error" failureproperty="junit.failure" haltonfailure="true" showoutput="true">
+        <junit printsummary="true"
+               errorproperty="junit.error"
+               failureproperty="junit.failure"
+               haltonfailure="true"
+               showoutput="true"
+               fork="true">
             <classpath refid="project.classpath"/>
             <classpath location="${tests.dir}"/>
             <classpath location="${test.resource.dir}"/>

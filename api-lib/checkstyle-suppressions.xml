@@ -9,6 +9,7 @@
     <suppress checks="JavadocPackage" files="test/*"/>
     <suppress checks="JavadocMethod" files="test/*"/>
     <suppress checks="JavadocType" files="test/*"/>
+    <suppress checks="JavadocVariable" files="test/*"/>
     <suppress checks="FinalLocalVariableCheck" files="test/*"/>
     <suppress checks="MagicNumber" files="test/*"/>
 </suppressions>
