@@ -10,6 +10,9 @@ import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.DataValidationException;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
@@ -38,5 +41,19 @@ public class ListRequestIntTest {
         DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
 
         ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1]);
+    }
+
+    @Test
+    public void testSearchForHotelsMultiRoomType() throws Exception {
+        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+
+        List<RoomOccupancy> occupancies = Arrays.asList(
+                OCCUPANCY,
+                new RoomOccupancy(1, 3)
+        );
+
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", occupancies, dateTimes[0], dateTimes[1]);
+
+        assertThat(results.size(), greaterThan(0));
     }
 }

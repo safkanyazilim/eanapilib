@@ -7,6 +7,7 @@ package com.ean.mobile.request;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -53,19 +54,46 @@ public final class ListRequest extends Request {
                                                 final DateTime arrivalDate,
                                                 final DateTime departureDate)
             throws IOException, EanWsError {
+        return searchForHotels(destination, Collections.singletonList(occupancy), arrivalDate, departureDate);
+    }
+    /**
+     * Uses the EAN API to search for hotels in the given destination using http requests.
+     *
+     * THIS SHOULD NOT BE RUN ON THE MAIN THREAD. It is a long-running network process and so might cause
+     * force close dialogs.
+     * @param destination The destination to search for hotel availability.
+     * @param occupancies The stated occupancy of each room to search for.
+     * @param arrivalDate The arrival date of the request.
+     * @param departureDate The departure date of the request.
+     * @return The list of HotelInfo that were requested by the search parameters.
+     * @throws IOException If there was a network-level error.
+     * @throws EanWsError If the API encountered an error and was unable to return results.
+     */
+    public static HotelInfoList searchForHotels(final String destination,
+                                                final List<RoomOccupancy> occupancies,
+                                                final DateTime arrivalDate,
+                                                final DateTime departureDate)
+            throws IOException, EanWsError {
 
-        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("cid", CID),
-            new BasicNameValuePair("minorRev", MINOR_REV),
-            new BasicNameValuePair("apiKey", API_KEY),
-            new BasicNameValuePair("locale", LOCALE),
-            new BasicNameValuePair("currencyCode", CURRENCY_CODE),
-            new BasicNameValuePair("destinationString", destination),
-            new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
-            new BasicNameValuePair("room1", occupancy.asAbbreviatedRequestString()),
-            new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
-            new BasicNameValuePair("departureDate", formatApiDate(departureDate))
+        final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("destinationString", destination),
+                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
+                new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
+                new BasicNameValuePair("departureDate", formatApiDate(departureDate))
         );
+
+        final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
+
+        int roomNumber = 1;
+        for (RoomOccupancy occupancy : occupancies) {
+            roomParameters.add(new BasicNameValuePair("room" + roomNumber, occupancy.asAbbreviatedRequestString()));
+            roomNumber++;
+        }
+
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.addAll(BASIC_URL_PARAMETERS);
+        urlParameters.addAll(requestParameters);
+        urlParameters.addAll(roomParameters);
 
         // TODO: Possibly cache the HotelInfoLists (factory?) such that if the request is performed again
         // within a certain threshold (maybe a day?) the search appears to be instantaneous.
@@ -73,9 +101,8 @@ public final class ListRequest extends Request {
         // bytes of the images they represent, once loaded.
         // TODO: Support pagination via cachekey and so forth
         try {
-            final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
-
-            final JSONObject listResponse = json.getJSONObject("HotelListResponse");
+            final JSONObject listResponse
+                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
 
             if (listResponse.has("EanWsError")) {
                 throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));

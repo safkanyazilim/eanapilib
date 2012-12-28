@@ -37,6 +37,42 @@ public final class BookingRequest extends Request {
      */
     private static final String URL_SUBDIR = "res";
 
+    //TODO: Overload performBooking so that it takes a HotelRoom object rather than Room and infers the rest
+    // of the information from the other fields, similar to the BookingRequestIntTest.
+
+
+    /**
+     * This method actually performs the booking request with the passed room and occupancy information.
+     * @param hotelId The ID of the hotel to be booked.
+     * @param arrivalDate The day that the booking should begin (checkin).
+     * @param departureDate The day that the booking will end (checkout).
+     * @param supplierType The supplierType (found in the list call, usually "E").
+     * @param room The room and its occupancy that will be booked.
+     * @param reservationInfo The information about the entity making the reservation. "Billing" information.
+     * @param addressInfo The address associated with the reservationInfo.
+     * @param customerSessionId The sessionID associated with this search session.
+     * @throws IOException If there is some sort of network error while making the booking.
+     * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     */
+    public static void performBooking(final Long hotelId,
+                                      final DateTime arrivalDate,
+                                      final DateTime departureDate,
+                                      final String supplierType,
+                                      final Room room,
+                                      final ReservationInfo reservationInfo,
+                                      final Map<String, String> addressInfo,
+                                      final String customerSessionId)
+            throws IOException, EanWsError {
+        performBooking(hotelId,
+                arrivalDate,
+                departureDate,
+                supplierType,
+                Collections.singletonList(room),
+                reservationInfo,
+                addressInfo,
+                customerSessionId);
+    }
+
     /**
      * This method actually performs the booking request with the passed room and occupancy information.
      * @param hotelId The ID of the hotel to be booked.
@@ -55,18 +91,16 @@ public final class BookingRequest extends Request {
                                       final String supplierType,
                                       final List<Room> roomGroup,
                                       final ReservationInfo reservationInfo,
-                                      final Map<String, String> addressInfo)
+                                      final Map<String, String> addressInfo,
+                                      final String customerSessionId)
             throws IOException, EanWsError {
         final Room firstRoom = roomGroup.get(0);
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("hotelId", hotelId.toString()),
-            new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
-            new BasicNameValuePair("departureDate", formatApiDate(departureDate)),
-            new BasicNameValuePair("supplierType", supplierType),
-            new BasicNameValuePair("rateKey", firstRoom.rate.roomGroup.get(0).rateKey),
-            new BasicNameValuePair("roomTypeCode", firstRoom.roomTypeCode),
-            new BasicNameValuePair("rateCode", firstRoom.rateCode),
-            new BasicNameValuePair("chargeableRate", "")
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", hotelId.toString()),
+                new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
+                new BasicNameValuePair("departureDate", formatApiDate(departureDate)),
+                new BasicNameValuePair("supplierType", supplierType)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -77,7 +111,12 @@ public final class BookingRequest extends Request {
         urlParameters.addAll(addressInfoAsNameValuePairs(addressInfo));
 
         try {
-            final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
+            final JSONObject json
+                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomReservationResponse");
+            if (json.has("EanWsError")) {
+                System.out.println(json.toString());
+                throw EanWsError.fromJson(json.getJSONObject("EanWsError"));
+            }
         } catch (JSONException jse) {
             return;
         }
@@ -215,8 +254,8 @@ public final class BookingRequest extends Request {
                     new BasicNameValuePair("email", email),
                     new BasicNameValuePair("firstName", name.first),
                     new BasicNameValuePair("lastName", name.last),
-                    new BasicNameValuePair("homePhone", homePhone),
-                    new BasicNameValuePair("workPhone", workPhone)
+                    homePhone == null ? null : new BasicNameValuePair("homePhone", homePhone),
+                    workPhone == null ? null : new BasicNameValuePair("workPhone", workPhone)
             );
         }
     }
@@ -235,7 +274,7 @@ public final class BookingRequest extends Request {
         /**
          * The formatter for the year field passed to the request.
          */
-        private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormat.forPattern("YY");
+        private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormat.forPattern("YYYY");
 
         /**
          * The type of credit card to be used (MC, VS, etc.).
@@ -319,6 +358,8 @@ public final class BookingRequest extends Request {
      */
     public static final class Room {
 
+        private static final int NUMBER_OF_PAIRS_PER_ROOM = 9;
+
         /**
          * The name of the individual who will check in this room.
          */
@@ -387,21 +428,22 @@ public final class BookingRequest extends Request {
          * @param checkInName see {@link Room#checkInName}.
          * @param room The HotelRoom object holding the bedTypeId, smokingPreference, roomTypeCode,
          *             and rateCode for this occupancy.
-         * @param numberOfAdults see {@link RoomOccupancy#numberOfAdults}.
-         * @param childAges see {@link RoomOccupancy#childAges}.
+         * @param selectedBedTypeId The particular bedTypeId selected for the room. Should be one of those available
+         *                          in "room". See {@link HotelRoom#bedTypes}.
+         * @param occupancy The stated occupancy of the room.
          */
         public Room(final Name checkInName,
-                             final HotelRoom room,
-                             final int numberOfAdults,
-                             final List<Integer> childAges) {
+                    final HotelRoom room,
+                    final String selectedBedTypeId,
+                    final RoomOccupancy occupancy) {
             this(checkInName,
-                    room.bedTypeId,
+                    selectedBedTypeId,
                     room.smokingPreference,
-                    room.rateCode,
                     room.roomTypeCode,
+                    room.rateCode,
                     room.rate,
-                    numberOfAdults,
-                    childAges);
+                    occupancy.numberOfAdults,
+                    occupancy.childAges);
         }
 
         /**
@@ -411,16 +453,55 @@ public final class BookingRequest extends Request {
          * name for each NameValuePair
          */
         public static List<NameValuePair> asNameValuePairs(final List<Room> rooms) {
-            final List<NameValuePair> pairs = new ArrayList<NameValuePair>(rooms.size());
-            String roomId;
-            for (Room occupancy : rooms) {
-                roomId = "room" + pairs.size() + 1;
-                pairs.add(new BasicNameValuePair(roomId, occupancy.occupancy.asAbbreviatedRequestString()));
-                pairs.add(new BasicNameValuePair(roomId + "FirstName", occupancy.checkInName.first));
-                pairs.add(new BasicNameValuePair(roomId + "LastName", occupancy.checkInName.last));
-                pairs.add(new BasicNameValuePair(roomId + "BedTypeId", occupancy.bedTypeId));
-                pairs.add(new BasicNameValuePair(roomId + "SmokingPreference", occupancy.smokingPreference));
+            final int pairsPerRoom = 9;
+            final List<NameValuePair> pairs = new ArrayList<NameValuePair>(rooms.size() * pairsPerRoom);
+            String rateKey = null;
+            String thisRateKey;
+            boolean singularRateKey = true;
+            for (Room room : rooms) {
+                thisRateKey = room.rate.getRateKeyForOccupancy(room.occupancy);
+                if (rateKey == null) {
+                     rateKey = thisRateKey;
+                } else if (!thisRateKey.equals(rateKey)) {
+                    singularRateKey = false;
+                    break;
+                }
             }
+
+            int roomNumber = 1;
+            for (Room room : rooms) {
+                final String roomId = "room" + roomNumber;
+
+                pairs.add(new BasicNameValuePair(roomId, room.occupancy.asAbbreviatedRequestString()));
+                pairs.add(new BasicNameValuePair(roomId + "FirstName", room.checkInName.first));
+                pairs.add(new BasicNameValuePair(roomId + "LastName", room.checkInName.last));
+
+                pairs.add(new BasicNameValuePair(roomId + "BedTypeId", room.bedTypeId));
+                pairs.add(new BasicNameValuePair(roomId + "SmokingPreference", room.smokingPreference));
+
+                if (rooms.size() == 1) {
+                    pairs.add(new BasicNameValuePair("roomTypeCode", room.roomTypeCode));
+                    pairs.add(new BasicNameValuePair("rateCode", room.rateCode));
+                    pairs.add(new BasicNameValuePair("chargeableRate", room.rate.chargeable.getTotal().toString()));
+                    pairs.add(new BasicNameValuePair("rateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
+                } else {
+                    pairs.add(new BasicNameValuePair(roomId + "RoomTypeCode", room.roomTypeCode));
+                    pairs.add(new BasicNameValuePair(roomId + "RateCode", room.rateCode));
+                    pairs.add(new BasicNameValuePair(roomId + "ChargeableRate", room.rate.chargeable.getTotal().toString()));
+
+                    if (singularRateKey && roomNumber == 1) {
+                        pairs.add(new BasicNameValuePair("rateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
+                    } else if (!singularRateKey) {
+                        pairs.add(new BasicNameValuePair(roomId + "RateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
+                    }
+                }
+                roomNumber++;
+
+            }
+//
+//            if (rooms.size() > 1 && singularRateKey) {
+//                pairs.add(new BasicNameValuePair("multiRoomRes", Integer.toString(1)));
+//            }
             return Collections.unmodifiableList(pairs);
         }
 

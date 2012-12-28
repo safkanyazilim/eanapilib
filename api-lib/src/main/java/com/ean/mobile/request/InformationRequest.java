@@ -47,16 +47,15 @@ public final class InformationRequest extends Request {
      */
     public static HotelInfoExtended getHotelInformation(final long hotelId, final String customerSessionId)
             throws IOException, EanWsError {
-        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("cid", CID),
-            new BasicNameValuePair("minorRev", MINOR_REV),
-            new BasicNameValuePair("apiKey", API_KEY),
-            new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("locale", LOCALE),
-            new BasicNameValuePair("currencyCode", CURRENCY_CODE),
-            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+        final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+                new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
+
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.addAll(BASIC_URL_PARAMETERS);
+        urlParameters.addAll(requestParameters);
         try {
             final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 

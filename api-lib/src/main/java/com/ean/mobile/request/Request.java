@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -16,6 +17,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
@@ -41,34 +43,55 @@ public abstract class Request {
     protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
     protected static final String LOCALE = "en_US";
     protected static final String CURRENCY_CODE = "USD";
+    //TODO: Add customeruseragent so requests can be cataloged as mobile
+    protected static final String CUSTOMER_USER_AGENT = "Android";
 
-    protected static final String URI_SCHEME = "http";
-    //protected static final String URI_HOST = "stg1-www.travelnow.com";
-    //protected static final String URI_HOST = "stg5-www.travelnow.com";
-    //protected static final String URI_HOST = "xml.travelnow.com";
-    protected static final String URI_HOST = "mobile.eancdn.com";
+    protected static final String STANDARD_URI_SCHEME = "http";
+    //protected static final String STANDARD_URI_SCHEME = "https";
+    //protected static final String STANDARD_URI_HOST = "stg1-www.travelnow.com";
+    //protected static final String STANDARD_URI_HOST = "stg5-www.travelnow.com";
+    //protected static final String STANDARD_URI_HOST = "xml.travelnow.com";
+    protected static final String STANDARD_URI_HOST = "api.ean.com";
+
+
+    protected static final String SECURE_URI_SCHEME = "https";
+    //protected static final String SECURE_URI_HOST = "stg1-www.travelnow.com";
+    protected static final String SECURE_URI_HOST = "book.api.ean.com";
+
+
     protected static final String URI_BASE_PATH = "/ean-services/rs/hotel/v3/";
     protected static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
 
-    protected static final URI FULL_URI;
+    protected static final URI STANDARD_ENDPOINT;
+
+    protected static final URI SECURE_ENDPOINT;
 
     protected static final List<NameValuePair> BASIC_URL_PARAMETERS;
 
     static {
-        URI fullUri = null;
+        URI standardUri = null;
+        URI secureUri = null;
         try {
-            fullUri = new URI(URI_SCHEME, URI_HOST, URI_BASE_PATH, null, null);
+            standardUri = new URI(STANDARD_URI_SCHEME, STANDARD_URI_HOST, URI_BASE_PATH, null, null);
+            secureUri = new URI(SECURE_URI_SCHEME, SECURE_URI_HOST, URI_BASE_PATH, null, null);
         } catch (URISyntaxException use) {
+            // This exception can only be thrown if the static variables listed above are incorrectly
+            // formatted, or the usage of new URI(...) is incorrect, both of which should be found out
+            // long before the code is used in production, since the requests (particularly the int tests)
+            // would fail.
             Log.wtf(Constants.DEBUG_TAG, "Base uri is malformed");
         }
-        FULL_URI = fullUri;
+        STANDARD_ENDPOINT = standardUri;
+        SECURE_ENDPOINT = secureUri;
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("cid", CID),
                 new BasicNameValuePair("minorRev", MINOR_REV),
                 new BasicNameValuePair("apiKey", API_KEY),
                 new BasicNameValuePair("locale", LOCALE),
-                new BasicNameValuePair("currencyCode", CURRENCY_CODE));
-        BASIC_URL_PARAMETERS = urlParameters;
+                new BasicNameValuePair("currencyCode", CURRENCY_CODE)
+                //new BasicNameValuePair("customerUserAgent", CUSTOMER_USER_AGENT)
+        );
+        BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
     }
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
@@ -83,9 +106,15 @@ public abstract class Request {
     private static String performApiRequestForString(final String relativePath, final List<NameValuePair> params)
             throws IOException {
         //Build the url
-        final HttpRequestBase request = new HttpGet(createFullUri(FULL_URI, relativePath, params));
+        final HttpRequestBase request;
+        if ("res".equals(relativePath)) {
+            request = new HttpPost(createFullUri(SECURE_ENDPOINT, relativePath, params));
+        } else {
+            request = new HttpGet(createFullUri(STANDARD_ENDPOINT, relativePath, params));
+        }
         request.setHeader("Accept", "application/json, */*");
-        Log.d(Constants.DEBUG_TAG, "uri: " + request.getURI());
+        System.out.println(request.getURI());
+        Log.d(Constants.DEBUG_TAG, "endpoint: " + request.getURI().getHost());
         Log.d(Constants.DEBUG_TAG, "getting response");
         final long startTime = System.currentTimeMillis();
         final HttpResponse response = new DefaultHttpClient().execute(request);
@@ -189,33 +218,5 @@ public abstract class Request {
      */
     public static String formatApiDate(final DateTime dateTime) {
         return DATE_TIME_FORMATTER.print(dateTime);
-    }
-
-    /**
-     * Gets a string containing the simplified specification for the number of adults and children requested for a room.
-     * @param numberOfAdults The number of adults to be in the room.
-     * @param numberOfChildren The number of children (as specified by the EAN API) to be included in the request.
-     * @return The requested string.
-     */
-    public static String formatRoomOccupancy(final int numberOfAdults, final int numberOfChildren) {
-        if (numberOfChildren > 0) {
-            return String.format("%d,%d", numberOfAdults, numberOfChildren);
-        }
-        return Integer.toString(numberOfAdults);
-    }
-
-    /**
-     * Turns the passed string into xml. Takes roughly the form of  &lt;nodeName&gt;nodeValue&lt;/nodeName&gt;.
-     * @param nodeName The name of the xml node.
-     * @param nodeValue The value of the xml node.
-     * @return The string of xml as requested.
-     */
-    public static String xmlIfy(final String nodeName, final String nodeValue) {
-        if (nodeName == null) {
-            return "";
-        } else if (nodeValue == null || "".equals(nodeValue)) {
-            return "<" + nodeName + " />";
-        }
-        return "<" + nodeName + ">" + nodeValue + "</" + nodeName + ">";
     }
 }

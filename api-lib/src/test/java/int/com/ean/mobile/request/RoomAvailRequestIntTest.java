@@ -3,6 +3,7 @@
  */
 package com.ean.mobile.request;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -16,6 +17,7 @@ import com.ean.mobile.exception.EanWsError;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 public class RoomAvailRequestIntTest {
@@ -59,4 +61,25 @@ public class RoomAvailRequestIntTest {
         DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
         RoomAvailRequest.getRoomAvail(-1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1], "");
     }
+
+
+    @Test
+    public void testGetGoodAvailMultiRoom() throws Exception {
+        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        List<RoomOccupancy> occupancies = Arrays.asList(
+                OCCUPANCY,
+                new RoomOccupancy(1, 3)
+        );
+        try {
+            List<HotelRoom> rooms
+                    = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, occupancies, dateTimes[0], dateTimes[1], "");
+            assertNotNull(rooms);
+            assertThat(rooms.size(), greaterThan(0));
+            assertEquals(2, rooms.get(0).rate.roomGroup.size());
+        } catch (EanWsError ewe) {
+            assertEquals("SOLD_OUT", ewe.category);
+        }
+    }
+
+    //TODO: MultiRoomTYPE
 }

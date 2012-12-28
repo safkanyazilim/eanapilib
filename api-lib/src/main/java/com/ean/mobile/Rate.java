@@ -51,15 +51,16 @@ public final class Rate {
     public Rate(final JSONObject rateInfoJson) throws JSONException {
 
         final List<Room> localRooms;
-        if (rateInfoJson.optJSONArray("RoomGroup") != null) {
-            final JSONArray roomGroupJson = rateInfoJson.optJSONArray("RoomGroup");
-            localRooms = new ArrayList<Room>(roomGroupJson.length());
-            for (int i = 0; i < roomGroupJson.length(); i++) {
-                localRooms.add(new Room(roomGroupJson.getJSONObject(i)));
+        final JSONObject roomGroupJson = rateInfoJson.optJSONObject("RoomGroup");
+        if (roomGroupJson.optJSONArray("Room") != null) {
+            JSONArray roomJson = roomGroupJson.optJSONArray("Room");
+            localRooms = new ArrayList<Room>(roomJson.length());
+            for (int i = 0; i < roomJson.length(); i++) {
+                localRooms.add(new Room(roomJson.getJSONObject(i)));
             }
-        } else if (rateInfoJson.optJSONObject("RoomGroup") != null) {
+        } else if (roomGroupJson.optJSONObject("Room") != null) {
             localRooms
-                = Collections.singletonList(new Room(rateInfoJson.optJSONObject("RoomGroup").optJSONObject("Room")));
+                = Collections.singletonList(new Room(roomGroupJson.optJSONObject("Room")));
         } else {
             localRooms = Collections.emptyList();
         }
@@ -97,6 +98,16 @@ public final class Rate {
      */
     public static List<Rate> parseRates(final JSONObject rateInfosJson) throws JSONException {
         return Collections.singletonList(new Rate(rateInfosJson.getJSONObject("RateInfo")));
+    }
+
+
+    public String getRateKeyForOccupancy(RoomOccupancy occupancy) {
+        for (Rate.Room room : roomGroup) {
+            if (room.occupancy.equals(occupancy)) {
+                return room.rateKey;
+            }
+        }
+        return null;
     }
 
     /**
@@ -146,15 +157,18 @@ public final class Rate {
 
             final Map<String, BigDecimal> localSurcharges = new HashMap<String, BigDecimal>();
             if (rate.optJSONArray("Surcharges") != null) {
-                for (int i = 0; i < rate.optJSONArray("Surcharges").length(); i++) {
-                    final JSONObject surchargeJson = rate.optJSONArray("Surcharges").getJSONObject(i);
-                    localSurcharges.put(surchargeJson.getString("@type"),
+                final JSONArray jsonSurcharges = rate.optJSONArray("Surcharges");
+                for (int i = 0; i < jsonSurcharges.length(); i++) {
+                    final JSONObject surchargeJson = jsonSurcharges.getJSONObject(i);
+                    localSurcharges.put(
+                            surchargeJson.getString("@type"),
                             new BigDecimal(surchargeJson.getString("@amount")));
                 }
-            } else if (rate.optJSONObject("Surcharge") != null) {
+            } else if (rate.optJSONObject("Surcharges") != null) {
+                final JSONObject jsonSurcharge = rate.optJSONObject("Surcharges").getJSONObject("Surcharge");
                 localSurcharges.put(
-                        rate.optJSONObject("Surcharge").getString("@type"),
-                        new BigDecimal(rate.optJSONObject("Surcharge").getString("@amount")));
+                        jsonSurcharge.getString("@type"),
+                        new BigDecimal(jsonSurcharge.getString("@amount")));
             }
 
             currencyCode = rate.getString("@currencyCode");
@@ -225,6 +239,22 @@ public final class Rate {
             }
             return baseRateTotal;
         }
+
+        public BigDecimal getSurchargeTotal() {
+            BigDecimal surchargeTotal = BigDecimal.ZERO;
+            for (BigDecimal surcharge : surcharges.values()) {
+                surchargeTotal = surchargeTotal.add(surcharge);
+            }
+            return surchargeTotal;
+        }
+
+        /**
+         * Gets the final total of the rate and taxes together.
+         * @return The total cost, including taxes and fees.
+         */
+        public BigDecimal getTotal() {
+            return getRateTotal().add(getSurchargeTotal());
+        }
     }
 
     /**
@@ -232,14 +262,9 @@ public final class Rate {
      */
     public static class Room {
         /**
-         * The number of children expected to occupy this room.
+         * The occupancy supported by this room.
          */
-        public final int numberOfChildren;
-
-        /**
-         * The number of adults expected to occupy this room.
-         */
-        public final int numberOfAdults;
+        public final RoomOccupancy occupancy;
 
         /**
          * The rateKey for this room, used for booking.
@@ -251,8 +276,7 @@ public final class Rate {
          * @param jsonRoom The JSONObject representing this room.
          */
         public Room(final JSONObject jsonRoom) {
-            this.numberOfAdults = jsonRoom.optInt("numberOfAdults");
-            this.numberOfChildren = jsonRoom.optInt("numberOfChildren");
+            this.occupancy = new RoomOccupancy(jsonRoom.optInt("numberOfAdults"), jsonRoom.optInt("numberOfChildren"));
             this.rateKey = jsonRoom.optString("rateKey");
         }
     }

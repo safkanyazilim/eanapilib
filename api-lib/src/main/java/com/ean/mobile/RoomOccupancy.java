@@ -19,6 +19,11 @@ public final class RoomOccupancy {
     private static final int MAX_CHILDREN = 20;
 
     /**
+     * The hash code calculated at construction.
+     */
+    private final int hashCode;
+
+    /**
      * The number of adults expected to occupy the room.
      */
     public final int numberOfAdults;
@@ -39,6 +44,13 @@ public final class RoomOccupancy {
                 = childAges == null
                 ? Collections.<Integer>emptyList()
                 : Collections.unmodifiableList(childAges);
+
+        // now precaluclate the hashcode
+        final int primeNumber = 31;
+        int hashCode = numberOfAdults == 0 ? 1 : numberOfAdults;
+        hashCode *= primeNumber * this.childAges.size();
+        this.hashCode = hashCode;
+
     }
 
     /**
@@ -80,5 +92,24 @@ public final class RoomOccupancy {
             adultsAndChildren.append(childAge);
         }
         return adultsAndChildren.toString();
+    }
+
+    /**
+     * A pair of room occupancies which have the same NUMBER of children and the same NUMBER of adults are declared
+     * to be equal.
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return obj instanceof RoomOccupancy && this.hashCode() == obj.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return hashCode;
     }
 }

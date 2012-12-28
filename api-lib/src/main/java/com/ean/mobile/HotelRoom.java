@@ -46,7 +46,7 @@ public final class HotelRoom {
     /**
      * The bedTypeId to be used to book this room.
      */
-    public final String bedTypeId;
+    public final List<BedType> bedTypes;
 
     /**
      * The all of the information that is available about the rates charged..
@@ -61,12 +61,18 @@ public final class HotelRoom {
      */
     public HotelRoom(final JSONObject roomRateDetail) throws JSONException {
 
-        this.description = roomRateDetail.optString("roomTypeDescription", "");
-        this.rateCode = roomRateDetail.optString("rateCode", "");
+        this.description = roomRateDetail.optString("roomTypeDescription");
+        this.rateCode = roomRateDetail.optString("rateCode");
         this.roomTypeCode = roomRateDetail.optString("roomTypeCode");
         this.promoDescription = roomRateDetail.optString("promoDescription");
-        this.smokingPreference = roomRateDetail.optString("smokingPreference");
-        this.bedTypeId = roomRateDetail.optString("bedTypeId");
+        this.smokingPreference = roomRateDetail.optString("smokingPreferences");
+        if (roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType") != null) {
+            this.bedTypes = BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType"));
+        } else if (roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType") != null) {
+            this.bedTypes = BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType"));
+        } else {
+            this.bedTypes = Collections.emptyList();
+        }
         final String rateInfoId = "RateInfos";
         if (roomRateDetail.optJSONArray(rateInfoId) != null) {
             final JSONArray rateInfos = roomRateDetail.getJSONArray(rateInfoId);
@@ -131,4 +137,30 @@ public final class HotelRoom {
         // TODO: Make this actually get the taxes and fees.
         return BigDecimal.ZERO;
     }
+
+    public static final class BedType {
+        public final String id;
+        public final String description;
+
+        public BedType(final String id, final String description) {
+            this.id = id;
+            this.description = description;
+        }
+
+        public static List<BedType> fromJson(JSONObject bedTypeJson) {
+            return Collections.singletonList(
+                    new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description")));
+        }
+
+        public static List<BedType> fromJson(JSONArray bedTypesJson) {
+            final List<BedType> bedTypes = new ArrayList<BedType>(bedTypesJson.length());
+            JSONObject bedTypeJson;
+            for (int i = 0; i < bedTypesJson.length(); i++) {
+                bedTypeJson = bedTypesJson.optJSONObject(i);
+                bedTypes.add(new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description")));
+            }
+            return Collections.unmodifiableList(bedTypes);
+        }
+    }
+
 }
