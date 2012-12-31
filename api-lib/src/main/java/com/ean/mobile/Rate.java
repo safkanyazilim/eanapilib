@@ -48,7 +48,7 @@ public final class Rate {
      * @param rateInfoJson The JSONObject holding the data to construct this object with.
      * @throws JSONException If the JSON isn't configured correctly.
      */
-    public Rate(final JSONObject rateInfoJson) throws JSONException {
+    public Rate(final JSONObject rateInfoJson) {
 
         final List<Room> localRooms;
         final JSONObject roomGroupJson = rateInfoJson.optJSONObject("RoomGroup");
@@ -56,7 +56,7 @@ public final class Rate {
             JSONArray roomJson = roomGroupJson.optJSONArray("Room");
             localRooms = new ArrayList<Room>(roomJson.length());
             for (int i = 0; i < roomJson.length(); i++) {
-                localRooms.add(new Room(roomJson.getJSONObject(i)));
+                localRooms.add(new Room(roomJson.optJSONObject(i)));
             }
         } else if (roomGroupJson.optJSONObject("Room") != null) {
             localRooms
@@ -71,7 +71,7 @@ public final class Rate {
         chargeable = new RateInfo(chargeableObject);
         converted = convertedObject == null ? null : new RateInfo(convertedObject);
 
-        promo = rateInfoJson.getBoolean("@promo");
+        promo = rateInfoJson.optBoolean("@promo");
         roomGroup = Collections.unmodifiableList(localRooms);
     }
 
@@ -79,12 +79,11 @@ public final class Rate {
      * Parses a list of Rate objects from a JSONArray representing their data.
      * @param rateInfosJson The json from which to parse
      * @return The Rate objects represented by the JSONArray.
-     * @throws JSONException If the JSON in the JSONArray is not formatted in the way expected by the parser
      */
-    public static List<Rate> parseRates(final JSONArray rateInfosJson) throws JSONException {
+    public static List<Rate> parseRates(final JSONArray rateInfosJson) {
         final List<Rate> rateInfos = new ArrayList<Rate>(rateInfosJson.length());
         for (int j = 0; j < rateInfosJson.length(); j++) {
-            rateInfos.add(new Rate(rateInfosJson.getJSONObject(j)));
+            rateInfos.add(new Rate(rateInfosJson.optJSONObject(j)));
         }
         return rateInfos;
     }
@@ -94,10 +93,25 @@ public final class Rate {
      * the RateInfos get represented as a single Rate object rather than an array of size one.
      * @param rateInfosJson The json from which to parse.
      * @return The singletonList of the Rate represented by the JSON
-     * @throws JSONException If the JSON is not as expected.
      */
-    public static List<Rate> parseRates(final JSONObject rateInfosJson) throws JSONException {
-        return Collections.singletonList(new Rate(rateInfosJson.getJSONObject("RateInfo")));
+    public static List<Rate> parseRates(final JSONObject rateInfosJson) {
+        return Collections.singletonList(new Rate(rateInfosJson.optJSONObject("RateInfo")));
+    }
+
+    public static List<Rate> parseFromRateInfos(final JSONObject object) {
+        final String rateInfoId = "RateInfos";
+        if (object.optJSONArray(rateInfoId) != null) {
+            final JSONArray rateInfos = object.optJSONArray(rateInfoId);
+            return parseRates(rateInfos);
+        } else if (object.optJSONObject(rateInfoId) != null) {
+            final JSONObject rateInfo = object.optJSONObject(rateInfoId);
+            return parseRates(rateInfo);
+        }
+        // if neither of the if/else above, then this was a sabre response that
+        // requires ANOTHER call to get the rate information but that is handled
+        // by the RoomAvail request, so we do nothing with the rates.
+        return Collections.singletonList(null);
+
     }
 
 
@@ -133,10 +147,9 @@ public final class Rate {
         /**
          * The standard constructor for this object, constructs itself from a JSON object.
          * @param rate The JSONObject representing this object.
-         * @throws JSONException If the JSON passed does not have the expected fields populated. This indicates
          * an unexpected api change or a network failure resulting in invalid json.
          */
-        public RateInfo(final JSONObject rate) throws JSONException {
+        public RateInfo(final JSONObject rate) {
 
             final String nightlyRatesPerRoom = "NightlyRatesPerRoom";
             final String nightlyRate = "NightlyRate";
@@ -144,14 +157,14 @@ public final class Rate {
             final List<NightlyRate> localNightlyRates = new ArrayList<NightlyRate>();
 
             if (rate.optJSONArray(nightlyRatesPerRoom) != null) {
-                localNightlyRates.addAll(NightlyRate.parseNightlyRates(rate.getJSONArray(nightlyRatesPerRoom)));
+                localNightlyRates.addAll(NightlyRate.parseNightlyRates(rate.optJSONArray(nightlyRatesPerRoom)));
             } else if (rate.optJSONObject(nightlyRatesPerRoom) != null) {
-                if (rate.getJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate) != null) {
+                if (rate.optJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate) != null) {
                     localNightlyRates.addAll(
                             NightlyRate.parseNightlyRates(
-                                    rate.getJSONObject(nightlyRatesPerRoom).getJSONArray(nightlyRate)));
+                                    rate.optJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate)));
                 } else {
-                    localNightlyRates.addAll(NightlyRate.parseNightlyRates(rate.getJSONObject(nightlyRatesPerRoom)));
+                    localNightlyRates.addAll(NightlyRate.parseNightlyRates(rate.optJSONObject(nightlyRatesPerRoom)));
                 }
             }
 
@@ -159,19 +172,19 @@ public final class Rate {
             if (rate.optJSONArray("Surcharges") != null) {
                 final JSONArray jsonSurcharges = rate.optJSONArray("Surcharges");
                 for (int i = 0; i < jsonSurcharges.length(); i++) {
-                    final JSONObject surchargeJson = jsonSurcharges.getJSONObject(i);
+                    final JSONObject surchargeJson = jsonSurcharges.optJSONObject(i);
                     localSurcharges.put(
-                            surchargeJson.getString("@type"),
-                            new BigDecimal(surchargeJson.getString("@amount")));
+                            surchargeJson.optString("@type"),
+                            new BigDecimal(surchargeJson.optString("@amount")));
                 }
             } else if (rate.optJSONObject("Surcharges") != null) {
-                final JSONObject jsonSurcharge = rate.optJSONObject("Surcharges").getJSONObject("Surcharge");
+                final JSONObject jsonSurcharge = rate.optJSONObject("Surcharges").optJSONObject("Surcharge");
                 localSurcharges.put(
-                        jsonSurcharge.getString("@type"),
-                        new BigDecimal(jsonSurcharge.getString("@amount")));
+                        jsonSurcharge.optString("@type"),
+                        new BigDecimal(jsonSurcharge.optString("@amount")));
             }
 
-            currencyCode = rate.getString("@currencyCode");
+            currencyCode = rate.optString("@currencyCode");
             nightlyRates = Collections.unmodifiableList(localNightlyRates);
             surcharges = Collections.unmodifiableMap(localSurcharges);
         }

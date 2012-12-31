@@ -73,19 +73,7 @@ public final class HotelRoom {
         } else {
             this.bedTypes = Collections.emptyList();
         }
-        final String rateInfoId = "RateInfos";
-        if (roomRateDetail.optJSONArray(rateInfoId) != null) {
-            final JSONArray rateInfos = roomRateDetail.getJSONArray(rateInfoId);
-            this.rate = Rate.parseRates(rateInfos).get(0);
-        } else if (roomRateDetail.optJSONObject(rateInfoId) != null) {
-            final JSONObject rateInfo = roomRateDetail.getJSONObject(rateInfoId);
-            this.rate = Rate.parseRates(rateInfo).get(0);
-        } else {
-            // if neither of the if/else above, then this was a sabre response that
-            // requires ANOTHER call to get the rate information but that is handled
-            // by the RoomAvail request, so we do nothing with the rates.
-            this.rate = null;
-        }
+        this.rate = Rate.parseFromRateInfos(roomRateDetail).get(0);
     }
 
     /**

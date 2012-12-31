@@ -36,7 +36,7 @@ public final class HotelInfo {
     /**
      * The star rating of this hotel.
      */
-    public final String starRating;
+    public final BigDecimal starRating;
 
     /**
      * The main HotelImageTuple for this hotel.
@@ -56,17 +56,7 @@ public final class HotelInfo {
     /**
      * The street address of this hotel.
      */
-    public final String address;
-
-    /**
-     * The city in which the hotel exists.
-     */
-    public final String city;
-
-    /**
-     * The state/province code for the hotel.
-     */
-    public final String stateProvinceCode;
+    public final LatLongAddress address;
 
     /**
      * The type of supplier for the hotel.
@@ -92,13 +82,10 @@ public final class HotelInfo {
     public HotelInfo(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
         this.name = Html.fromHtml(hotelSummary.optString("name")).toString();
         this.hotelId = hotelSummary.optLong("hotelId");
-        this.address = hotelSummary.getString("address1");
-        this.city = hotelSummary.getString("city");
-        this.stateProvinceCode = hotelSummary.optString("stateProvinceCode");
+        this.address = new LatLongAddress(hotelSummary);
         this.shortDescription =  Html.fromHtml(hotelSummary.optString("shortDescription")).toString();
         this.locDescription = Html.fromHtml(hotelSummary.optString("locationDescription")).toString();
-        final String starRatingRaw = hotelSummary.optString("hotelRating");
-        this.starRating = null == starRatingRaw || "".equals(starRatingRaw) ? "0" : starRatingRaw;
+        this.starRating = parseStarRating(hotelSummary.optString("hotelRating"));
         final String thumbnailString = hotelSummary.optString("thumbNailUrl").replace("_t.jpg", "_n.jpg");
         this.mainHotelImageTuple = new HotelImageTuple(ImageFetcher.getFullImageUrl(thumbnailString), null, null);
         //TODO: figure a better way of scaling the rates.
@@ -106,6 +93,10 @@ public final class HotelInfo {
         this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.currencyCode = hotelSummary.optString("rateCurrencyCode");
         this.supplierType = hotelSummary.optString("supplierType");
+    }
+
+    public static BigDecimal parseStarRating(final String starRating) {
+        return starRating == null || "".equals(starRating) ? BigDecimal.ZERO : new BigDecimal(starRating);
     }
 
     /**

@@ -4,6 +4,8 @@
 
 package com.ean.mobile;
 
+import org.json.JSONObject;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -78,6 +80,9 @@ public final class RoomOccupancy {
         this(baseOccupancy.numberOfAdults, childAges);
     }
 
+    public RoomOccupancy(final JSONObject object) {
+        this(object.optInt("numberOfAdults"), object.optInt("numberOfChildren", 0));
+    }
 
     /**
      * Gets this object as a string in the abbreviated form required by the rest requests of the api.

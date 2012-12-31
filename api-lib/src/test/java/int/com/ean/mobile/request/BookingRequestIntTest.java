@@ -1,21 +1,24 @@
 package com.ean.mobile.request;
 
+import com.ean.mobile.Address;
+import com.ean.mobile.BasicAddress;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.HotelRoom;
+import com.ean.mobile.Name;
 import com.ean.mobile.RoomOccupancy;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.assertTrue;
 
 public class BookingRequestIntTest {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
+
+    private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
 
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
@@ -30,7 +33,7 @@ public class BookingRequestIntTest {
                 hotelList.customerSessionId);
 
         BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo(
-                "test@test.com",
+                "test@expedia.com",
                 "test",
                 "tester",
                 "1234567890",
@@ -47,12 +50,6 @@ public class BookingRequestIntTest {
                 rooms.get(0).bedTypes.get(0).id,
                 OCCUPANCY);
 
-        Map<String, String> addressInfo = new HashMap<String, String>();
-        addressInfo.put("address1", "travelnow");
-        addressInfo.put("city", "Seattle");
-        addressInfo.put("stateProvinceCode", "WA");
-        addressInfo.put("countryCode", "US");
-        addressInfo.put("postalCode", "98004");
 
         BookingRequest.performBooking(
                 hotelList.get(0).hotelId,
@@ -61,7 +58,7 @@ public class BookingRequestIntTest {
                 hotelList.get(0).supplierType,
                 room,
                 resInfo,
-                addressInfo,
+                ADDRESS,
                 hotelList.customerSessionId
         );
 
@@ -85,13 +82,13 @@ public class BookingRequestIntTest {
                 dateTimes[1],
                 hotelList.customerSessionId);
 
-        List<BookingRequest.Name> checkInNames = Arrays.asList(
-                new BookingRequest.Name("test", "tester"),
-                new BookingRequest.Name("test", "testerson")
+        List<Name> checkInNames = Arrays.asList(
+                new Name("test", "tester"),
+                new Name("test", "testerson")
         );
 
         BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo(
-                "test@test.com",
+                "test@expedia.com",
                 checkInNames.get(0).first,
                 checkInNames.get(0).last,
                 "1234567890",
@@ -101,6 +98,8 @@ public class BookingRequestIntTest {
                 "123",
                 DateTime.now().plusYears(1)
         );
+
+
 
 
         List<BookingRequest.Room> bookingRooms = Arrays.asList(
@@ -116,12 +115,6 @@ public class BookingRequestIntTest {
                         occupancies.get(1))
         );
 
-        Map<String, String> addressInfo = new HashMap<String, String>();
-        addressInfo.put("address1", "travelnow");
-        addressInfo.put("city", "Seattle");
-        addressInfo.put("stateProvinceCode", "WA");
-        addressInfo.put("countryCode", "US");
-        addressInfo.put("postalCode", "98004");
 
         BookingRequest.performBooking(
                 hotelList.get(0).hotelId,
@@ -130,7 +123,7 @@ public class BookingRequestIntTest {
                 hotelList.get(0).supplierType,
                 bookingRooms,
                 resInfo,
-                addressInfo,
+                ADDRESS,
                 hotelList.customerSessionId
         );
 

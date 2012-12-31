@@ -6,11 +6,12 @@ package com.ean.mobile;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 
 /**
  * The holder for a list of hotels, used as the return value from the list call.
  */
-public final class HotelInfoList extends ArrayList<HotelInfo> {
+public final class HotelInfoList extends LinkedList<HotelInfo> {
 
     /**
      * The key used to paginate through multiple parts of a larger list request.

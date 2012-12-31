@@ -13,6 +13,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.ean.mobile.Address;
+import com.ean.mobile.Individual;
+import com.ean.mobile.Name;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -50,7 +53,7 @@ public final class BookingRequest extends Request {
      * @param supplierType The supplierType (found in the list call, usually "E").
      * @param room The room and its occupancy that will be booked.
      * @param reservationInfo The information about the entity making the reservation. "Billing" information.
-     * @param addressInfo The address associated with the reservationInfo.
+     * @param address The address associated with the reservationInfo.
      * @param customerSessionId The sessionID associated with this search session.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
@@ -61,16 +64,17 @@ public final class BookingRequest extends Request {
                                       final String supplierType,
                                       final Room room,
                                       final ReservationInfo reservationInfo,
-                                      final Map<String, String> addressInfo,
+                                      final Address address,
                                       final String customerSessionId)
             throws IOException, EanWsError {
-        performBooking(hotelId,
+        performBooking(
+                hotelId,
                 arrivalDate,
                 departureDate,
                 supplierType,
                 Collections.singletonList(room),
                 reservationInfo,
-                addressInfo,
+                address,
                 customerSessionId);
     }
 
@@ -82,7 +86,7 @@ public final class BookingRequest extends Request {
      * @param supplierType The supplierType (found in the list call, usually "E").
      * @param roomGroup The Rooms and their occupancies that will be booked.
      * @param reservationInfo The information about the entity making the reservation. "Billing" information.
-     * @param addressInfo The address associated with the reservationInfo.
+     * @param address The address associated with the reservationInfo.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
      */
@@ -92,10 +96,45 @@ public final class BookingRequest extends Request {
                                       final String supplierType,
                                       final List<Room> roomGroup,
                                       final ReservationInfo reservationInfo,
-                                      final Map<String, String> addressInfo,
+                                      final Address address,
                                       final String customerSessionId)
             throws IOException, EanWsError {
-        final Room firstRoom = roomGroup.get(0);
+        performBooking(
+                hotelId,
+                arrivalDate,
+                departureDate,
+                supplierType,
+                roomGroup,
+                reservationInfo,
+                address,
+                customerSessionId,
+                null);
+    }
+
+    /**
+     * This method actually performs the booking request with the passed room and occupancy information.
+     * @param hotelId The ID of the hotel to be booked.
+     * @param arrivalDate The day that the booking should begin (checkin).
+     * @param departureDate The day that the booking will end (checkout).
+     * @param supplierType The supplierType (found in the list call, usually "E").
+     * @param roomGroup The Rooms and their occupancies that will be booked.
+     * @param reservationInfo The information about the entity making the reservation. "Billing" information.
+     * @param address The address associated with the reservationInfo.
+     * @param customerSessionId The session ID carried over from the original search.
+     * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
+     * @throws IOException If there is some sort of network error while making the booking.
+     * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     */
+    public static void performBooking(final Long hotelId,
+                                      final DateTime arrivalDate,
+                                      final DateTime departureDate,
+                                      final String supplierType,
+                                      final List<Room> roomGroup,
+                                      final ReservationInfo reservationInfo,
+                                      final Address address,
+                                      final String customerSessionId,
+                                      final List<NameValuePair> extraBookingData)
+            throws IOException, EanWsError {
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", hotelId.toString()),
@@ -109,7 +148,8 @@ public final class BookingRequest extends Request {
         urlParameters.addAll(rateInfoParameters);
         urlParameters.addAll(Room.asNameValuePairs(roomGroup));
         urlParameters.addAll(reservationInfo.asNameValuePairs());
-        urlParameters.addAll(addressInfoAsNameValuePairs(addressInfo));
+        urlParameters.addAll(address.asBookingRequestPairs());
+        urlParameters.addAll(extraBookingData == null ? Collections.<NameValuePair>emptyList() : extraBookingData);
 
         try {
             final JSONObject json
@@ -118,24 +158,11 @@ public final class BookingRequest extends Request {
                 System.out.println(json.toString());
                 throw EanWsError.fromJson(json.getJSONObject("EanWsError"));
             }
+            //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
         } catch (JSONException jse) {
             return;
         }
     }
-
-    /**
-     * Gets NameValuePairs for the address information so it can be sent in a rest request.
-     * @param addressInfo The information to turn into NameValuePairs
-     * @return The requested NameValuePairs
-     */
-    private static List<NameValuePair> addressInfoAsNameValuePairs(final Map<String, String> addressInfo) {
-        final List<NameValuePair> addressInfoPairs = new ArrayList<NameValuePair>(addressInfo.size());
-        for (Map.Entry<String, String> entry : addressInfo.entrySet()) {
-            addressInfoPairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
-        }
-        return addressInfoPairs;
-    }
-
 
     /**
      * This is a holder for all of the information required as "billing" information in the booking process.
@@ -173,7 +200,7 @@ public final class BookingRequest extends Request {
                                final String creditCardNumber,
                                final String creditCardIdentifier,
                                final DateTime creditCardExpirationDate) {
-            this.individual = new Individual(
+            this.individual = new BookingIndividual(
                     email,
                     firstName,
                     lastName,
@@ -204,29 +231,7 @@ public final class BookingRequest extends Request {
      * Data holder for information about a particular individual.
      * DO NOT SERIALIZE OR SAVE ANYWHERE.
      */
-    public static final class Individual {
-
-
-        /**
-         * The email of the individual.
-         */
-        public final String email;
-
-        /**
-         * The name of the individual.
-         */
-        public final Name name;
-
-        /**
-         * The individual's home telephone number.
-         */
-        public final String homePhone;
-
-        /**
-         * The individual's work telephone number.
-         */
-        public final String workPhone;
-
+    public static final class BookingIndividual extends Individual {
         /**
          * The constructor for the holder for information about a particular individual.
          * @param email The individual's email.
@@ -235,29 +240,12 @@ public final class BookingRequest extends Request {
          * @param homePhone The individual's home telephone number.
          * @param workPhone The individual's work telephone number.
          */
-        public Individual(final String email,
-                          final String firstName,
-                          final String lastName,
-                          final String homePhone,
-                          final String workPhone) {
-            this.email = email;
-            this.name = new Name(firstName, lastName);
-            this.homePhone = homePhone;
-            this.workPhone = workPhone;
-        }
-
-        /**
-         * Gets NameValuePairs for the reservation information so it can be sent in a rest request.
-         * @return The requested NameValuePairs
-         */
-        public List<NameValuePair> asNameValuePairs() {
-            return Arrays.<NameValuePair>asList(
-                    new BasicNameValuePair("email", email),
-                    new BasicNameValuePair("firstName", name.first),
-                    new BasicNameValuePair("lastName", name.last),
-                    homePhone == null ? null : new BasicNameValuePair("homePhone", homePhone),
-                    workPhone == null ? null : new BasicNameValuePair("workPhone", workPhone)
-            );
+        public BookingIndividual(final String email,
+                                 final String firstName,
+                                 final String lastName,
+                                 final String homePhone,
+                                 final String workPhone) {
+            super(email, firstName,lastName, homePhone, workPhone);
         }
     }
 
@@ -328,31 +316,6 @@ public final class BookingRequest extends Request {
         }
     }
 
-    /**
-     * A class that holds the first and last name of an individual in an easy to use container.
-     */
-    public static final class Name {
-
-        /**
-         * The first name of the person represented.
-         */
-        public final String first;
-
-        /**
-         * The last name of the person represented.
-         */
-        public final String last;
-
-        /**
-         * The constructor for this name object.
-         * @param first The first name to set.
-         * @param last The last name.
-         */
-        public Name(final String first, final String last) {
-            this.first = first;
-            this.last = last;
-        }
-    }
 
     /**
      * A container for a room for booking.
