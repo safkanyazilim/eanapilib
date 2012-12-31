@@ -6,6 +6,7 @@ package com.ean.mobile.request;
 
 import java.io.IOException;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -480,18 +481,29 @@ public final class BookingRequest extends Request {
                 pairs.add(new BasicNameValuePair(roomId + "SmokingPreference", room.smokingPreference));
 
                 if (rooms.size() == 1) {
+                    // then this is a singular room and the codes must be put in at the root.
                     pairs.add(new BasicNameValuePair("roomTypeCode", room.roomTypeCode));
                     pairs.add(new BasicNameValuePair("rateCode", room.rateCode));
                     pairs.add(new BasicNameValuePair("chargeableRate", room.rate.chargeable.getTotal().toString()));
                     pairs.add(new BasicNameValuePair("rateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
                 } else {
-                    pairs.add(new BasicNameValuePair(roomId + "RoomTypeCode", room.roomTypeCode));
-                    pairs.add(new BasicNameValuePair(roomId + "RateCode", room.rateCode));
-                    pairs.add(new BasicNameValuePair(roomId + "ChargeableRate", room.rate.chargeable.getTotal().toString()));
-
                     if (singularRateKey && roomNumber == 1) {
+                        // In this case, we have multiple identical rooms and we must modify the keys accordingly.
+
+                        // since all rooms are identical (have the same rate key), then all rooms have the same
+                        // chargeable rate, therefore we can simply multiply the chargeable rate by the number
+                        // of rooms for the total chargeable rate.
+                        BigDecimal chargeable = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
+                        pairs.add(new BasicNameValuePair("roomTypeCode", room.roomTypeCode));
+                        pairs.add(new BasicNameValuePair("rateCode", room.rateCode));
+                        pairs.add(new BasicNameValuePair("chargeableRate", chargeable.toString()));
                         pairs.add(new BasicNameValuePair("rateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
                     } else if (!singularRateKey) {
+                        // if we're not a singular rate key, then we are a multiple room TYPE booking and require some
+                        // special handling.
+                        pairs.add(new BasicNameValuePair(roomId + "RoomTypeCode", room.roomTypeCode));
+                        pairs.add(new BasicNameValuePair(roomId + "RateCode", room.rateCode));
+                        pairs.add(new BasicNameValuePair(roomId + "ChargeableRate", room.rate.chargeable.getTotal().toString()));
                         pairs.add(new BasicNameValuePair(roomId + "RateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
                     }
                 }
