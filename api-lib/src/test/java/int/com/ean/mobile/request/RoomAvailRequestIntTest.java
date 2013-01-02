@@ -6,8 +6,7 @@ package com.ean.mobile.request;
 import java.util.Arrays;
 import java.util.List;
 
-import org.joda.time.DateTime;
-
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.ean.mobile.HotelRoom;
@@ -28,7 +27,7 @@ public class RoomAvailRequestIntTest {
 
     @Test
     public void testGetGoodAvail() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
             List<HotelRoom> rooms
                     = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "");
@@ -40,7 +39,7 @@ public class RoomAvailRequestIntTest {
 
     @Test
     public void testMultiRoomAvail() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
             List<HotelRoom> rooms
                 = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "");
@@ -52,20 +51,20 @@ public class RoomAvailRequestIntTest {
 
     @Test(expected = DataValidationException.class)
     public void testGetAvailWrongDates() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, -3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
         RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "");
     }
 
     @Test(expected = DataValidationException.class)
     public void testGetAvailBadHotel() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         RoomAvailRequest.getRoomAvail(-1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1], "");
     }
 
 
     @Test
     public void testGetGoodAvailMultiRoom() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         List<RoomOccupancy> occupancies = Arrays.asList(
                 OCCUPANCY,
                 new RoomOccupancy(1, 3)

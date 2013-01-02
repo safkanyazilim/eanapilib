@@ -12,7 +12,7 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,8 +51,8 @@ public final class ListRequest extends Request {
      */
     public static HotelInfoList searchForHotels(final String destination,
                                                 final RoomOccupancy occupancy,
-                                                final DateTime arrivalDate,
-                                                final DateTime departureDate)
+                                                final LocalDate arrivalDate,
+                                                final LocalDate departureDate)
             throws IOException, EanWsError {
         return searchForHotels(destination, Collections.singletonList(occupancy), arrivalDate, departureDate);
     }
@@ -71,8 +71,8 @@ public final class ListRequest extends Request {
      */
     public static HotelInfoList searchForHotels(final String destination,
                                                 final List<RoomOccupancy> occupancies,
-                                                final DateTime arrivalDate,
-                                                final DateTime departureDate)
+                                                final LocalDate arrivalDate,
+                                                final LocalDate departureDate)
             throws IOException, EanWsError {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(

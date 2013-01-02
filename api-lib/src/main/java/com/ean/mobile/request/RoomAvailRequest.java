@@ -13,7 +13,7 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,8 +53,8 @@ public final class RoomAvailRequest extends Request {
      */
     public static List<HotelRoom> getRoomAvail(final long hotelId,
                                                final RoomOccupancy room,
-                                               final DateTime arrivalDate,
-                                               final DateTime departureDate,
+                                               final LocalDate arrivalDate,
+                                               final LocalDate departureDate,
                                                final String customerSessionId)
             throws IOException, EanWsError {
         return getRoomAvail(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId);
@@ -78,8 +78,8 @@ public final class RoomAvailRequest extends Request {
 
     public static List<HotelRoom> getRoomAvail(final long hotelId,
                                                final List<RoomOccupancy> rooms,
-                                               final DateTime arrivalDate,
-                                               final DateTime departureDate,
+                                               final LocalDate arrivalDate,
+                                               final LocalDate departureDate,
                                                final String customerSessionId)
             throws IOException, EanWsError {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
@@ -117,10 +117,10 @@ public final class RoomAvailRequest extends Request {
                 // it'll be parsed as a singular object, otherwise it'll be an array.
                 if (response.optJSONArray("HotelRoomResponse") != null) {
                     final JSONArray hotelRoomResponse = response.optJSONArray("HotelRoomResponse");
-                    hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
+                    hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse, arrivalDate);
                 } else {
                     final JSONObject hotelRoomResponse = response.optJSONObject("HotelRoomResponse");
-                    hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse);
+                    hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse, arrivalDate);
                 }
             } else if (response.has("EanWsError")) {
                 throw EanWsError.fromJson(response.getJSONObject("EanWsError"));

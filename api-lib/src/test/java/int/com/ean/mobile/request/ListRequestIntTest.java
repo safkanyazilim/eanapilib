@@ -3,7 +3,7 @@
  */
 package com.ean.mobile.request;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.junit.Test;
 
 import com.ean.mobile.HotelInfoList;
@@ -22,7 +22,7 @@ public class ListRequestIntTest {
 
     @Test
     public void testSearchForHotelsHappy() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
         HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
@@ -31,21 +31,21 @@ public class ListRequestIntTest {
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsCauseError() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, -3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
 
         ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
         ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1]);
     }
 
     @Test
     public void testSearchForHotelsMultiRoomType() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
         List<RoomOccupancy> occupancies = Arrays.asList(
                 OCCUPANCY,

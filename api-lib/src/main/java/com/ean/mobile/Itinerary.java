@@ -1,6 +1,6 @@
 package com.ean.mobile;
 
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONArray;
@@ -31,76 +31,6 @@ public final class Itinerary {
     private static final DateTimeFormatter API_DATE_PARSER = DateTimeFormat.forPattern("MM/dd/YYYY");
 
     /**
-     * The various statuses a HotelConfirmation can hold once booked.
-     * Indicates the status of the reservation in the supplier system at the time of booking.
-     * Anticipate appropriate customer messaging for all non-confirmed values.
-     */
-    public enum ConfirmationStatus {
-
-        /**
-         * Encountered when an unknown confirmation status is encountered. Should never happen.
-         */
-        UNKNOWN(""),
-        /**
-         * The normal state of a confirmation. When everything has gone right, a confirmation will say confirmed.
-         */
-        CONFIRMED("CF"),
-        /**
-         * A cancelled confirmation.
-         */
-        CANCELLED("CX"),
-        /**
-         * Unconfirmed. Usually due to the property being sold out. Agent will follow up.
-         * Most cases result in customer being advised to select other property when agent cannot obtain a reservation.
-         */
-        UNCONFIRMED("UC"),
-        /**
-         * Pending Supplier. Agent will follow up with customer when confirmation number is available.
-         */
-        PENDING_SUPPLIER("PS"),
-        /**
-         * Error. Agent attention needed. Agent will follow up.
-         */
-        ERROR("ER"),
-        /**
-         * Deleted Itinerary (Usually a test or failed booking)
-         */
-        DELETED("DT");
-
-        private static final Map<String, ConfirmationStatus> STATUSES;
-
-        static {
-            final Map<String, ConfirmationStatus> statuses = new HashMap<String, ConfirmationStatus>();
-            statuses.put(CONFIRMED.code, CONFIRMED);
-            statuses.put(CANCELLED.code, CANCELLED);
-            statuses.put(UNCONFIRMED.code, UNCONFIRMED);
-            statuses.put(PENDING_SUPPLIER.code, PENDING_SUPPLIER);
-            statuses.put(ERROR.code, ERROR);
-            statuses.put(DELETED.code, DELETED);
-            STATUSES = Collections.unmodifiableMap(statuses);
-        }
-
-        final String code;
-
-        ConfirmationStatus(final String code) {
-            this.code = code;
-        }
-
-        /**
-         * Gets a ConfirmationStatus object from a string. Assumes no whitespace and fully uppercase.
-         * @param code The code returned from the API
-         * @return The ConfirmationStatus object represented by the string.
-         */
-        public static ConfirmationStatus fromString(final String code) {
-            if (code == null || code.length() != 2) {
-                return UNKNOWN;
-            } else {
-                return STATUSES.get(code);
-            }
-        }
-    }
-
-    /**
      * ID associated with the booking.
      */
     public final long id;
@@ -113,17 +43,17 @@ public final class Itinerary {
     /**
      * Date reservation was booked.
      */
-    public final DateTime creationDate;
+    public final LocalDate creationDate;
 
     /**
      * First check-in date for this itinerary.
      */
-    public final DateTime itineraryStartDate;
+    public final LocalDate itineraryStartDate;
 
     /**
      * Final check-out date for this itinerary.
      */
-    public final DateTime itineraryEndDate;
+    public final LocalDate itineraryEndDate;
 
     /**
      * Affiliate-assigned value used when booking was placed, if applicable.
@@ -144,9 +74,9 @@ public final class Itinerary {
     public Itinerary(final JSONObject object) {
         this.id = object.optLong("itineraryId");
         this.affiliateId = object.optLong("affiliateId");
-        this.creationDate = API_DATE_PARSER.parseDateTime(object.optString("creationDate"));
-        this.itineraryStartDate = API_DATE_PARSER.parseDateTime(object.optString("itineraryStartDate"));
-        this.itineraryEndDate = API_DATE_PARSER.parseDateTime(object.optString("itineraryEndDate"));
+        this.creationDate = API_DATE_PARSER.parseLocalDate(object.optString("creationDate"));
+        this.itineraryStartDate = API_DATE_PARSER.parseLocalDate(object.optString("itineraryStartDate"));
+        this.itineraryEndDate = API_DATE_PARSER.parseLocalDate(object.optString("itineraryEndDate"));
         this.affiliateCustomerId = object.optString("affiliateCustomerId");
         this.customer = new Customer(object.optJSONObject("Customer"));
 
@@ -217,12 +147,12 @@ public final class Itinerary {
         /**
          * The check-in date for this particular confirmation.
          */
-        public final DateTime arrivalDate;
+        public final LocalDate arrivalDate;
 
         /**
          * The check-out date for this particular confirmation.
          */
-        public final DateTime departureDate;
+        public final LocalDate departureDate;
 
         /**
          * The confirmation number for this particular confirmation.
@@ -311,8 +241,8 @@ public final class Itinerary {
             this.supplierId = object.optInt("supplierId");
             this.chainCode = object.optString("chainCode");
             this.creditCardType = object.optString("creditCardType");
-            this.arrivalDate = API_DATE_PARSER.parseDateTime(object.optString("arrivalDate"));
-            this.departureDate = API_DATE_PARSER.parseDateTime(object.optString("departureDate"));
+            this.arrivalDate = API_DATE_PARSER.parseLocalDate(object.optString("arrivalDate"));
+            this.departureDate = API_DATE_PARSER.parseLocalDate(object.optString("departureDate"));
             this.confirmationNumber = object.optString("confirmationNumber");
             this.cancellationNumber = object.optString("cancellationNumber");
             this.occupancy = new RoomOccupancy(object);

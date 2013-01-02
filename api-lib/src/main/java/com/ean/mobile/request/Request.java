@@ -21,7 +21,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
@@ -43,7 +43,6 @@ public abstract class Request {
     protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
     protected static final String LOCALE = "en_US";
     protected static final String CURRENCY_CODE = "USD";
-    //TODO: Add customeruseragent so requests can be cataloged as mobile
     protected static final String CUSTOMER_USER_AGENT = "Android";
 
     protected static final String STANDARD_URI_SCHEME = "http";
@@ -88,8 +87,8 @@ public abstract class Request {
                 new BasicNameValuePair("minorRev", MINOR_REV),
                 new BasicNameValuePair("apiKey", API_KEY),
                 new BasicNameValuePair("locale", LOCALE),
-                new BasicNameValuePair("currencyCode", CURRENCY_CODE)
-                //new BasicNameValuePair("customerUserAgent", CUSTOMER_USER_AGENT)
+                new BasicNameValuePair("currencyCode", CURRENCY_CODE),
+                new BasicNameValuePair("customerUserAgent", CUSTOMER_USER_AGENT)
         );
         BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
     }
@@ -216,7 +215,7 @@ public abstract class Request {
      * @param dateTime The DateTime object to format.
      * @return The date string for the API.
      */
-    public static String formatApiDate(final DateTime dateTime) {
+    public static String formatApiDate(final LocalDate dateTime) {
         return DATE_TIME_FORMATTER.print(dateTime);
     }
 }

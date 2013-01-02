@@ -5,8 +5,10 @@ import com.ean.mobile.BasicAddress;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.Name;
+import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.RoomOccupancy;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
+import org.joda.time.YearMonth;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -22,7 +24,7 @@ public class BookingRequestIntTest {
 
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(10, 13);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
         HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
@@ -41,10 +43,10 @@ public class BookingRequestIntTest {
                 "CA",
                 "5401999999999999",
                 "123",
-                DateTime.now().plusYears(1)
+                YearMonth.now().plusYears(1)
         );
 
-        BookingRequest.Room room = new BookingRequest.Room(
+        ReservationRoom room = new ReservationRoom(
                 resInfo.individual.name,
                 rooms.get(0),
                 rooms.get(0).bedTypes.get(0).id,
@@ -62,12 +64,13 @@ public class BookingRequestIntTest {
                 hotelList.customerSessionId
         );
 
+        // TODO: some assertions here on hotel/date/occupancy, etc.
         assertTrue(true);
     }
 
     @Test
     public void testBookMultiRoomInSeattle() throws Exception {
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(10, 13);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
 
         List<RoomOccupancy> occupancies = Arrays.asList(
                 OCCUPANCY,
@@ -96,19 +99,19 @@ public class BookingRequestIntTest {
                 "CA",
                 "5401999999999999",
                 "123",
-                DateTime.now().plusYears(1)
+                YearMonth.now().plusYears(1)
         );
 
 
 
 
-        List<BookingRequest.Room> bookingRooms = Arrays.asList(
-                new BookingRequest.Room(
+        List<ReservationRoom> bookingRooms = Arrays.asList(
+                new ReservationRoom(
                     checkInNames.get(0),
                     rooms.get(0),
                     rooms.get(0).bedTypes.get(0).id,
                     occupancies.get(0)),
-                new BookingRequest.Room(
+                new ReservationRoom(
                         checkInNames.get(1),
                         rooms.get(0),
                         rooms.get(0).bedTypes.get(0).id,
@@ -127,6 +130,7 @@ public class BookingRequestIntTest {
                 hotelList.customerSessionId
         );
 
+        // TODO: some assertions here on hotel/date/occupancy, etc.
         assertTrue(true);
     }
 }

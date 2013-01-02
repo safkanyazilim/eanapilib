@@ -5,20 +5,12 @@ import org.json.JSONObject;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * A basic implementation of address. Simply a final implementation of the abstract {@link Address} with no extra
+ * fields or constructors.
+ */
 public final class BasicAddress extends Address {
-    public BasicAddress(final String addressLine1,
-                        final String city,
-                        final String countryCode,
-                        final String postalCode) {
-        this(Arrays.asList(addressLine1), city, countryCode, postalCode);
-    }
 
-    public BasicAddress(final List<String> addressLines,
-                        final String city,
-                        final String countryCode,
-                        final String postalCode) {
-        this(addressLines, city, null, countryCode,  postalCode);
-    }
 
     public BasicAddress(final String addressLine1,
                         final String city,
@@ -37,7 +29,7 @@ public final class BasicAddress extends Address {
 
     }
 
-    public BasicAddress(final JSONObject object){
+    public BasicAddress(final JSONObject object) {
         super(object);
     }
 }

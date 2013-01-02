@@ -7,7 +7,7 @@ import java.math.BigDecimal;
 /**
  * An address implementation that has latitude and longitude included.
  */
-public class LatLongAddress extends Address {
+public final class LatLongAddress extends Address {
 
     /**
      * The latitude of the address.
@@ -24,6 +24,10 @@ public class LatLongAddress extends Address {
      */
     public final String coordinateAccuracyCode;
 
+    /**
+     * Creates an address object which includes latitude and longitude parts.
+     * @param object A JSONObject which has all of the necessary fields for this type of object.
+     */
     public LatLongAddress(final JSONObject object) {
         super(object);
         //Defaults to 0,0 lat,long to prevent null pointer exceptions.

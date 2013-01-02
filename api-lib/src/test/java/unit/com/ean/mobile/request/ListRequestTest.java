@@ -4,7 +4,7 @@
 package com.ean.mobile.request;
 
 import org.apache.http.NameValuePair;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.json.JSONException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +34,7 @@ public class ListRequestTest {
         mockStatic(Request.class);
         when(Request.performApiRequest(anyString(), anyListOf(NameValuePair.class))).thenThrow(new JSONException(""));
 
-        DateTime[] dateTimes = DateModifier.getAnArrayOfDateTimesWithOffsets(1, 3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
         HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
 

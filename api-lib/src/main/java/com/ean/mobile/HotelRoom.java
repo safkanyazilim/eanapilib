@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -53,13 +54,17 @@ public final class HotelRoom {
      */
     public final Rate rate;
 
+    /**
+     * The cancellation policy associated with this room.
+     */
+    public final CancellationPolicy cancellationPolicy;
 
     /**
      * The main constructor that creates HotelRooms from JSONObjects.
      * @param roomRateDetail The JSON information about this hotel room.
-     * @throws JSONException If any of the fields required do not exist.
+     * @param arrivalDate The arrival date of the room. Used to calculate the cancellation policy.
      */
-    public HotelRoom(final JSONObject roomRateDetail) throws JSONException {
+    public HotelRoom(final JSONObject roomRateDetail, final LocalDate arrivalDate) {
 
         this.description = roomRateDetail.optString("roomTypeDescription");
         this.rateCode = roomRateDetail.optString("rateCode");
@@ -74,18 +79,20 @@ public final class HotelRoom {
             this.bedTypes = Collections.emptyList();
         }
         this.rate = Rate.parseFromRateInfos(roomRateDetail).get(0);
+        this.cancellationPolicy = new CancellationPolicy(roomRateDetail, arrivalDate);
     }
 
     /**
      * Parses a list of HotelRoom objects from a JSONArray of hotel room objects.
      * @param hotelRoomResponseJson The JSONArray from which to parse HotelRoom objects.
+     * @param arrivalDate The arrival date of the room. Used to calculate the cancellation policy.
      * @return The newly formed HotelRoom objects
-     * @throws JSONException If there is an error in the JSON.
      */
-    public static List<HotelRoom> parseRoomRateDetails(final JSONArray hotelRoomResponseJson) throws JSONException {
+    public static List<HotelRoom> parseRoomRateDetails(final JSONArray hotelRoomResponseJson,
+                                                       final LocalDate arrivalDate) {
         final List<HotelRoom> hotelRooms = new ArrayList<HotelRoom>(hotelRoomResponseJson.length());
         for (int j = 0; j < hotelRoomResponseJson.length(); j++) {
-            hotelRooms.add(new HotelRoom(hotelRoomResponseJson.getJSONObject(j)));
+            hotelRooms.add(new HotelRoom(hotelRoomResponseJson.optJSONObject(j), arrivalDate));
         }
 
         return hotelRooms;
@@ -94,11 +101,12 @@ public final class HotelRoom {
     /**
      * Creates a singleton list of HotelRoom from a JSONObject.
      * @param hotelRoomResponseJson The JSONObject from which to parse the HotelRoom Object.
+     * @param arrivalDate The arrival date of the room. Used to calculate the cancellation policy.
      * @return The newly formed HotelRoom object
-     * @throws JSONException If there is an error in the JSON.
      */
-    public static List<HotelRoom> parseRoomRateDetails(final JSONObject hotelRoomResponseJson) throws JSONException {
-        return Collections.singletonList(new HotelRoom(hotelRoomResponseJson));
+    public static List<HotelRoom> parseRoomRateDetails(final JSONObject hotelRoomResponseJson,
+                                                       final LocalDate arrivalDate) {
+        return Collections.singletonList(new HotelRoom(hotelRoomResponseJson, arrivalDate));
     }
 
     /**

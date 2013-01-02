@@ -62,20 +62,6 @@ public abstract class Address {
 
     public Address(final String addressLine1,
                    final String city,
-                   final String countryCode,
-                   final String postalCode) {
-        this(Arrays.asList(addressLine1), city, countryCode, postalCode);
-    }
-
-    public Address(final List<String> addressLines,
-                   final String city,
-                   final String countryCode,
-                   final String postalCode) {
-        this(addressLines, city, null, countryCode,  postalCode);
-    }
-
-    public Address(final String addressLine1,
-                   final String city,
                    final String stateProvinceCode,
                    final String countryCode,
                    final String postalCode) {

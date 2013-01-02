@@ -6,6 +6,7 @@ package com.ean.mobile;
 
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,13 +47,7 @@ public final class RoomOccupancy {
                 = childAges == null
                 ? Collections.<Integer>emptyList()
                 : Collections.unmodifiableList(childAges);
-
-        // now precaluclate the hashcode
-        final int primeNumber = 31;
-        int hashCode = numberOfAdults == 0 ? 1 : numberOfAdults;
-        hashCode *= primeNumber * this.childAges.size();
-        this.hashCode = hashCode;
-
+        this.hashCode = preCalculateHashCode(this);
     }
 
     /**
@@ -80,8 +75,45 @@ public final class RoomOccupancy {
         this(baseOccupancy.numberOfAdults, childAges);
     }
 
+    /**
+     * This constructs a room occupancy object from a JSONObject who has the field numberOfAdults and one of
+     * [numberOfChildren] and [childAges]. If the object has both [numberOfChildren] and [childAges], child ages
+     * is used for the basis of the list, and child ages of 0 are appended to the list.
+     * @param object The JSONObject from which to construct the list.
+     */
     public RoomOccupancy(final JSONObject object) {
-        this(object.optInt("numberOfAdults"), object.optInt("numberOfChildren", 0));
+        this.numberOfAdults = object.optInt("numberOfAdults");
+        final List<Integer> childAges;
+        if (object.has("childAges")) {
+            final String[] ageStrings = object.optString("childAges").split(",");
+            childAges = new ArrayList<Integer>(ageStrings.length);
+            for (String age : ageStrings) {
+                childAges.add(Integer.parseInt(age));
+            }
+            if (object.has("numberOfChildren") && object.optInt("numberOfChildren") > childAges.size()) {
+                childAges.addAll(Collections.nCopies(object.optInt("numberOfChildren"), 0));
+            }
+        } else if (object.has("numberOfChildren")) {
+            childAges = Collections.nCopies(object.optInt("numberOfChildren"), 0);
+        } else {
+            childAges = Collections.emptyList();
+        }
+
+        this.childAges = Collections.unmodifiableList(childAges);
+        this.hashCode = preCalculateHashCode(this);
+    }
+
+    /**
+     * Gets the hash code for a room occupancy.
+     * @param occupancy The room occupancy for which to calculate the hash code.
+     * @return The hash code for the occupancy
+     */
+    private static int preCalculateHashCode(final RoomOccupancy occupancy) {
+        final int primeNumber = 31;
+        int hashCode = occupancy.numberOfAdults == 0 ? 1 : occupancy.numberOfAdults;
+        hashCode *= primeNumber * occupancy.childAges.size() == 0 ? 1 : occupancy.childAges.size();
+        return hashCode;
+
     }
 
     /**
