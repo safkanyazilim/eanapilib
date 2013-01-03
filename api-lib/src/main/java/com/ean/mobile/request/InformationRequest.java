@@ -57,7 +57,7 @@ public final class InformationRequest extends Request {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        //urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
         try {
             final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);

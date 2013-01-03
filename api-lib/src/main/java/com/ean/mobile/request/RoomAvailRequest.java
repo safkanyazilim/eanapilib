@@ -43,8 +43,8 @@ public final class RoomAvailRequest extends Request {
      *
      * @param hotelId The hotel to search for availability in.
      * @param room The singular room occupancy to search for.
-     * @param arrivalDate The date of arrival, specified as a DateTime object.
-     * @param departureDate The date of departure (from the hotel), specified as a DateTime object.
+     * @param arrivalDate The date of arrival.
+     * @param departureDate The date of departure (from the hotel).
      * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
      *                          Can be null.
      * @return The list of HotelRoom objects returned by the API request.
@@ -76,10 +76,11 @@ public final class RoomAvailRequest extends Request {
      *
      * @param hotelId The hotel to search for availability in.
      * @param rooms The list of room occupancies to search for.
-     * @param arrivalDate The date of arrival, specified as a DateTime object.
-     * @param departureDate The date of departure (from the hotel), specified as a DateTime object.
+     * @param arrivalDate The date of arrival.
+     * @param departureDate The date of departure (from the hotel).
      * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *                          Can be null.
+     *                          The same customerSessionId as returned to
+     *                          {@link com.ean.mobile.HotelInfoList#customerSessionId}.
      * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.
@@ -94,11 +95,9 @@ public final class RoomAvailRequest extends Request {
                                                final String currencyCode)
             throws IOException, EanWsError {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
-            new BasicNameValuePair("departureDate", formatApiDate(departureDate)),
-            new BasicNameValuePair("includeDetails", "true"),
-            new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("hotelId", Long.toString(hotelId))
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+                new BasicNameValuePair("includeDetails", "true")
         );
 
         final List<NameValuePair> roomPairs = new ArrayList<NameValuePair>(rooms.size());
@@ -109,7 +108,7 @@ public final class RoomAvailRequest extends Request {
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(roomPairs);
 

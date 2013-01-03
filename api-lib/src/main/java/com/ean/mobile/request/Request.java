@@ -23,6 +23,7 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.GzipDecompressingEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -103,6 +104,7 @@ public abstract class Request {
      */
     private static String performApiRequestForString(final String relativePath,
                                                      final List<NameValuePair> params) throws IOException {
+        //TODO: refactor this to use java.net.HttpUrlConnection and javax.net.ssl.HttpsUrlConnection
         //Build the url
         final HttpRequestBase request;
         if ("res".equals(relativePath)) {
@@ -110,11 +112,23 @@ public abstract class Request {
         } else {
             request = new HttpGet(createFullUri(STANDARD_ENDPOINT, relativePath, params));
         }
-        request.setHeader("Accept", "application/json, */*");
-        System.out.println(request.getURI());
+
+        /****/
+        /****/
+        String[] printbits = request.getURI().toString().split("\\?");
+        System.out.print(printbits[0] + "?");
+        if (printbits[0].endsWith("t")) {
+            System.out.print("     ");
+        } else if (printbits[0].endsWith("l")) {
+            System.out.print("    ");
+        }
+        System.out.println(printbits[1]);
+        /****/
+        /****/
+
         Log.d(Constants.DEBUG_TAG, "request endpoint: " + request.getURI().getHost());
         final long startTime = System.currentTimeMillis();
-        final DefaultHttpClient client = new EANAPIHttpClient();
+        final HttpClient client = new EANAPIHttpClient();
         final HttpResponse response = client.execute(request);
         final StatusLine statusLine = response.getStatusLine();
         final String jsonString;
@@ -212,20 +226,51 @@ public abstract class Request {
     }
 
     /**
-     * Formats a DateTime object as a date string expected by the API.
-     * @param dateTime The DateTime object to format.
-     * @return The date string for the API.
+     * Gets the url parameters that will need to be present for every request.
+     * @param locale The locale in which to request.
+     * @param currencyCode The currency code in which to perform this request.
+     * @param arrivalDate The arrival date for this request.
+     * @param departureDate The departure date for this request.
+     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
      */
-    public static String formatApiDate(final LocalDate dateTime) {
-        return DATE_TIME_FORMATTER.print(dateTime);
+    public static List<NameValuePair> getBasicUrlParameters(final String locale,
+                                                            final String currencyCode,
+                                                            final LocalDate arrivalDate,
+                                                            final LocalDate departureDate) {
+        final List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.addAll(BASIC_URL_PARAMETERS);
+        if (locale != null) {
+            params.add(new BasicNameValuePair("locale", locale));
+        }
+        if (currencyCode != null) {
+            params.add(new BasicNameValuePair("currencyCode", currencyCode));
+        }
+        if (arrivalDate != null) {
+            params.add(new BasicNameValuePair("arrivalDate", DATE_TIME_FORMATTER.print(arrivalDate)));
+        }
+        if (departureDate != null) {
+            params.add(new BasicNameValuePair("departureDate", DATE_TIME_FORMATTER.print(departureDate)));
+        }
+        return params;
     }
 
-    public static List<NameValuePair> getBasicUrlParameters(final String locale, final String currencyCode) {
-        final List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("locale", locale));
-        params.add(new BasicNameValuePair("currencyCode", currencyCode));
-        params.addAll(BASIC_URL_PARAMETERS);
-        return params;
+    /**
+     * Gets the url parameters that will need to be present for every request.
+     * @param locale The locale in which to request.
+     * @param currencyCode The currency code in which to perform this request.
+     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
+     */
+    public static List<NameValuePair> getBasicUrlParameters(final String locale,
+                                                            final String currencyCode) {
+        return getBasicUrlParameters(locale, currencyCode, null, null);
+    }
+
+    /**
+     * Gets the url parameters that will need to be present for every request.
+     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
+     */
+    public static List<NameValuePair> getBasicUrlParameters() {
+        return getBasicUrlParameters(null, null, null, null);
     }
 
     private static final class EANAPIHttpClient extends DefaultHttpClient {
@@ -245,6 +290,9 @@ public abstract class Request {
                 if (!request.containsHeader("Accept-Encoding")) {
                     request.addHeader("Accept-Encoding", "gzip");
                 }
+                if (!request.containsHeader("Accept")) {
+                    request.addHeader("Accept", "application/json, */*");
+                }
             }
         }
 
@@ -257,13 +305,14 @@ public abstract class Request {
         private static final class GzipResponseInterceptor implements HttpResponseInterceptor {
             public void process(final HttpResponse response, final HttpContext context)
                     throws HttpException, IOException {
-                HttpEntity entity = response.getEntity();
+                // The idea here is to check the headers, and if they contain "gzip", then decompress
+                // the data transparently.
+                final HttpEntity entity = response.getEntity();
                 if (entity != null) {
-                    Header header = entity.getContentEncoding();
+                    final Header header = entity.getContentEncoding();
                     if (header != null) {
-                        HeaderElement[] codecs = header.getElements();
-                        for (HeaderElement codec : codecs) {
-                            if (codec.getName().equalsIgnoreCase("gzip")) {
+                        for (HeaderElement element : header.getElements()) {
+                            if (element.getName().equalsIgnoreCase("gzip")) {
                                 response.setEntity(new GzipDecompressingEntity(response.getEntity()));
                                 return;
                             }

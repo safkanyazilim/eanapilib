@@ -43,6 +43,13 @@ public final class BookingRequest extends Request {
      */
     private static final String URL_SUBDIR = "res";
 
+    /**
+     * Private no-op constructor to prevent instantiation.
+     */
+    private BookingRequest() {
+        // see javadoc.
+    }
+
     //TODO: Overload performBooking so that it takes a HotelRoom object rather than Room and infers the rest
     // of the information from the other fields, similar to the BookingRequestIntTest.
 
@@ -150,13 +157,11 @@ public final class BookingRequest extends Request {
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", hotelId.toString()),
-                new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
-                new BasicNameValuePair("departureDate", formatApiDate(departureDate)),
                 new BasicNameValuePair("supplierType", supplierType)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
         urlParameters.addAll(rateInfoParameters);
         urlParameters.addAll(ReservationRoom.asNameValuePairs(roomGroup));
         urlParameters.addAll(reservationInfo.asNameValuePairs());
@@ -278,7 +283,7 @@ public final class BookingRequest extends Request {
         /**
          * The formatter for the year field passed to the request.
          */
-        private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormat.forPattern("YYYY");
+        private static final DateTimeFormatter YEAR_FORMATTER = DateTimeFormat.forPattern("yyyy");
 
         /**
          * The type of credit card to be used (MC, VS, etc.).
