@@ -26,6 +26,7 @@ import com.ean.mobile.exception.EanWsError;
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
  */
 public final class ListRequest extends Request {
+
     private static final String NUMBER_OF_RESULTS = "10";
     private static final String URL_SUBDIR = "list";
 
@@ -56,8 +57,7 @@ public final class ListRequest extends Request {
                                                 final LocalDate arrivalDate,
                                                 final LocalDate departureDate,
                                                 final String locale,
-                                                final String currencyCode)
-            throws IOException, EanWsError {
+                                                final String currencyCode) throws IOException, EanWsError {
         return searchForHotels(
                 destination,
                 Collections.singletonList(occupancy),
@@ -84,14 +84,11 @@ public final class ListRequest extends Request {
                                                 final LocalDate arrivalDate,
                                                 final LocalDate departureDate,
                                                 final String locale,
-                                                final String currencyCode)
-            throws IOException, EanWsError {
+                                                final String currencyCode) throws IOException, EanWsError {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("destinationString", destination),
-                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
-                new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
-                new BasicNameValuePair("departureDate", formatApiDate(departureDate))
+                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
         );
 
         final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
@@ -103,7 +100,7 @@ public final class ListRequest extends Request {
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(roomParameters);
 
@@ -123,18 +120,62 @@ public final class ListRequest extends Request {
             final String cacheKey = listResponse.optString("cacheKey");
             final String cacheLocation = listResponse.optString("cacheLocation");
             final String customerSessionId = listResponse.optString("customerSessionId");
+            final int pageSize = listResponse.optJSONObject("HotelList").optInt("@size");
+            final int totalNumberOfResults = listResponse.optJSONObject("HotelList").optInt("@activePropertyCount");
             final JSONArray hotelList = listResponse
                 .getJSONObject("HotelList")
                 .getJSONArray("HotelSummary");
             final List<HotelInfo> hotels = new ArrayList<HotelInfo>(hotelList.length());
             for (int i = 0; i < hotelList.length(); i++) {
-                hotels.add(new HotelInfo(hotelList.getJSONObject(i)));
+                hotels.add(new HotelInfo(hotelList.getJSONObject(i), i));
             }
 
-            return new HotelInfoList(hotels, cacheKey, cacheLocation, customerSessionId);
+            return new HotelInfoList(
+                    hotels,
+                    cacheKey,
+                    cacheLocation,
+                    customerSessionId,
+                    pageSize,
+                    totalNumberOfResults);
         } catch (JSONException jse) {
             return HotelInfoList.empty();
         }
+    }
 
+    public static HotelInfoList loadMoreResults(final HotelInfoList list,
+                                                final String locale,
+                                                final String currencyCode) throws IOException, EanWsError {
+        final int myPageIndex = list.allocateNewPageIndex();
+        final int myStartIndex = list.pageSize * myPageIndex;
+        final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("cacheKey", list.cacheKey),
+                new BasicNameValuePair("cacheLocation", list.cacheLocation),
+                new BasicNameValuePair("customerSessionId", list.customerSessionId)
+        );
+
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(requestParameters);
+        try {
+            final JSONObject listResponse
+                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
+
+            if (listResponse.has("EanWsError")) {
+                throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
+            }
+
+            final JSONArray newHotelJson = listResponse
+                    .getJSONObject("HotelList")
+                    .getJSONArray("HotelSummary");
+            final List<HotelInfo> newHotels = new ArrayList<HotelInfo>(newHotelJson.length());
+            for (int i = 0; i < newHotelJson.length(); i++) {
+                newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i), i + myStartIndex));
+            }
+
+            list.addAll(myStartIndex, newHotels);
+        } catch (JSONException jse) {
+            // we'll do nothing.
+        }
+        return list;
     }
 }
