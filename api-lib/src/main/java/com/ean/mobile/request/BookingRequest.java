@@ -67,7 +67,9 @@ public final class BookingRequest extends Request {
                                       final ReservationRoom room,
                                       final ReservationInfo reservationInfo,
                                       final Address address,
-                                      final String customerSessionId)
+                                      final String customerSessionId,
+                                      final String locale,
+                                      final String currencyCode)
             throws IOException, EanWsError {
         return performBooking(
                 hotelId,
@@ -77,7 +79,9 @@ public final class BookingRequest extends Request {
                 Collections.singletonList(room),
                 reservationInfo,
                 address,
-                customerSessionId);
+                customerSessionId,
+                locale,
+                currencyCode);
     }
 
     /**
@@ -99,7 +103,9 @@ public final class BookingRequest extends Request {
                                       final List<ReservationRoom> roomGroup,
                                       final ReservationInfo reservationInfo,
                                       final Address address,
-                                      final String customerSessionId)
+                                      final String customerSessionId,
+                                      final String locale,
+                                      final String currencyCode)
             throws IOException, EanWsError {
         return performBooking(
                 hotelId,
@@ -110,7 +116,9 @@ public final class BookingRequest extends Request {
                 reservationInfo,
                 address,
                 customerSessionId,
-                null);
+                null,
+                locale,
+                currencyCode);
     }
 
     /**
@@ -135,7 +143,9 @@ public final class BookingRequest extends Request {
                                       final ReservationInfo reservationInfo,
                                       final Address address,
                                       final String customerSessionId,
-                                      final List<NameValuePair> extraBookingData)
+                                      final List<NameValuePair> extraBookingData,
+                                      final String locale,
+                                      final String currencyCode)
             throws IOException, EanWsError {
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -146,7 +156,7 @@ public final class BookingRequest extends Request {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(BASIC_URL_PARAMETERS);
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(rateInfoParameters);
         urlParameters.addAll(ReservationRoom.asNameValuePairs(roomGroup));
         urlParameters.addAll(reservationInfo.asNameValuePairs());

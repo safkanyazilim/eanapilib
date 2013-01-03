@@ -45,6 +45,8 @@ public final class ListRequest extends Request {
      * @param occupancy The stated occupancy to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
+     * @param locale The locale in which to perform the request.
+     * @param currencyCode The currency which is desired in the response.
      * @return The list of HotelInfo that were requested by the search parameters.
      * @throws IOException If there was a network-level error.
      * @throws EanWsError If the API encountered an error and was unable to return results.
@@ -52,9 +54,17 @@ public final class ListRequest extends Request {
     public static HotelInfoList searchForHotels(final String destination,
                                                 final RoomOccupancy occupancy,
                                                 final LocalDate arrivalDate,
-                                                final LocalDate departureDate)
+                                                final LocalDate departureDate,
+                                                final String locale,
+                                                final String currencyCode)
             throws IOException, EanWsError {
-        return searchForHotels(destination, Collections.singletonList(occupancy), arrivalDate, departureDate);
+        return searchForHotels(
+                destination,
+                Collections.singletonList(occupancy),
+                arrivalDate,
+                departureDate,
+                locale,
+                currencyCode);
     }
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
@@ -72,7 +82,9 @@ public final class ListRequest extends Request {
     public static HotelInfoList searchForHotels(final String destination,
                                                 final List<RoomOccupancy> occupancies,
                                                 final LocalDate arrivalDate,
-                                                final LocalDate departureDate)
+                                                final LocalDate departureDate,
+                                                final String locale,
+                                                final String currencyCode)
             throws IOException, EanWsError {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
@@ -91,7 +103,7 @@ public final class ListRequest extends Request {
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(BASIC_URL_PARAMETERS);
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(roomParameters);
 

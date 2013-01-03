@@ -55,9 +55,18 @@ public final class RoomAvailRequest extends Request {
                                                final RoomOccupancy room,
                                                final LocalDate arrivalDate,
                                                final LocalDate departureDate,
-                                               final String customerSessionId)
+                                               final String customerSessionId,
+                                               final String locale,
+                                               final String currencyCode)
             throws IOException, EanWsError {
-        return getRoomAvail(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId);
+        return getRoomAvail(
+                hotelId,
+                Collections.singletonList(room),
+                arrivalDate,
+                departureDate,
+                customerSessionId,
+                locale,
+                currencyCode);
     }
     /**
      * Gets the room availability for the specified information.
@@ -80,7 +89,9 @@ public final class RoomAvailRequest extends Request {
                                                final List<RoomOccupancy> rooms,
                                                final LocalDate arrivalDate,
                                                final LocalDate departureDate,
-                                               final String customerSessionId)
+                                               final String customerSessionId,
+                                               final String locale,
+                                               final String currencyCode)
             throws IOException, EanWsError {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("arrivalDate", formatApiDate(arrivalDate)),
@@ -98,7 +109,7 @@ public final class RoomAvailRequest extends Request {
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(BASIC_URL_PARAMETERS);
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(roomPairs);
 

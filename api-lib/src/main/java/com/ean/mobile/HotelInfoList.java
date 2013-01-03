@@ -3,10 +3,9 @@
  */
 package com.ean.mobile;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * The holder for a list of hotels, used as the return value from the list call.
@@ -37,7 +36,7 @@ public final class HotelInfoList extends LinkedList<HotelInfo> {
      * @param cacheLocation The cache location to set.
      * @param customerSessionId The session to set.
      */
-    public HotelInfoList(final Collection<HotelInfo> hotelInfos,
+    public HotelInfoList(final List<HotelInfo> hotelInfos,
                          final String cacheKey,
                          final String cacheLocation,
                          final String customerSessionId) {

@@ -4,23 +4,33 @@
 
 package com.ean.mobile.request;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpException;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
+import org.apache.http.client.entity.GzipDecompressingEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -37,42 +47,28 @@ import com.ean.mobile.exception.UriCreationException;
  * requests.
  */
 public abstract class Request {
-    //TODO: These should be defined in a .properties file.
-    protected static final String CID = "55505";
-    protected static final String MINOR_REV = "20";
-    protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
-    protected static final String LOCALE = "en_US";
-    protected static final String CURRENCY_CODE = "USD";
-    protected static final String CUSTOMER_USER_AGENT = "Android";
+    private static final List<NameValuePair> BASIC_URL_PARAMETERS;
 
-    protected static final String STANDARD_URI_SCHEME = "http";
-    //protected static final String STANDARD_URI_SCHEME = "https";
-    //protected static final String STANDARD_URI_HOST = "stg1-www.travelnow.com";
-    //protected static final String STANDARD_URI_HOST = "stg5-www.travelnow.com";
-    //protected static final String STANDARD_URI_HOST = "xml.travelnow.com";
-    protected static final String STANDARD_URI_HOST = "api.ean.com";
+    private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
 
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
-    protected static final String SECURE_URI_SCHEME = "https";
-    //protected static final String SECURE_URI_HOST = "stg1-www.travelnow.com";
-    protected static final String SECURE_URI_HOST = "book.api.ean.com";
+    private static final URI STANDARD_ENDPOINT;
 
-
-    protected static final String URI_BASE_PATH = "/ean-services/rs/hotel/v3/";
-    protected static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
-
-    protected static final URI STANDARD_ENDPOINT;
-
-    protected static final URI SECURE_ENDPOINT;
-
-    protected static final List<NameValuePair> BASIC_URL_PARAMETERS;
+    private static final URI SECURE_ENDPOINT;
 
     static {
+        final String standardUriScheme = "http";
+        final String standardUriHost = "api.ean.com";
+        final String secureUriScheme = "https";
+        final String secureUriHost = "book.api.ean.com";
+        final String uriBasePath = "/ean-services/rs/hotel/v3/";
+
         URI standardUri = null;
         URI secureUri = null;
         try {
-            standardUri = new URI(STANDARD_URI_SCHEME, STANDARD_URI_HOST, URI_BASE_PATH, null, null);
-            secureUri = new URI(SECURE_URI_SCHEME, SECURE_URI_HOST, URI_BASE_PATH, null, null);
+            standardUri = new URI(standardUriScheme, standardUriHost, uriBasePath, null, null);
+            secureUri = new URI(secureUriScheme, secureUriHost, uriBasePath, null, null);
         } catch (URISyntaxException use) {
             // This exception can only be thrown if the static variables listed above are incorrectly
             // formatted, or the usage of new URI(...) is incorrect, both of which should be found out
@@ -82,18 +78,21 @@ public abstract class Request {
         }
         STANDARD_ENDPOINT = standardUri;
         SECURE_ENDPOINT = secureUri;
+
+        //TODO: load CID, APIKey, and customerUserAgent from the classpath
+        final String cid = "55505";
+        final String apiKey = "cbrzfta369qwyrm9t5b8y8kf";
+        final String customerUserAgent = "Android";
+
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("cid", CID),
-                new BasicNameValuePair("minorRev", MINOR_REV),
-                new BasicNameValuePair("apiKey", API_KEY),
-                new BasicNameValuePair("locale", LOCALE),
-                new BasicNameValuePair("currencyCode", CURRENCY_CODE),
-                new BasicNameValuePair("customerUserAgent", CUSTOMER_USER_AGENT)
+                new BasicNameValuePair("cid", cid),
+                new BasicNameValuePair("apiKey", apiKey),
+                new BasicNameValuePair("minorRev", "20"),
+                new BasicNameValuePair("customerUserAgent", customerUserAgent)
         );
         BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
     }
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
     /**
      * Performs an api request at the specified path with the parameters listed.
@@ -102,8 +101,8 @@ public abstract class Request {
      * @return The String representation of the JSON returned from the request.
      * @throws IOException If there is a network error or some other connection issue.
      */
-    private static String performApiRequestForString(final String relativePath, final List<NameValuePair> params)
-            throws IOException {
+    private static String performApiRequestForString(final String relativePath,
+                                                     final List<NameValuePair> params) throws IOException {
         //Build the url
         final HttpRequestBase request;
         if ("res".equals(relativePath)) {
@@ -113,18 +112,15 @@ public abstract class Request {
         }
         request.setHeader("Accept", "application/json, */*");
         System.out.println(request.getURI());
-        Log.d(Constants.DEBUG_TAG, "endpoint: " + request.getURI().getHost());
-        Log.d(Constants.DEBUG_TAG, "getting response");
+        Log.d(Constants.DEBUG_TAG, "request endpoint: " + request.getURI().getHost());
         final long startTime = System.currentTimeMillis();
-        final HttpResponse response = new DefaultHttpClient().execute(request);
-        Log.d(Constants.DEBUG_TAG, "got response");
+        final DefaultHttpClient client = new EANAPIHttpClient();
+        final HttpResponse response = client.execute(request);
         final StatusLine statusLine = response.getStatusLine();
         final String jsonString;
         try {
             if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                jsonString = out.toString();
+                jsonString = EntityUtils.toString(response.getEntity());
             } else {
                 jsonString = null;
                 throw new IOException(statusLine.getReasonPhrase());
@@ -134,6 +130,10 @@ public abstract class Request {
             if (response.getEntity().isStreaming()) {
                 response.getEntity().getContent().close();
             }
+            // When HttpClient instance is no longer needed,
+            // shut down the connection manager to ensure
+            // immediate deallocation of all system resources
+            client.getConnectionManager().shutdown();
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
         Log.d(Constants.DEBUG_TAG, "Took " + timeTaken + " milliseconds.");
@@ -205,6 +205,7 @@ public abstract class Request {
             } else if (potentialQueryString.endsWith("&")) {
                 potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
             }
+            // URLEncoder.encode cannot be used since it encodes things in a way the api does not expect.
             queryString = potentialQueryString;
         }
         return queryString;
@@ -217,5 +218,59 @@ public abstract class Request {
      */
     public static String formatApiDate(final LocalDate dateTime) {
         return DATE_TIME_FORMATTER.print(dateTime);
+    }
+
+    public static List<NameValuePair> getBasicUrlParameters(final String locale, final String currencyCode) {
+        final List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.add(new BasicNameValuePair("locale", locale));
+        params.add(new BasicNameValuePair("currencyCode", currencyCode));
+        params.addAll(BASIC_URL_PARAMETERS);
+        return params;
+    }
+
+    private static final class EANAPIHttpClient extends DefaultHttpClient {
+
+        public EANAPIHttpClient() {
+            this.addRequestInterceptor(new GzipRequestInterceptor());
+            this.addResponseInterceptor(new GzipResponseInterceptor());
+        }
+
+        /**
+         * Similar to the response interceptor below, and taken from the same place.
+         */
+        private static final class GzipRequestInterceptor implements HttpRequestInterceptor{
+
+            public void process(final HttpRequest request, final HttpContext context)
+                    throws HttpException, IOException {
+                if (!request.containsHeader("Accept-Encoding")) {
+                    request.addHeader("Accept-Encoding", "gzip");
+                }
+            }
+        }
+
+        /**
+         * Transparent interceptor taken from
+         * <a href="http://hc.apache.org/httpcomponents-client-ga
+         * /httpclient/examples/org/apache/http/examples/client/ClientGZipContentCompression.java">
+         *  apache http components</a>
+         */
+        private static final class GzipResponseInterceptor implements HttpResponseInterceptor {
+            public void process(final HttpResponse response, final HttpContext context)
+                    throws HttpException, IOException {
+                HttpEntity entity = response.getEntity();
+                if (entity != null) {
+                    Header header = entity.getContentEncoding();
+                    if (header != null) {
+                        HeaderElement[] codecs = header.getElements();
+                        for (HeaderElement codec : codecs) {
+                            if (codec.getName().equalsIgnoreCase("gzip")) {
+                                response.setEntity(new GzipDecompressingEntity(response.getEntity()));
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }

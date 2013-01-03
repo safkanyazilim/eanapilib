@@ -25,14 +25,16 @@ public class BookingRequestIntTest {
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
-        HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1]);
+        HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
 
         List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
                 hotelList.get(0).hotelId,
                 OCCUPANCY,
                 dateTimes[0],
                 dateTimes[1],
-                hotelList.customerSessionId);
+                hotelList.customerSessionId,
+                "en_US",
+                "USD");
 
         BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo(
                 "test@expedia.com",
@@ -61,7 +63,9 @@ public class BookingRequestIntTest {
                 room,
                 resInfo,
                 ADDRESS,
-                hotelList.customerSessionId
+                hotelList.customerSessionId,
+                "en_US",
+                "USD"
         );
 
         // TODO: some assertions here on hotel/date/occupancy, etc.
@@ -76,14 +80,17 @@ public class BookingRequestIntTest {
                 OCCUPANCY,
                 new RoomOccupancy(1, 3)
         );
-        HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", occupancies, dateTimes[0], dateTimes[1]);
+        HotelInfoList hotelList
+                = ListRequest.searchForHotels("Seattle, WA", occupancies, dateTimes[0], dateTimes[1], "en_US", "USD");
 
         List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
                 hotelList.get(0).hotelId,
                 occupancies,
                 dateTimes[0],
                 dateTimes[1],
-                hotelList.customerSessionId);
+                hotelList.customerSessionId,
+                "en_US",
+                "USD");
 
         List<Name> checkInNames = Arrays.asList(
                 new Name("test", "tester"),
@@ -127,7 +134,9 @@ public class BookingRequestIntTest {
                 bookingRooms,
                 resInfo,
                 ADDRESS,
-                hotelList.customerSessionId
+                hotelList.customerSessionId,
+                "en_US",
+                "USD"
         );
 
         // TODO: some assertions here on hotel/date/occupancy, etc.

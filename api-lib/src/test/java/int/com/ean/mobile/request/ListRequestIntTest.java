@@ -24,7 +24,7 @@ public class ListRequestIntTest {
     public void testSearchForHotelsHappy() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
 
         assertThat(results.size(), greaterThan(0));
     }
@@ -33,14 +33,14 @@ public class ListRequestIntTest {
     public void testSearchForHotelsCauseError() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
 
-        ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
+        ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1]);
+        ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class ListRequestIntTest {
                 new RoomOccupancy(1, 3)
         );
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", occupancies, dateTimes[0], dateTimes[1]);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", occupancies, dateTimes[0], dateTimes[1], "en_US", "USD");
 
         assertThat(results.size(), greaterThan(0));
     }

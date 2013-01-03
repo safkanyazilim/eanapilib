@@ -45,7 +45,10 @@ public final class InformationRequest extends Request {
      * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
      * @return Returns the extended hotel information that was requested.
      */
-    public static HotelInfoExtended getHotelInformation(final long hotelId, final String customerSessionId)
+    public static HotelInfoExtended getHotelInformation(final long hotelId,
+                                                        final String customerSessionId,
+                                                        final String locale,
+                                                        final String currencyCode)
             throws IOException, EanWsError {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -54,7 +57,7 @@ public final class InformationRequest extends Request {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(BASIC_URL_PARAMETERS);
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
         try {
             final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);

@@ -30,7 +30,7 @@ public class RoomAvailRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
             List<HotelRoom> rooms
-                    = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "");
+                    = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "", "en_US", "USD");
             assertThat(rooms.size(), greaterThan(0));
         } catch (EanWsError ewe) {
             assertEquals("SOLD_OUT", ewe.category);
@@ -42,7 +42,7 @@ public class RoomAvailRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
             List<HotelRoom> rooms
-                = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "");
+                = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "", "en_US", "USD");
             assertThat(rooms.size(), greaterThan(0));
         } catch (EanWsError ewe) {
             assertEquals("SOLD_OUT", ewe.category);
@@ -52,13 +52,13 @@ public class RoomAvailRequestIntTest {
     @Test(expected = DataValidationException.class)
     public void testGetAvailWrongDates() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
-        RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "");
+        RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "", "en_US", "USD");
     }
 
     @Test(expected = DataValidationException.class)
     public void testGetAvailBadHotel() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
-        RoomAvailRequest.getRoomAvail(-1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1], "");
+        RoomAvailRequest.getRoomAvail(-1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1], "", "en_US", "USD");
     }
 
 
@@ -71,7 +71,7 @@ public class RoomAvailRequestIntTest {
         );
         try {
             List<HotelRoom> rooms
-                    = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, occupancies, dateTimes[0], dateTimes[1], "");
+                    = RoomAvailRequest.getRoomAvail(HOTEL_IN_SEATTLE, occupancies, dateTimes[0], dateTimes[1], "", "en_US", "USD");
             assertNotNull(rooms);
             assertThat(rooms.size(), greaterThan(0));
             assertEquals(2, rooms.get(0).rate.roomGroup.size());
