@@ -4,17 +4,17 @@
 
 package com.ean.mobile;
 
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDate;
 import org.joda.time.LocalTime;
 import org.json.JSONArray;
 import org.json.JSONObject;
-
-import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Represents a reservation's cancellation policy as returned from the api.
@@ -34,27 +34,42 @@ public final class CancellationPolicy {
      */
     public final List<CancellationPolicyInfo> policies;
 
+    /**
+     * The standard constructor for cancellation policies, created from the json and the arrival date of the
+     * reservation.
+     * @param object The JSONObject from which to construct.
+     * @param arrivalDate The arrivalDate of the reservation.
+     */
     public CancellationPolicy(final JSONObject object, final LocalDate arrivalDate) {
         this.text = object.optString("cancellationPolicy");
 
-        final List<CancellationPolicyInfo> policies;
+        final List<CancellationPolicyInfo> localPolicies;
         if (object.has("CancelPolicyInfoList")) {
             final JSONObject listJson = object.optJSONObject("CancelPolicyInfoList");
             if (listJson.optJSONArray("CancelPolicyInfo") != null) {
-                policies = new LinkedList<CancellationPolicyInfo>();
+                localPolicies = new LinkedList<CancellationPolicyInfo>();
                 final JSONArray infoListJson = listJson.optJSONArray("CancelPolicyInfo");
                 for (int i = 0; i < infoListJson.length(); i++) {
-                    policies.add(new CancellationPolicyInfo(infoListJson.optJSONObject(i), arrivalDate));
+                    localPolicies.add(new CancellationPolicyInfo(infoListJson.optJSONObject(i), arrivalDate));
                 }
             } else {
-                policies = Collections.singletonList(
+                localPolicies = Collections.singletonList(
                         new CancellationPolicyInfo(listJson.optJSONObject("CancelPolicyInfo"), arrivalDate));
             }
         } else {
-            policies = Collections.emptyList();
+            localPolicies = Collections.emptyList();
         }
 
-        this.policies = Collections.unmodifiableList(policies);
+        this.policies = Collections.unmodifiableList(localPolicies);
+    }
+
+    /**
+     * Simply the text of the cancellation policy.
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return text;
     }
 
     /**
@@ -96,17 +111,22 @@ public final class CancellationPolicy {
          */
         public final String currencyCode;
 
+        /**
+         * The standard constructor for the cancel policy info.
+         * @param object The object to construct from.
+         * @param arrivalDate The arrival date of the reservation.
+         */
         public CancellationPolicyInfo(final JSONObject object, final LocalDate arrivalDate) {
             this.versionId = object.optInt("versionId");
             this.currencyCode = object.optString("currencyCode");
 
-            final Double nightCount = object.optDouble("nightCount");
-            final Double percent = object.optDouble("percent");
-            final Double amount = object.optDouble("amount");
+            final Double localNightCount = object.optDouble("nightCount");
+            final Double localPercent = object.optDouble("percent");
+            final Double localAmount = object.optDouble("amount");
 
-            this.nightCount = nightCount == null ? null : BigDecimal.valueOf(nightCount);
-            this.percent = percent == null ? null : BigDecimal.valueOf(percent);
-            this.amount = amount == null ? null : BigDecimal.valueOf(amount);
+            this.nightCount = localNightCount == null ? null : BigDecimal.valueOf(localNightCount);
+            this.percent = localPercent == null ? null : BigDecimal.valueOf(localPercent);
+            this.amount = localAmount == null ? null : BigDecimal.valueOf(localAmount);
 
             final String cancelTimeString = object.optString("cancelTime");
             final int startWindowHours = object.optInt("startWindowHours");
@@ -126,14 +146,5 @@ public final class CancellationPolicy {
                     = arrivalDate.toDateTime(cancelTime).withZone(cancelZone).minusHours(startWindowHours);
 
         }
-    }
-
-    /**
-     * Simply the text of the cancellation policy.
-     * {@inheritDoc}
-     */
-    @Override
-    public String toString() {
-        return text;
     }
 }

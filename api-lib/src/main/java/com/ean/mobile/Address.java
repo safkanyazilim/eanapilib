@@ -4,14 +4,14 @@
 
 package com.ean.mobile;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONObject;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONObject;
 
 /**
  * Container for address information. Should handle any international address.
@@ -26,11 +26,6 @@ public abstract class Address {
      */
     public static final List<String> VALID_STATE_PROVINCE_CODE_COUNTRY_CODES
             = Collections.unmodifiableList(Arrays.asList("US", "CA", "AU"));
-
-    /**
-     * The maximum number of supported address lines, excluding state, country, and postal code information.
-     */
-    public static final int MAX_NUM_SUPPORTED_LINES = 3;
 
     /**
      * An ordered list of address lines, starting with address line 1 and maxing out around 3.
@@ -59,89 +54,25 @@ public abstract class Address {
      */
     public final String postalCode;
 
-
-    public final List<String> validationErrors;
-
-
-    public Address(final String addressLine1,
-                   final String city,
-                   final String stateProvinceCode,
-                   final String countryCode,
-                   final String postalCode) {
-        this(Arrays.asList(addressLine1), city, stateProvinceCode, countryCode, postalCode);
-    }
-
-    public Address(final List<String> lines,
-                   final String city,
-                   final String stateProvinceCode,
-                   final String countryCode,
-                   final String postalCode) {
-        this.lines = Collections.unmodifiableList(lines == null ? Collections.<String>emptyList() : lines);
-        this.city = city;
-        this.stateProvinceCode = stateProvinceCode;
-        this.countryCode = countryCode;
-        this.postalCode = postalCode;
-
-
-
-        this.validationErrors = Collections.unmodifiableList(validate());
-
-    }
-
+    /**
+     * Creates an address object from a JSONObject which has the appropriate address fields.
+     * @param object The JSONObject from which to construct the address.
+     */
     public Address(final JSONObject object) {
-        final List<String> lines = new LinkedList<String>();
+        final List<String> localLines = new LinkedList<String>();
         String line;
-        // This is an infinite loop that only exits when an address line is not found.
-        for (int i = 1; lines.size() == i - 1; i++) {
+        for (int i = 1; localLines.size() == i - 1; i++) {
             line = object.optString("address" + i);
             if (line != null && !"".equals(line)) {
-                lines.add(line);
+                localLines.add(line);
             }
         }
 
-        this.lines = Collections.unmodifiableList(lines);
+        this.lines = Collections.unmodifiableList(localLines);
         this.city = object.optString("city");
         this.stateProvinceCode = object.optString("stateProvinceCode");
         this.countryCode = object.optString("countryCode");
         this.postalCode = object.optString("postalCode");
-
-        this.validationErrors = Collections.unmodifiableList(validate());
-    }
-
-    private List<String> validate() {
-        final List<String> validationErrors = new LinkedList<String>();
-        //now we validate this address.
-        if (this.lines.size() < 1) {
-            validationErrors.add("Address must have at least one line for the street address.");
-        } else if (this.lines.size() > MAX_NUM_SUPPORTED_LINES) {
-            validationErrors.add("Address may have too many lines. Typical addresses have a maximum of 3 lines.");
-        }
-
-        if (city == null) {
-            validationErrors.add("City cannot be null.");
-        }
-
-        if (VALID_STATE_PROVINCE_CODE_COUNTRY_CODES.contains(countryCode)) {
-            if (stateProvinceCode == null || stateProvinceCode.length() != 2) {
-                validationErrors.add("A 2 character state province code is required for AU, CA, and US country codes.");
-            }
-        } else if (stateProvinceCode != null) {
-            validationErrors.add("stateProvinceCode is only valid for AU, CA, and US country codes.");
-        }
-
-        if (countryCode == null || countryCode.length() != 2) {
-            validationErrors.add("2 character country code is required.");
-        }
-
-        if (postalCode == null) {
-            validationErrors.add("A postal code is required.");
-        }
-
-        return validationErrors;
-    }
-
-    public boolean hasValidationErrors() {
-        return validationErrors.size() > 0;
     }
 
     /**
@@ -149,7 +80,7 @@ public abstract class Address {
      * @return The requested NameValuePairs
      */
     public List<NameValuePair> asBookingRequestPairs() {
-        List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
+        final List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
         int i = 1;
         for (String line : lines) {
             addressPairs.add(new BasicNameValuePair("address" + i, line));
