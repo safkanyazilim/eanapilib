@@ -3,6 +3,7 @@ package com.ean.mobile;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -72,29 +73,8 @@ public final class Reservation {
     public final String supplierType;
 
     /**
-     * Indicates the status of the reservation in the supplier system at the time of booking. Anticipate appropriate customer messaging for all non-confirmed values.
-     * 
-     *Values:
-     * <table>
-     *     <thead>
-     *         <tr>
-     *             <th>Value</th><th>Description</th>
-     *         </tr>
-     *     </thead>
-     *     <tbody>
-     *         <tr><td>CF</td><td>Confirmed</td></tr>
-     *         <tr><td>CX</td><td></td>Cancelled</tr>
-     *         <tr><td>UC</td><td></td>Unconfirmed. Usually due to the property being sold out.
-     *                                 Agent will follow up.
-     *                                 Most cases result in customer being advised to select
-     *                                 other property when agent cannot obtain a reservation.</tr>
-     *         <tr><td>PS</td><td></td>Pending Supplier. Agent will follow up with customer
-     *                                 when confirmation number is available.</tr>
-     *         <tr><td>ER</td><td></td>Error. Agent attention needed. Agent will follow up.</tr>
-     *         <tr><td>DT</td><td></td>Deleted Itinerary (Usually a test or failed booking)</tr>
-     *     </tbody>
-     *     
-     * </table>
+     * Indicates the status of the reservation in the supplier system at the time of booking.
+     * Anticipate appropriate customer messaging for all non-confirmed values.
      */
     public final ConfirmationStatus reservationStatusCode;
 
@@ -156,14 +136,19 @@ public final class Reservation {
      */
     public final CancellationPolicy cancellationPolicy;
 
-    public final List<ReservationRoom> rooms;
+    public final List<Rate> rateInfos;
 
     public Reservation(final JSONObject object) {
         this.itineraryId = object.optLong("itineraryId");
-        final String[] confirmationNumberStrings = object.optString("confirmationNumbers").split(",");
-        final List<Long> confirmationNumbers = new ArrayList<Long>(confirmationNumberStrings.length);
-        for (String conf : confirmationNumberStrings) {
-            confirmationNumbers.add(Long.parseLong(conf));
+        final List<Long> confirmationNumbers;
+        if (object.optJSONArray("confirmationNumbers") != null) {
+            final JSONArray confirmationNumbersJson = object.optJSONArray("confirmationNumbers");
+            confirmationNumbers = new ArrayList<Long>(confirmationNumbersJson.length());
+            for (int i = 0; i < confirmationNumbersJson.length(); i++) {
+                confirmationNumbers.add(confirmationNumbersJson.optLong(i));
+            }
+        } else {
+            confirmationNumbers = Collections.singletonList(object.optLong("confirmationNumbers"));
         }
         this.confirmationNumbers = Collections.unmodifiableList(confirmationNumbers);
         this.processedWithConfirmation = object.optBoolean("processedWithConfirmation");
@@ -186,6 +171,6 @@ public final class Reservation {
         this.nonRefundable = object.optBoolean("nonRefundable");
         this.rateOccupancyPerRoom = object.optInt("rateOccupancyPerRoom");
         this.cancellationPolicy = new CancellationPolicy(object, this.arrivalDate);
-        this.rooms = Collections.unmodifiableList(ReservationRoom.fromJson(object.optJSONObject("RoomGroup")));
+        this.rateInfos = Collections.unmodifiableList(Rate.parseFromRateInfos(object));
     }
 }

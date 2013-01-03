@@ -204,10 +204,7 @@ public final class ReservationRoom {
             roomNumber++;
 
         }
-//
-//            if (rooms.size() > 1 && singularRateKey) {
-//                pairs.add(new BasicNameValuePair("multiRoomRes", Integer.toString(1)));
-//            }
+
         return Collections.unmodifiableList(pairs);
     }
 
