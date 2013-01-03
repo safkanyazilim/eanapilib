@@ -146,8 +146,10 @@ public abstract class Address {
      */
     public List<NameValuePair> asBookingRequestPairs() {
         List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
-        for (int i = 0; i < lines.size(); i++) {
-            addressPairs.add(new BasicNameValuePair("address" + i, lines.get(i)));
+        int i = 1;
+        for (String line : lines) {
+            addressPairs.add(new BasicNameValuePair("address" + i, line));
+            i++;
         }
         addressPairs.add(new BasicNameValuePair("city", city));
         if (VALID_STATE_PROVINCE_CODE_COUNTRY_CODES.contains(countryCode)) {
