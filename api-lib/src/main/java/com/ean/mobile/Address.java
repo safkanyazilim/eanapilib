@@ -4,7 +4,6 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -89,12 +88,11 @@ public abstract class Address {
         final List<String> lines = new LinkedList<String>();
         String line;
         // This is an infinite loop that only exits when an address line is not found.
-        for (int i = 1; true; i++) {
+        for (int i = 1; lines.size() == i - 1; i++) {
             line = object.optString("address" + i);
-            if (line == null) {
-                break;
+            if (line != null && !"".equals(line)) {
+                lines.add(line);
             }
-            lines.add(line);
         }
 
         this.lines = Collections.unmodifiableList(lines);
@@ -107,7 +105,7 @@ public abstract class Address {
     }
 
     private List<String> validate() {
-        final List<String> validationErrors = new ArrayList<String>();
+        final List<String> validationErrors = new LinkedList<String>();
         //now we validate this address.
         if (this.lines.size() < 1) {
             validationErrors.add("Address must have at least one line for the street address.");
@@ -147,7 +145,7 @@ public abstract class Address {
      * @return The requested NameValuePairs
      */
     public List<NameValuePair> asBookingRequestPairs() {
-        List<NameValuePair> addressPairs = new ArrayList<NameValuePair>();
+        List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
         for (int i = 0; i < lines.size(); i++) {
             addressPairs.add(new BasicNameValuePair("address" + i, lines.get(i)));
         }
