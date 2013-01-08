@@ -183,9 +183,10 @@ public final class ListRequest extends Request {
             }
 
             list.addAll(myStartIndex, newHotels);
+            return list;
         } catch (JSONException jse) {
             // we'll do nothing.
+            return list;
         }
-        return list;
     }
 }
