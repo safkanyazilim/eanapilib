@@ -4,15 +4,16 @@
 
 package com.ean.mobile;
 
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicNameValuePair;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 /**
  * A container for a room for booking.
@@ -191,7 +192,7 @@ public final class ReservationRoom {
                     // since all rooms are identical (have the same rate key), then all rooms have the same
                     // chargeable rate, therefore we can simply multiply the chargeable rate by the number
                     // of rooms for the total chargeable rate.
-                    BigDecimal chargeable = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
+                    final BigDecimal chargeable = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
                     pairs.add(new BasicNameValuePair("roomTypeCode", room.roomTypeCode));
                     pairs.add(new BasicNameValuePair("rateCode", room.rateCode));
                     pairs.add(new BasicNameValuePair("chargeableRate", chargeable.toString()));

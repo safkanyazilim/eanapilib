@@ -4,6 +4,13 @@
 
 package com.ean.mobile.request;
 
+import java.util.Arrays;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.joda.time.YearMonth;
+import org.junit.Test;
+
 import com.ean.mobile.Address;
 import com.ean.mobile.BasicAddress;
 import com.ean.mobile.HotelInfoList;
@@ -11,12 +18,6 @@ import com.ean.mobile.HotelRoom;
 import com.ean.mobile.Name;
 import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.RoomOccupancy;
-import org.joda.time.LocalDate;
-import org.joda.time.YearMonth;
-import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.Assert.assertTrue;
 

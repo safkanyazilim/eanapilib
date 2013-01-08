@@ -4,9 +4,9 @@
 
 package com.ean.mobile;
 
-import org.json.JSONObject;
-
 import java.math.BigDecimal;
+
+import org.json.JSONObject;
 
 /**
  * An address implementation that has latitude and longitude included.

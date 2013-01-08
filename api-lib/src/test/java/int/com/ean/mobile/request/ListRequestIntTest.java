@@ -4,16 +4,16 @@
 
 package com.ean.mobile.request;
 
-import com.ean.mobile.HotelInfo;
+import java.util.Arrays;
+import java.util.List;
+
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
+import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.DataValidationException;
-
-import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.Matchers.both;
 import static org.hamcrest.Matchers.greaterThan;

@@ -4,11 +4,11 @@
 
 package com.ean.mobile;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.json.JSONObject;
 
 /**
  * The holder for information about a particular room's adult and child occupancy.

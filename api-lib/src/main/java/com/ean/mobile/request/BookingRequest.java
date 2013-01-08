@@ -6,17 +6,11 @@ package com.ean.mobile.request;
 
 import java.io.IOException;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.ean.mobile.Address;
-import com.ean.mobile.Individual;
-import com.ean.mobile.Name;
-import com.ean.mobile.Reservation;
-import com.ean.mobile.ReservationRoom;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -27,10 +21,11 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ean.mobile.Address;
+import com.ean.mobile.Individual;
+import com.ean.mobile.Reservation;
+import com.ean.mobile.ReservationRoom;
 
-import com.ean.mobile.HotelRoom;
-import com.ean.mobile.Rate;
-import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
 
 /**

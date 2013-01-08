@@ -81,6 +81,7 @@ public final class HotelInfo implements Comparable<HotelInfo> {
     /**
      * The constructor that constructs the hotel info from a JSONObject.
      * @param hotelSummary The object holding the hotel's info.
+     * @param listOrder The place in the hotel list that this HotelInfo object intends to reside.
      * @throws JSONException If there is a problem with the JSON objects
      * @throws MalformedURLException If the thumbnail url is not correctly formatted.
      */
@@ -100,8 +101,13 @@ public final class HotelInfo implements Comparable<HotelInfo> {
         this.listOrder = listOrder;
     }
 
+    /**
+     * Gets the star rating (a BigDecimal) from the string representation of the star rating.
+     * @param starRating The String representation of a star rating.
+     * @return The BigDecimal representation of a star rating.
+     */
     public static BigDecimal parseStarRating(final String starRating) {
-        return starRating == null || "".equals(starRating) ? BigDecimal.ZERO : new BigDecimal(starRating);
+        return starRating == null || "".equals(starRating) ? BigDecimal.ZERO : new BigDecimal(starRating).setScale(1);
     }
 
     /**
@@ -118,7 +124,7 @@ public final class HotelInfo implements Comparable<HotelInfo> {
      * {@inheritDoc}
      */
     @Override
-    public int compareTo(HotelInfo o) {
+    public int compareTo(final HotelInfo o) {
         return this.listOrder.compareTo(o.listOrder);
     }
 }

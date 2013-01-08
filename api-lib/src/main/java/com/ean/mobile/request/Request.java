@@ -115,7 +115,7 @@ public abstract class Request {
 
         /****/
         /****/
-        String[] printbits = request.getURI().toString().split("\\?");
+        final String[] printbits = request.getURI().toString().split("\\?");
         System.out.print(printbits[0] + "?");
         if (printbits[0].endsWith("t")) {
             System.out.print("     ");
@@ -283,7 +283,7 @@ public abstract class Request {
         /**
          * Similar to the response interceptor below, and taken from the same place.
          */
-        private static final class GzipRequestInterceptor implements HttpRequestInterceptor{
+        private static final class GzipRequestInterceptor implements HttpRequestInterceptor {
 
             public void process(final HttpRequest request, final HttpContext context)
                     throws HttpException, IOException {
@@ -300,7 +300,7 @@ public abstract class Request {
          * Transparent interceptor taken from
          * <a href="http://hc.apache.org/httpcomponents-client-ga
          * /httpclient/examples/org/apache/http/examples/client/ClientGZipContentCompression.java">
-         *  apache http components</a>
+         *  apache http components</a>.
          */
         private static final class GzipResponseInterceptor implements HttpResponseInterceptor {
             public void process(final HttpResponse response, final HttpContext context)
@@ -312,7 +312,7 @@ public abstract class Request {
                     final Header header = entity.getContentEncoding();
                     if (header != null) {
                         for (HeaderElement element : header.getElements()) {
-                            if (element.getName().equalsIgnoreCase("gzip")) {
+                            if ("gzip".equalsIgnoreCase(element.getName())) {
                                 response.setEntity(new GzipDecompressingEntity(response.getEntity()));
                                 return;
                             }

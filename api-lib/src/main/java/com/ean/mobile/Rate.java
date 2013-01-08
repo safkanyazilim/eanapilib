@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -46,7 +45,6 @@ public final class Rate {
     /**
      * Constructs a Rate from a JSONObject.
      * @param rateInfoJson The JSONObject holding the data to construct this object with.
-     * @throws JSONException If the JSON isn't configured correctly.
      */
     public Rate(final JSONObject rateInfoJson) {
 

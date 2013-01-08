@@ -11,7 +11,6 @@ import java.util.List;
 
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -134,6 +133,9 @@ public final class HotelRoom {
         return BigDecimal.ZERO;
     }
 
+    /**
+     *
+     */
     public static final class BedType {
         public final String id;
         public final String description;
@@ -143,12 +145,12 @@ public final class HotelRoom {
             this.description = description;
         }
 
-        public static List<BedType> fromJson(JSONObject bedTypeJson) {
+        public static List<BedType> fromJson(final JSONObject bedTypeJson) {
             return Collections.singletonList(
                     new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description")));
         }
 
-        public static List<BedType> fromJson(JSONArray bedTypesJson) {
+        public static List<BedType> fromJson(final JSONArray bedTypesJson) {
             final List<BedType> bedTypes = new ArrayList<BedType>(bedTypesJson.length());
             JSONObject bedTypeJson;
             for (int i = 0; i < bedTypesJson.length(); i++) {

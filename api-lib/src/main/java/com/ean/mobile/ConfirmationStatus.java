@@ -41,7 +41,7 @@ public enum ConfirmationStatus {
      */
     ERROR("ER"),
     /**
-     * Deleted Itinerary (Usually a test or failed booking)
+     * Deleted Itinerary (Usually a test or failed booking).
      */
     DELETED("DT");
 
@@ -60,6 +60,10 @@ public enum ConfirmationStatus {
 
     final String code;
 
+    /**
+     * The sole constructor, sets the string code that this status applies to.
+     * @param code The code for this status.
+     */
     ConfirmationStatus(final String code) {
         this.code = code;
     }

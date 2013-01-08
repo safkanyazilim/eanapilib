@@ -42,7 +42,7 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
     /**
      * The number of pages either loaded or in process of being loaded.
      */
-    private int numberOfPages = 0;
+    private int currentPageIndex;
 
     /**
      * The main constructor for this class. Maps to ArrayList(Collection c) and sets the other fields
@@ -51,6 +51,11 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
      * @param cacheKey The cache key to set.
      * @param cacheLocation The cache location to set.
      * @param customerSessionId The session to set.
+     * @param pageSize The number of HotelInfo objects that will be retrieved each time
+     *                 {@link com.ean.mobile.request.ListRequest#loadMoreResults(HotelInfoList, String, String)}
+     *                 is called.
+     * @param totalNumberOfResults The total number of results that the request that created this
+     *                             HotelInfoList can return.
      */
     public HotelInfoList(final List<HotelInfo> hotelInfos,
                          final String cacheKey,
@@ -74,12 +79,22 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
         return new HotelInfoList(Collections.<HotelInfo>emptyList(), null, null, null, 0, 0);
     }
 
+    /**
+     * Allocates a new page index. Used by
+     * {@link com.ean.mobile.request.ListRequest#loadMoreResults(HotelInfoList, String, String)}
+     * to insert the new set of results in the right position in the list.
+     * @return A new page index after incrementing {@link #currentPageIndex}.
+     */
     public int allocateNewPageIndex() {
-        numberOfPages++;
-        return numberOfPages;
+        currentPageIndex++;
+        return currentPageIndex;
     }
 
+    /**
+     * Gets the page index currently allocated.
+     * @return The page index currently allocated.
+     */
     public int getCurrentPageIndex() {
-        return numberOfPages;
+        return currentPageIndex;
     }
 }
