@@ -134,22 +134,44 @@ public final class HotelRoom {
     }
 
     /**
-     *
+     * The type of beds in the room. Two queens, single king, etc.
      */
     public static final class BedType {
+        /**
+         * The numeric id of the type of beds in the room.
+         */
         public final String id;
+
+        /**
+         * The description of the beds, such as two queens, etc.
+         */
         public final String description;
 
+        /**
+         * The standard constructor. Sets up the two fields of the class.
+         * @param id see {@link BedType#id}.
+         * @param description see {@link BedType#description}.
+         */
         public BedType(final String id, final String description) {
             this.id = id;
             this.description = description;
         }
 
+        /**
+         * Builds a list of BedTypes from a singular JSONObject. Will be a singleton list.
+         * @param bedTypeJson The JSONObject used to construct the singular list.
+         * @return The singleton list constructed from the JSONObject.
+         */
         public static List<BedType> fromJson(final JSONObject bedTypeJson) {
-            return Collections.singletonList(
-                    new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description")));
+            return Collections.unmodifiableList(Collections.singletonList(
+                    new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description"))));
         }
 
+        /**
+         * Builds a list of BedTypes from a JSONArray of objects. Will have the same length as the json array
+         * @param bedTypesJson The array of bed types.
+         * @return The new list of bed types.
+         */
         public static List<BedType> fromJson(final JSONArray bedTypesJson) {
             final List<BedType> bedTypes = new ArrayList<BedType>(bedTypesJson.length());
             JSONObject bedTypeJson;

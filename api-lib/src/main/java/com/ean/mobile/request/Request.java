@@ -237,6 +237,7 @@ public abstract class Request {
                                                             final String currencyCode,
                                                             final LocalDate arrivalDate,
                                                             final LocalDate departureDate) {
+        //TODO: force locale to be a java Locale object?
         final List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.addAll(BASIC_URL_PARAMETERS);
         if (locale != null) {
@@ -273,8 +274,19 @@ public abstract class Request {
         return getBasicUrlParameters(null, null, null, null);
     }
 
+    /**
+     * An implementation of HTTPClient that transparently forces gzip encoding on the request and response, as well
+     * as setst the Accept header to application/json.
+     * Inspired by <a href="http://hc.apache.org/httpcomponents-client-ga
+     * /httpclient/examples/org/apache/http/examples/client/ClientGZipContentCompression.java">
+     *  apache http components</a>.
+     */
     private static final class EANAPIHttpClient extends DefaultHttpClient {
 
+        /**
+         * The standard constructor for this client. Sets up the interceptors to enable the Accept-Encoding
+         * and Accept headers to be set appropriately, if they are not set.
+         */
         public EANAPIHttpClient() {
             this.addRequestInterceptor(new GzipRequestInterceptor());
             this.addResponseInterceptor(new GzipResponseInterceptor());
@@ -285,6 +297,15 @@ public abstract class Request {
          */
         private static final class GzipRequestInterceptor implements HttpRequestInterceptor {
 
+            /**
+             * Implementation of
+             * {@link HttpRequestInterceptor#process(org.apache.http.HttpRequest,
+             * org.apache.http.protocol.HttpContext)}.
+             * @param request The request that is being intercepted.
+             * @param context The context into which the request is being sent.
+             * @throws HttpException Can't happen in this implementation.
+             * @throws IOException Can't happen in this implementation.
+             */
             public void process(final HttpRequest request, final HttpContext context)
                     throws HttpException, IOException {
                 if (!request.containsHeader("Accept-Encoding")) {
@@ -303,6 +324,15 @@ public abstract class Request {
          *  apache http components</a>.
          */
         private static final class GzipResponseInterceptor implements HttpResponseInterceptor {
+            /**
+             * Implementation of
+             * {@link HttpResponseInterceptor#process(org.apache.http.HttpResponse,
+             * org.apache.http.protocol.HttpContext)}.
+             * @param response The response that is being intercepted.
+             * @param context The context which this request/response is being interacted within.
+             * @throws HttpException Can't happen in this implementation.
+             * @throws IOException Can't happen in this implementation.
+             */
             public void process(final HttpResponse response, final HttpContext context)
                     throws HttpException, IOException {
                 // The idea here is to check the headers, and if they contain "gzip", then decompress

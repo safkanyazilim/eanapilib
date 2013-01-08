@@ -30,7 +30,8 @@ public class BookingRequestIntTest {
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
-        HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
+        HotelInfoList hotelList
+                = ListRequest.searchForHotels("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
 
         List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
                 hotelList.get(0).hotelId,

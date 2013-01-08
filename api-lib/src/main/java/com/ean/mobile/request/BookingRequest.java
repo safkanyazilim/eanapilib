@@ -59,8 +59,11 @@ public final class BookingRequest extends Request {
      * @param reservationInfo The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInfo.
      * @param customerSessionId The sessionID associated with this search session.
+     * @param locale The locale in which to book the hotel.
+     * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
                                       final LocalDate arrivalDate,
@@ -95,8 +98,11 @@ public final class BookingRequest extends Request {
      * @param roomGroup The Rooms and their occupancies that will be booked.
      * @param reservationInfo The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInfo.
+     * @param locale The locale in which to book the hotel.
+     * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
                                       final LocalDate arrivalDate,
@@ -134,8 +140,11 @@ public final class BookingRequest extends Request {
      * @param address The address associated with the reservationInfo.
      * @param customerSessionId The session ID carried over from the original search.
      * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
+     * @param locale The locale in which to book the hotel.
+     * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
                                       final LocalDate arrivalDate,
@@ -260,7 +269,7 @@ public final class BookingRequest extends Request {
                                  final String lastName,
                                  final String homePhone,
                                  final String workPhone) {
-            super(email, firstName,lastName, homePhone, workPhone);
+            super(email, firstName, lastName, homePhone, workPhone);
         }
     }
 

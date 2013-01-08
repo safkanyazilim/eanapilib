@@ -75,6 +75,9 @@ public final class ListRequest extends Request {
      * @param occupancies The stated occupancy of each room to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
+     * @param locale The locale to search for the hotels in.
+     * @param currencyCode The currency code to search for.
+     *                     Can be any valid currency, but can only book chargeable currencies.
      * @return The list of HotelInfo that were requested by the search parameters.
      * @throws IOException If there was a network-level error.
      * @throws EanWsError If the API encountered an error and was unable to return results.
@@ -136,15 +139,22 @@ public final class ListRequest extends Request {
                     cacheLocation,
                     customerSessionId,
                     pageSize,
-                    totalNumberOfResults);
+                    totalNumberOfResults,
+                    locale,
+                    currencyCode);
         } catch (JSONException jse) {
             return HotelInfoList.empty();
         }
     }
 
-    public static HotelInfoList loadMoreResults(final HotelInfoList list,
-                                                final String locale,
-                                                final String currencyCode) throws IOException, EanWsError {
+    /**
+     * Loads more results into a HotelInfoList so pagination can be supported.
+     * @param list The HotelInfoList that is being loaded.
+     * @return The newly grown HotelInfoList
+     * @throws IOException If there is a network connection issue.
+     * @throws EanWsError If there is an error with the API request.
+     */
+    public static HotelInfoList loadMoreResults(final HotelInfoList list) throws IOException, EanWsError {
         final int myPageIndex = list.allocateNewPageIndex();
         final int myStartIndex = list.pageSize * myPageIndex;
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
@@ -154,7 +164,7 @@ public final class ListRequest extends Request {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters(list.locale, list.currencyCode));
         urlParameters.addAll(requestParameters);
         try {
             final JSONObject listResponse

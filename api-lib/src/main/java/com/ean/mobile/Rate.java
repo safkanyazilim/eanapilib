@@ -51,7 +51,7 @@ public final class Rate {
         final List<Room> localRooms;
         final JSONObject roomGroupJson = rateInfoJson.optJSONObject("RoomGroup");
         if (roomGroupJson.optJSONArray("Room") != null) {
-            JSONArray roomJson = roomGroupJson.optJSONArray("Room");
+            final JSONArray roomJson = roomGroupJson.optJSONArray("Room");
             localRooms = new ArrayList<Room>(roomJson.length());
             for (int i = 0; i < roomJson.length(); i++) {
                 localRooms.add(new Room(roomJson.optJSONObject(i)));
@@ -96,6 +96,11 @@ public final class Rate {
         return Collections.singletonList(new Rate(rateInfosJson.optJSONObject("RateInfo")));
     }
 
+    /**
+     * Constructs a List of Rate objects from a RateInfos JSONObject.
+     * @param object The JSONObject which holds a RateInfos field which holds an array of RateInfo objects.
+     * @return A fully constructed Rate list.
+     */
     public static List<Rate> parseFromRateInfos(final JSONObject object) {
         final String rateInfoId = "RateInfos";
         if (object.optJSONArray(rateInfoId) != null) {
@@ -112,8 +117,12 @@ public final class Rate {
 
     }
 
-
-    public String getRateKeyForOccupancy(RoomOccupancy occupancy) {
+    /**
+     * Gets the rateKey from a RoomOccupancy which is equivalent to the parameter.
+     * @param occupancy A known room occupancy to find a matching RoomOccupancy in this RoomGroup.
+     * @return The matching rateKey.
+     */
+    public String getRateKeyForOccupancy(final RoomOccupancy occupancy) {
         for (Rate.Room room : roomGroup) {
             if (room.occupancy.equals(occupancy)) {
                 return room.rateKey;
@@ -251,6 +260,10 @@ public final class Rate {
             return baseRateTotal;
         }
 
+        /**
+         * Gets the total of the surcharges of this Rate.
+         * @return The total of the surcharges.
+         */
         public BigDecimal getSurchargeTotal() {
             BigDecimal surchargeTotal = BigDecimal.ZERO;
             for (BigDecimal surcharge : surcharges.values()) {

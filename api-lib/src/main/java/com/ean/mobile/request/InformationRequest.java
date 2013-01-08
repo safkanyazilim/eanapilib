@@ -41,14 +41,14 @@ public final class InformationRequest extends Request {
      * Gets the rest of the information about a hotel not included in previous calls.
      * @param hotelId The hotelId for which to gather more information.
      * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
+     * @param locale The locale for which to get the information about a hotel.
      * @throws IOException If there is an error communicating on the network.
      * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
      * @return Returns the extended hotel information that was requested.
      */
     public static HotelInfoExtended getHotelInformation(final long hotelId,
                                                         final String customerSessionId,
-                                                        final String locale,
-                                                        final String currencyCode)
+                                                        final String locale)
             throws IOException, EanWsError {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -59,6 +59,7 @@ public final class InformationRequest extends Request {
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         //urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
+        urlParameters.addAll(getBasicUrlParameters(locale, null));
         try {
             final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 

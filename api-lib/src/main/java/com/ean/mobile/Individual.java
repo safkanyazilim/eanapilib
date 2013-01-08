@@ -58,6 +58,11 @@ public abstract class Individual {
         this.workPhone = workPhone;
     }
 
+    /**
+     * Constructs an individual from a JSONObject who has email, firstName, lastName, homePhone, and workPhone
+     * fields.
+     * @param object The JSONObject that contains the aforementioned fields.
+     */
     public Individual(final JSONObject object) {
         this.email = object.optString("email");
         this.name = new Name(object);

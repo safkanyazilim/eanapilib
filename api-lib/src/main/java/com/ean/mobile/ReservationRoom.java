@@ -192,7 +192,8 @@ public final class ReservationRoom {
                     // since all rooms are identical (have the same rate key), then all rooms have the same
                     // chargeable rate, therefore we can simply multiply the chargeable rate by the number
                     // of rooms for the total chargeable rate.
-                    final BigDecimal chargeable = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
+                    final BigDecimal chargeable
+                            = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
                     pairs.add(new BasicNameValuePair("roomTypeCode", room.roomTypeCode));
                     pairs.add(new BasicNameValuePair("rateCode", room.rateCode));
                     pairs.add(new BasicNameValuePair("chargeableRate", chargeable.toString()));
@@ -202,8 +203,10 @@ public final class ReservationRoom {
                     // special handling.
                     pairs.add(new BasicNameValuePair(roomId + "RoomTypeCode", room.roomTypeCode));
                     pairs.add(new BasicNameValuePair(roomId + "RateCode", room.rateCode));
-                    pairs.add(new BasicNameValuePair(roomId + "ChargeableRate", room.rate.chargeable.getTotal().toString()));
-                    pairs.add(new BasicNameValuePair(roomId + "RateKey", room.rate.getRateKeyForOccupancy(room.occupancy)));
+                    pairs.add(new BasicNameValuePair(roomId + "ChargeableRate",
+                            room.rate.chargeable.getTotal().toString()));
+                    pairs.add(new BasicNameValuePair(roomId + "RateKey",
+                            room.rate.getRateKeyForOccupancy(room.occupancy)));
                 }
             }
             roomNumber++;
@@ -213,6 +216,12 @@ public final class ReservationRoom {
         return Collections.unmodifiableList(pairs);
     }
 
+    /**
+     * Loads a ReservationRoom from a JSONObject which has a Room parameter which has the appropriate other fields
+     * inside.
+     * @param roomGroup A JSONObject which usually has a name of RoomGroup and has an array of Room fields.
+     * @return The deserialized list.
+     */
     public static List<ReservationRoom> fromJson(final JSONObject roomGroup) {
         final List<ReservationRoom> rooms;
         if (roomGroup.optJSONArray("Room") != null) {

@@ -75,6 +75,10 @@ public final class Itinerary {
      */
     public final List<HotelConfirmation> hotelConfirmations;
 
+    /**
+     * Constructs an Itinerary object from an appropriately structured JSONObject.
+     * @param object The JSONObject that contains appropriate fields to construct an Itinerary.
+     */
     public Itinerary(final JSONObject object) {
         this.id = object.optLong("itineraryId");
         this.affiliateId = object.optLong("affiliateId");
@@ -118,6 +122,11 @@ public final class Itinerary {
          */
         public final CustomerAddress address;
 
+        /**
+         * Constructs a customer object from a JSONObject which has all of the fields for an
+         * {@link Individual} plus extension, faxPhone, and a {@link CustomerAddress}.
+         * @param object The JSONObject with the appropriate fields.
+         */
         public Customer(final JSONObject object) {
             super(object);
             this.extension = object.optString("extension");
@@ -129,7 +138,9 @@ public final class Itinerary {
 
     /**
      * Contains information on the room and hotel booked as well as the current status of the itinerary.
-     * @see <a href="http://developer.ean.com/docs/read/hotels/version_3/request_itinerary/Response_Format#HotelConfirmation">EAN Hotel Confirmation</a> documentation.
+     * @see <a
+     * href="http://developer.ean.com/docs/read/hotels/version_3/request_itinerary/Response_Format#HotelConfirmation">
+     * EAN Hotel Confirmation</a> documentation.
      */
     public final class HotelConfirmation {
 
@@ -169,12 +180,12 @@ public final class Itinerary {
         public final String cancellationNumber;
 
         /**
-         * The stated occupancy of this confirmation
+         * The stated occupancy of this confirmation.
          */
         public final RoomOccupancy occupancy;
 
         /**
-         * The cancellation policy text for this confirmation. Notes the restrictions regarding cancellation
+         * The cancellation policy text for this confirmation. Notes the restrictions regarding cancellation.
          * availability for the booking.
          */
         public final String cancellationPolicy;
@@ -241,6 +252,10 @@ public final class Itinerary {
          */
         public final Name guestName;
 
+        /**
+         * Constructs a HotelConfirmation object from an appropriately structured JSONObject.
+         * @param object A JSONObject with the appropriate fields.
+         */
         public HotelConfirmation(final JSONObject object) {
             this.supplierId = object.optInt("supplierId");
             this.chainCode = object.optString("chainCode");
@@ -266,6 +281,9 @@ public final class Itinerary {
 
         }
 
+        /**
+         * Represents the data held in an itinerary for a hotel.
+         */
         public final class Hotel {
             /**
              * The id of the hotel that has been booked.
@@ -338,6 +356,10 @@ public final class Itinerary {
              */
             public final Map<String, String> confirmationExtras;
 
+            /**
+             * Constructs a HotelObject from a Hotel json object returned from an Itinerary call.
+             * @param object The JSONObject appropriately structured.
+             */
             public Hotel(final JSONObject object) {
                 this.id = object.optLong("hotelId");
                 this.statusCode = object.optString("statusCode");
@@ -351,27 +373,27 @@ public final class Itinerary {
                 this.superRegion = object.optString("superRegion");
                 this.theme = object.optString("theme");
 
-                Map<String, String> confirmationExtras;
+                Map<String, String> localConfirmationExtras;
                 if (object.has("ConfirmationExtras")) {
                     final JSONArray extras;
                     if ((extras
                             = object.optJSONObject("ConfirmationExtras").optJSONArray("ConfirmationExtra")) != null) {
-                        confirmationExtras = new HashMap<String, String>();
+                        localConfirmationExtras = new HashMap<String, String>();
                         JSONObject thisExtra;
                         for (int i = 0; i < extras.length(); i++) {
                             thisExtra = extras.optJSONObject(i);
-                            confirmationExtras.put(thisExtra.optString("name"), thisExtra.optString("value"));
+                            localConfirmationExtras.put(thisExtra.optString("name"), thisExtra.optString("value"));
                         }
                     } else {
                         final JSONObject thisExtra
                                 = object.optJSONObject("ConfirmationExtras").optJSONObject("ConfirmationExtra");
-                        confirmationExtras
+                        localConfirmationExtras
                                 = Collections.singletonMap(thisExtra.optString("name"), thisExtra.optString("value"));
                     }
                 } else {
-                    confirmationExtras = Collections.emptyMap();
+                    localConfirmationExtras = Collections.emptyMap();
                 }
-                this.confirmationExtras = Collections.unmodifiableMap(confirmationExtras);
+                this.confirmationExtras = Collections.unmodifiableMap(localConfirmationExtras);
             }
         }
     }

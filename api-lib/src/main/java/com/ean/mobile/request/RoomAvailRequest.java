@@ -47,6 +47,8 @@ public final class RoomAvailRequest extends Request {
      * @param departureDate The date of departure (from the hotel).
      * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
      *                          Can be null.
+     * @param locale The locale to retrieve the availability with.
+     * @param currencyCode The currency code to use in the request.
      * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.
@@ -81,6 +83,8 @@ public final class RoomAvailRequest extends Request {
      * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
      *                          The same customerSessionId as returned to
      *                          {@link com.ean.mobile.HotelInfoList#customerSessionId}.
+     * @param locale The locale to retrieve the availability with.
+     * @param currencyCode The currency code to use in the request.
      * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.

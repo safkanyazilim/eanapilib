@@ -22,11 +22,6 @@ public final class RoomOccupancy {
     private static final int MAX_CHILDREN = 20;
 
     /**
-     * The hash code calculated at construction.
-     */
-    private final int hashCode;
-
-    /**
      * The number of adults expected to occupy the room.
      */
     public final int numberOfAdults;
@@ -35,6 +30,11 @@ public final class RoomOccupancy {
      * The list of children's ages that will be occupying said room.
      */
     public final List<Integer> childAges;
+
+    /**
+     * The hash code calculated at construction.
+     */
+    private final int hashCode;
 
     /**
      * The primary constructor setting the final variables in this class.
@@ -83,23 +83,23 @@ public final class RoomOccupancy {
      */
     public RoomOccupancy(final JSONObject object) {
         this.numberOfAdults = object.optInt("numberOfAdults");
-        final List<Integer> childAges;
+        final List<Integer> localChildAges;
         if (object.has("childAges")) {
             final String[] ageStrings = object.optString("childAges").split(",");
-            childAges = new ArrayList<Integer>(ageStrings.length);
+            localChildAges = new ArrayList<Integer>(ageStrings.length);
             for (String age : ageStrings) {
-                childAges.add(Integer.parseInt(age));
+                localChildAges.add(Integer.parseInt(age));
             }
-            if (object.has("numberOfChildren") && object.optInt("numberOfChildren") > childAges.size()) {
-                childAges.addAll(Collections.nCopies(object.optInt("numberOfChildren"), 0));
+            if (object.has("numberOfChildren") && object.optInt("numberOfChildren") > localChildAges.size()) {
+                localChildAges.addAll(Collections.nCopies(object.optInt("numberOfChildren"), 0));
             }
         } else if (object.has("numberOfChildren")) {
-            childAges = Collections.nCopies(object.optInt("numberOfChildren"), 0);
+            localChildAges = Collections.nCopies(object.optInt("numberOfChildren"), 0);
         } else {
-            childAges = Collections.emptyList();
+            localChildAges = Collections.emptyList();
         }
 
-        this.childAges = Collections.unmodifiableList(childAges);
+        this.childAges = Collections.unmodifiableList(localChildAges);
         this.hashCode = preCalculateHashCode(this);
     }
 
@@ -138,7 +138,7 @@ public final class RoomOccupancy {
      * {@inheritDoc}
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return obj instanceof RoomOccupancy && this.hashCode() == obj.hashCode();
     }
 

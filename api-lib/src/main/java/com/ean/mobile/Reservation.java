@@ -139,21 +139,29 @@ public final class Reservation {
      */
     public final CancellationPolicy cancellationPolicy;
 
+    /**
+     * The list of rate informations associated with this reservation.
+     */
     public final List<Rate> rateInfos;
 
+    /**
+     * Constructs a reservation object from an appropriately structured JSONObject.
+     * @param object The appropriately structured JSONObject.
+     */
     public Reservation(final JSONObject object) {
-        this.itineraryId = object.optLong("itineraryId");
-        final List<Long> confirmationNumbers;
+        final List<Long> localConfirmationNumbers;
         if (object.optJSONArray("confirmationNumbers") != null) {
             final JSONArray confirmationNumbersJson = object.optJSONArray("confirmationNumbers");
-            confirmationNumbers = new ArrayList<Long>(confirmationNumbersJson.length());
+            localConfirmationNumbers = new ArrayList<Long>(confirmationNumbersJson.length());
             for (int i = 0; i < confirmationNumbersJson.length(); i++) {
-                confirmationNumbers.add(confirmationNumbersJson.optLong(i));
+                localConfirmationNumbers.add(confirmationNumbersJson.optLong(i));
             }
         } else {
-            confirmationNumbers = Collections.singletonList(object.optLong("confirmationNumbers"));
+            localConfirmationNumbers = Collections.singletonList(object.optLong("confirmationNumbers"));
         }
-        this.confirmationNumbers = Collections.unmodifiableList(confirmationNumbers);
+
+        this.itineraryId = object.optLong("itineraryId");
+        this.confirmationNumbers = Collections.unmodifiableList(localConfirmationNumbers);
         this.processedWithConfirmation = object.optBoolean("processedWithConfirmation");
         this.errorText = object.optString("errorText");
         this.hotelReplyText = object.optString("hotelReplyText");

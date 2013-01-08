@@ -31,6 +31,10 @@ public final class Name {
         this.last = last;
     }
 
+    /**
+     * Constructs a Name object from a JSONObject which has firstName and lastName fields.
+     * @param object The JSONObject with the appropriate fields.
+     */
     public Name(final JSONObject object) {
         this.first = object.optString("firstName");
         this.last = object.optString("lastName");

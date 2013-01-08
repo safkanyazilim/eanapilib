@@ -37,7 +37,8 @@ public class ListRequestTest {
 
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
+        HotelInfoList results
+                = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], "en_US", "USD");
 
         assertNotNull(results);
         assertEquals(0, results.size());

@@ -40,6 +40,16 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
     public final int totalNumberOfResults;
 
     /**
+     * The locale that this list has been loaded with.
+     */
+    public final String locale;
+
+    /**
+     * The currency code for the data in this list.
+     */
+    public final String currencyCode;
+
+    /**
      * The number of pages either loaded or in process of being loaded.
      */
     private int currentPageIndex;
@@ -52,23 +62,29 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
      * @param cacheLocation The cache location to set.
      * @param customerSessionId The session to set.
      * @param pageSize The number of HotelInfo objects that will be retrieved each time
-     *                 {@link com.ean.mobile.request.ListRequest#loadMoreResults(HotelInfoList, String, String)}
+     *                 {@link com.ean.mobile.request.ListRequest#loadMoreResults(HotelInfoList)}
      *                 is called.
      * @param totalNumberOfResults The total number of results that the request that created this
      *                             HotelInfoList can return.
+     * @param locale The locale that this list was loaded with.
+     * @param currencyCode The currency code that this list was loaded with.
      */
     public HotelInfoList(final List<HotelInfo> hotelInfos,
                          final String cacheKey,
                          final String cacheLocation,
                          final String customerSessionId,
                          final int pageSize,
-                         final int totalNumberOfResults) {
+                         final int totalNumberOfResults,
+                         final String locale,
+                         final String currencyCode) {
         super(hotelInfos);
         this.cacheKey = cacheKey;
         this.cacheLocation = cacheLocation;
         this.customerSessionId = customerSessionId;
         this.pageSize = pageSize;
         this.totalNumberOfResults = totalNumberOfResults;
+        this.locale = locale;
+        this.currencyCode = currencyCode;
     }
 
     /**
@@ -76,12 +92,12 @@ public final class HotelInfoList extends ArrayList<HotelInfo> {
      * @return An empty hotel info list whose fields are all null.
      */
     public static HotelInfoList empty() {
-        return new HotelInfoList(Collections.<HotelInfo>emptyList(), null, null, null, 0, 0);
+        return new HotelInfoList(Collections.<HotelInfo>emptyList(), null, null, null, 0, 0, null, null);
     }
 
     /**
      * Allocates a new page index. Used by
-     * {@link com.ean.mobile.request.ListRequest#loadMoreResults(HotelInfoList, String, String)}
+     * {@link com.ean.mobile.request.ListRequest#loadMoreResults(HotelInfoList)}
      * to insert the new set of results in the right position in the list.
      * @return A new page index after incrementing {@link #currentPageIndex}.
      */
