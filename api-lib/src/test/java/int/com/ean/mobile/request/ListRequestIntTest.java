@@ -92,11 +92,11 @@ public class ListRequestIntTest {
         assertEquals(results.pageSize, results.size());
 
         // Paginate a few times and make sure they are ordered correctly.
-        results = ListRequest.loadMoreResults(results, LOCALE, CURRENCY_CODE);
+        results = ListRequest.loadMoreResults(results);
         assertPagination(results);
-        results = ListRequest.loadMoreResults(results, LOCALE, CURRENCY_CODE);
+        results = ListRequest.loadMoreResults(results);
         assertPagination(results);
-        results = ListRequest.loadMoreResults(results, LOCALE, CURRENCY_CODE);
+        results = ListRequest.loadMoreResults(results);
         assertPagination(results);
     }
 

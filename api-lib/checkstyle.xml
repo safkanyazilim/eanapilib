@@ -61,7 +61,7 @@
     </module>
 
     <module name="StrictDuplicateCode">
-        <property name="min" value="12"/>
+        <property name="min" value="20"/>
     </module>
 
     <module name="JavadocPackage"/>
@@ -131,7 +131,7 @@
         <module name="MethodLength"/>
 
         <module name="ParameterNumber">
-            <property name="max" value="7"/>
+            <property name="max" value="15"/>
             <property name="tokens" value="METHOD_DEF"/>
         </module>
 

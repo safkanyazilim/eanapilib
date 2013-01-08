@@ -76,6 +76,23 @@ public abstract class Address {
     }
 
     /**
+     * Creates an address object from the various parameters.
+     * @param addressLine1 First line of address.
+     * @param city City of address.
+     * @param stateProvinceCode State/province code for state.
+     * @param countryCode ISO country code for country.
+     * @param postalCode Postal code for country.
+     */
+    public Address(final String addressLine1, final String city, final String stateProvinceCode,
+            final String countryCode, final String postalCode) {
+        lines = Collections.unmodifiableList(Collections.singletonList(addressLine1));
+        this.city = city;
+        this.stateProvinceCode = stateProvinceCode;
+        this.countryCode = countryCode;
+        this.postalCode = postalCode;
+    }
+
+    /**
      * Gets NameValuePairs for the address information so it can be sent in a rest request.
      * @return The requested NameValuePairs
      */

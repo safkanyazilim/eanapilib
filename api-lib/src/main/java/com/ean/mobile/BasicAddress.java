@@ -18,4 +18,17 @@ public final class BasicAddress extends Address {
     public BasicAddress(final JSONObject object) {
         super(object);
     }
+
+    /**
+     * Creates a basic address object from the various parameters.
+     * @param addressLine1 First line of address.
+     * @param city City of address.
+     * @param stateProvinceCode State/province code for state.
+     * @param countryCode ISO country code for country.
+     * @param postalCode Postal code for country.
+     */
+    public BasicAddress(final String addressLine1, final String city, final String stateProvinceCode,
+            final String countryCode, final String postalCode) {
+        super(addressLine1, city,  stateProvinceCode, countryCode, postalCode);
+    }
 }

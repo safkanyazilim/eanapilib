@@ -98,6 +98,8 @@ public final class BookingRequest extends Request {
      * @param roomGroup The Rooms and their occupancies that will be booked.
      * @param reservationInfo The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInfo.
+     * @param customerSessionId Customer session id, passed to track user as they move through
+     *  the booking flow.
      * @param locale The locale in which to book the hotel.
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
