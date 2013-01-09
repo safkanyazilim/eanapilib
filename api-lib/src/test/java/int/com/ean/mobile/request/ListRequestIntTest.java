@@ -34,8 +34,8 @@ public class ListRequestIntTest {
     public void testSearchForHotelsHappy() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results
-                = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], LOCALE, CURRENCY_CODE);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
+            dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
 
         assertThat(results.size(), both(greaterThan(0)).and(lessThanOrEqualTo(results.pageSize)));
     }
@@ -44,7 +44,7 @@ public class ListRequestIntTest {
     public void testSearchForHotelsCauseError() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
 
-        ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], LOCALE, CURRENCY_CODE);
+        ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
     }
 
     @Test(expected = DataValidationException.class)
@@ -56,6 +56,7 @@ public class ListRequestIntTest {
                 OCCUPANCY,
                 dateTimes[0],
                 dateTimes[1],
+                null,
                 LOCALE,
                 CURRENCY_CODE);
     }
@@ -74,6 +75,7 @@ public class ListRequestIntTest {
                 occupancies,
                 dateTimes[0],
                 dateTimes[1],
+                null,
                 LOCALE,
                 CURRENCY_CODE);
 
@@ -84,8 +86,8 @@ public class ListRequestIntTest {
     public void testSearchForHotelsPaging() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results
-                = ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], LOCALE, CURRENCY_CODE);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
+            dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
 
         //multiply page size by 4 since we will load 4 "pages"
         assertThat(results.totalNumberOfResults, greaterThanOrEqualTo(results.pageSize * 4));

@@ -46,6 +46,8 @@ public final class ListRequest extends Request {
      * @param occupancy The stated occupancy to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
+     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
+     *     The same customerSessionId as returned in other API requests
      * @param locale The locale in which to perform the request.
      * @param currencyCode The currency which is desired in the response.
      * @return The list of HotelInfo that were requested by the search parameters.
@@ -56,6 +58,7 @@ public final class ListRequest extends Request {
                                                 final RoomOccupancy occupancy,
                                                 final LocalDate arrivalDate,
                                                 final LocalDate departureDate,
+                                                final String customerSessionId,
                                                 final String locale,
                                                 final String currencyCode) throws IOException, EanWsError {
         return searchForHotels(
@@ -63,6 +66,7 @@ public final class ListRequest extends Request {
                 Collections.singletonList(occupancy),
                 arrivalDate,
                 departureDate,
+                customerSessionId,
                 locale,
                 currencyCode);
     }
@@ -75,6 +79,8 @@ public final class ListRequest extends Request {
      * @param occupancies The stated occupancy of each room to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
+     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
+     *     The same customerSessionId as returned in other API requests
      * @param locale The locale to search for the hotels in.
      * @param currencyCode The currency code to search for.
      *                     Can be any valid currency, but can only book chargeable currencies.
@@ -86,12 +92,14 @@ public final class ListRequest extends Request {
                                                 final List<RoomOccupancy> occupancies,
                                                 final LocalDate arrivalDate,
                                                 final LocalDate departureDate,
+                                                final String customerSessionId,
                                                 final String locale,
                                                 final String currencyCode) throws IOException, EanWsError {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("destinationString", destination),
-                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
+                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
+                new BasicNameValuePair("customerSessionId", customerSessionId)
         );
 
         final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
@@ -122,7 +130,7 @@ public final class ListRequest extends Request {
 
             final String cacheKey = listResponse.optString("cacheKey");
             final String cacheLocation = listResponse.optString("cacheLocation");
-            final String customerSessionId = listResponse.optString("customerSessionId");
+            final String outgoingCustomerSessionId = listResponse.optString("customerSessionId");
             final int pageSize = listResponse.optJSONObject("HotelList").optInt("@size");
             final int totalNumberOfResults = listResponse.optJSONObject("HotelList").optInt("@activePropertyCount");
             final JSONArray hotelList = listResponse
@@ -137,7 +145,7 @@ public final class ListRequest extends Request {
                     hotels,
                     cacheKey,
                     cacheLocation,
-                    customerSessionId,
+                    outgoingCustomerSessionId,
                     pageSize,
                     totalNumberOfResults,
                     locale,

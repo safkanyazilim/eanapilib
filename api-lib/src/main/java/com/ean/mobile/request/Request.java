@@ -113,22 +113,9 @@ public abstract class Request {
             request = new HttpGet(createFullUri(STANDARD_ENDPOINT, relativePath, params));
         }
 
-        /****/
-        /****/
-        final String[] printbits = request.getURI().toString().split("\\?");
-        System.out.print(printbits[0] + "?");
-        if (printbits[0].endsWith("t")) {
-            System.out.print("     ");
-        } else if (printbits[0].endsWith("l")) {
-            System.out.print("    ");
-        }
-        System.out.println(printbits[1]);
-        /****/
-        /****/
-
         Log.d(Constants.DEBUG_TAG, "request endpoint: " + request.getURI().getHost());
         final long startTime = System.currentTimeMillis();
-        final HttpClient client = new EANAPIHttpClient();
+        final HttpClient client = new EanApiHttpClient();
         final HttpResponse response = client.execute(request);
         final StatusLine statusLine = response.getStatusLine();
         final String jsonString;
@@ -281,13 +268,13 @@ public abstract class Request {
      * /httpclient/examples/org/apache/http/examples/client/ClientGZipContentCompression.java">
      *  apache http components</a>.
      */
-    private static final class EANAPIHttpClient extends DefaultHttpClient {
+    private static final class EanApiHttpClient extends DefaultHttpClient {
 
         /**
          * The standard constructor for this client. Sets up the interceptors to enable the Accept-Encoding
          * and Accept headers to be set appropriately, if they are not set.
          */
-        public EANAPIHttpClient() {
+        public EanApiHttpClient() {
             this.addRequestInterceptor(new GzipRequestInterceptor());
             this.addResponseInterceptor(new GzipResponseInterceptor());
         }
