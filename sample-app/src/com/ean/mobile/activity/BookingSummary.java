@@ -15,6 +15,7 @@ import com.ean.mobile.NightlyRate;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -76,7 +77,7 @@ public class BookingSummary extends Activity {
         final LayoutInflater inflater = getLayoutInflater();
         DateTimeFormatter nightlyRateFormatter = DateTimeFormat.forPattern("MM-dd-yyyy");
 
-        DateTime currentDate = SampleApp.arrivalDate.minusDays(1);
+        LocalDate currentDate = SampleApp.arrivalDate.minusDays(1);
         for (NightlyRate rate : SampleApp.selectedRoom.rate.chargeable.nightlyRates) {
             view = inflater.inflate(R.layout.pricebreakdownlayout, null);
             TextView date = (TextView) view.findViewById(R.id.priceBreakdownDate);

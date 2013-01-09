@@ -85,4 +85,6 @@
     
     <!-- The ivy import has to happen after the sdk's build.xml because it relies on properties set there. -->
     <import file="ivy.ant.xml" />
+
+    <target name="debug" depends="android_rules.debug" />
 </project>

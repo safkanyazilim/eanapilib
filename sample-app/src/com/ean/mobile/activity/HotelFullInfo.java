@@ -30,6 +30,7 @@ import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -97,7 +98,7 @@ public class HotelFullInfo extends Activity {
                 (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb12)
         };
 
-        address.setText(SampleApp.selectedHotel.address);
+        address.setText(SampleApp.selectedHotel.address.toString());
         HotelInfoExtended extended = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(extended.longDescription, "text/html", null);
         for(int i = 0; i < smallThumbs.length && i < extended.images.size(); i++){
@@ -114,15 +115,15 @@ public class HotelFullInfo extends Activity {
         private final long hotelId;
         private final int numberOfAdults;
         private final int numberOfChildren;
-        private final DateTime arrivalDate;
-        private final DateTime departureDate;
+        private final LocalDate arrivalDate;
+        private final LocalDate departureDate;
         private final String customerSessionId;
 
         public AvailabilityInformationLoaderTask(final long hotelId,
                                                  final int numberOfAdults,
                                                  final int numberOfChildren,
-                                                 final DateTime arrivalDate,
-                                                 final DateTime departureDate,
+                                                 final LocalDate arrivalDate,
+                                                 final LocalDate departureDate,
                                                  final String customerSessionId) {
             this.hotelId = hotelId;
             this.numberOfAdults = numberOfAdults;
@@ -141,7 +142,9 @@ public class HotelFullInfo extends Activity {
                     SampleApp.occupancy(),
                     arrivalDate,
                     departureDate,
-                    customerSessionId);
+                    customerSessionId,
+                    SampleApp.LOCALE.toString(),
+                    SampleApp.CURRENCY.getCurrencyCode());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
@@ -169,7 +172,10 @@ public class HotelFullInfo extends Activity {
         @Override
         protected HotelInfoExtended doInBackground(Void... voids) {
             try {
-                return InformationRequest.getHotelInformation(hotelId, SampleApp.foundHotels.customerSessionId);
+                return InformationRequest.getHotelInformation(
+                    hotelId,
+                    SampleApp.foundHotels.customerSessionId,
+                    SampleApp.LOCALE.toString());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {

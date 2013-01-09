@@ -55,6 +55,12 @@ public abstract class Address {
     public final String postalCode;
 
     /**
+     * The cached representation of this object as a string. Used to prevent the string from needing to be constructed
+     * every time the toString method is called.
+     */
+    private transient String asString;
+
+    /**
      * Creates an address object from a JSONObject which has the appropriate address fields.
      * @param object The JSONObject from which to construct the address.
      */
@@ -111,6 +117,28 @@ public abstract class Address {
         addressPairs.add(new BasicNameValuePair("postalCode", postalCode));
 
         return Collections.unmodifiableList(addressPairs);
+    }
+
+    /**
+     * Returns a formatted string representing this address as it would appear on an envelope.
+     * @return The formatted address.
+     */
+    @Override
+    public String toString() {
+        final StringBuilder addressBuilder = new StringBuilder();
+        for (String line : lines) {
+            addressBuilder.append(line);
+            addressBuilder.append("\n");
+        }
+        addressBuilder.append(city);
+        addressBuilder.append(" ");
+        addressBuilder.append(stateProvinceCode);
+        addressBuilder.append(" ");
+        addressBuilder.append(postalCode);
+        addressBuilder.append("\n");
+        addressBuilder.append(countryCode);
+        asString = addressBuilder.toString();
+        return asString;
     }
 
 }
