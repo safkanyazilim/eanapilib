@@ -98,8 +98,7 @@ public final class ListRequest extends Request {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("destinationString", destination),
-                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS),
-                new BasicNameValuePair("customerSessionId", customerSessionId)
+                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
         );
 
         final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
@@ -113,6 +112,9 @@ public final class ListRequest extends Request {
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
         urlParameters.addAll(requestParameters);
+        if (customerSessionId != null) {
+            urlParameters.add(new BasicNameValuePair("customerSessionId", customerSessionId));
+        }
         urlParameters.addAll(roomParameters);
 
         // TODO: Possibly cache the HotelInfoLists (factory?) such that if the request is performed again
