@@ -63,20 +63,28 @@
     </target>
 
     <target name="test" depends="compile, compile.test">
+        <mkdir dir="${test.reports.dir}" />
+
         <junit printsummary="true"
                errorproperty="junit.error"
                failureproperty="junit.failure"
-               haltonfailure="true"
+               haltonfailure="false"
                showoutput="true"
                fork="true">
             <classpath refid="project.classpath"/>
             <classpath location="${tests.dir}"/>
             <classpath location="${test.resource.dir}"/>
-            <batchtest>
+            <batchtest todir="${test.reports.dir}">
                 <fileset dir="${tests.dir}" includes="**/*Test.*" />
             </batchtest>
-            <formatter type="plain" usefile="false" />
+            <formatter type="xml"/>
         </junit>
+
+        <junitreport todir="${test.reports.dir}">
+            <fileset dir="${test.reports.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+        </junitreport>
     </target>
 
     <target name="clean">

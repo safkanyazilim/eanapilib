@@ -37,7 +37,7 @@
         <fail unless="android.found" message="android not found in path. Please ensure your ANDROID_HOME is set to the root of the android sdk (the parent of tools/ and platform-tools/) and try again."/>
     </target>
     
-    <target name="inital-build" depends="check-android-home">
+    <target name="initial-build" depends="check-android-home">
         <ant dir="${api-lib.dir}" target="ivy.publish" />
         <update-android-project />
         <ant dir="${sample-app.dir}" target="debug" />
