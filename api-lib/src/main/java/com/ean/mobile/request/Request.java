@@ -4,34 +4,20 @@
 
 package com.ean.mobile.request;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.http.Header;
-import org.apache.http.HeaderElement;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpResponseInterceptor;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.GzipDecompressingEntity;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -106,35 +92,33 @@ public abstract class Request {
                                                      final List<NameValuePair> params) throws IOException {
         //TODO: refactor this to use java.net.HttpUrlConnection and javax.net.ssl.HttpsUrlConnection
         //Build the url
-        final HttpRequestBase request;
-        if ("res".equals(relativePath)) {
-            request = new HttpPost(createFullUri(SECURE_ENDPOINT, relativePath, params));
-        } else {
-            request = new HttpGet(createFullUri(STANDARD_ENDPOINT, relativePath, params));
-        }
-
-        Log.d(Constants.DEBUG_TAG, "request endpoint: " + request.getURI().getHost());
+        final URLConnection connection;
         final long startTime = System.currentTimeMillis();
-        final HttpClient client = new EanApiHttpClient();
-        final HttpResponse response = client.execute(request);
-        final StatusLine statusLine = response.getStatusLine();
+        if ("res".equals(relativePath)) {
+            connection = createFullUri(SECURE_ENDPOINT, relativePath, params).toURL().openConnection();
+            // cause booking requests to use post.
+            connection.setDoOutput(true);
+            ((HttpURLConnection) connection).setRequestMethod("POST");
+            ((HttpURLConnection) connection).setFixedLengthStreamingMode(0);
+        } else {
+            connection = createFullUri(STANDARD_ENDPOINT, relativePath, params).toURL().openConnection();
+        }
+        // force application/json
+        connection.setRequestProperty("Accept", "application/json, */*");
+
+        Log.d(Constants.DEBUG_TAG, "request endpoint: " + connection.getURL().getHost());
         final String jsonString;
         try {
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                jsonString = EntityUtils.toString(response.getEntity());
-            } else {
-                jsonString = null;
-                throw new IOException(statusLine.getReasonPhrase());
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            final StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
             }
+            jsonString = jsonBuilder.toString();
         } finally {
             // Always close the connection.
-            if (response.getEntity().isStreaming()) {
-                response.getEntity().getContent().close();
-            }
-            // When HttpClient instance is no longer needed,
-            // shut down the connection manager to ensure
-            // immediate deallocation of all system resources
-            client.getConnectionManager().shutdown();
+            ((HttpURLConnection) connection).disconnect();
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
         Log.d(Constants.DEBUG_TAG, "Took " + timeTaken + " milliseconds.");
@@ -173,6 +157,7 @@ public abstract class Request {
             return null;
         }
         final URI relativeUri = relativePath == null ? baseUri : baseUri.resolve(relativePath);
+        //URLEncodedUtils cannot be used because the api cannot handle %2F instead of / for the date strings.
         final String queryString = createQueryString(params);
 
         try {
@@ -206,7 +191,8 @@ public abstract class Request {
             } else if (potentialQueryString.endsWith("&")) {
                 potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
             }
-            // URLEncoder.encode cannot be used since it encodes things in a way the api does not expect.
+            // URLEncoder.encode cannot be used since it encodes things in a way the api does not expect, particularly
+            // dates.
             queryString = potentialQueryString;
         }
         return queryString;
@@ -259,84 +245,5 @@ public abstract class Request {
      */
     public static List<NameValuePair> getBasicUrlParameters() {
         return getBasicUrlParameters(null, null, null, null);
-    }
-
-    /**
-     * An implementation of HTTPClient that transparently forces gzip encoding on the request and response, as well
-     * as setst the Accept header to application/json.
-     * Inspired by <a href="http://hc.apache.org/httpcomponents-client-ga
-     * /httpclient/examples/org/apache/http/examples/client/ClientGZipContentCompression.java">
-     *  apache http components</a>.
-     */
-    private static final class EanApiHttpClient extends DefaultHttpClient {
-
-        /**
-         * The standard constructor for this client. Sets up the interceptors to enable the Accept-Encoding
-         * and Accept headers to be set appropriately, if they are not set.
-         */
-        public EanApiHttpClient() {
-            this.addRequestInterceptor(new GzipRequestInterceptor());
-            this.addResponseInterceptor(new GzipResponseInterceptor());
-        }
-
-        /**
-         * Similar to the response interceptor below, and taken from the same place.
-         */
-        private static final class GzipRequestInterceptor implements HttpRequestInterceptor {
-
-            /**
-             * Implementation of
-             * {@link HttpRequestInterceptor#process(org.apache.http.HttpRequest,
-             * org.apache.http.protocol.HttpContext)}.
-             * @param request The request that is being intercepted.
-             * @param context The context into which the request is being sent.
-             * @throws HttpException Can't happen in this implementation.
-             * @throws IOException Can't happen in this implementation.
-             */
-            public void process(final HttpRequest request, final HttpContext context)
-                    throws HttpException, IOException {
-                if (!request.containsHeader("Accept-Encoding")) {
-                    request.addHeader("Accept-Encoding", "gzip");
-                }
-                if (!request.containsHeader("Accept")) {
-                    request.addHeader("Accept", "application/json, */*");
-                }
-            }
-        }
-
-        /**
-         * Transparent interceptor taken from
-         * <a href="http://hc.apache.org/httpcomponents-client-ga
-         * /httpclient/examples/org/apache/http/examples/client/ClientGZipContentCompression.java">
-         *  apache http components</a>.
-         */
-        private static final class GzipResponseInterceptor implements HttpResponseInterceptor {
-            /**
-             * Implementation of
-             * {@link HttpResponseInterceptor#process(org.apache.http.HttpResponse,
-             * org.apache.http.protocol.HttpContext)}.
-             * @param response The response that is being intercepted.
-             * @param context The context which this request/response is being interacted within.
-             * @throws HttpException Can't happen in this implementation.
-             * @throws IOException Can't happen in this implementation.
-             */
-            public void process(final HttpResponse response, final HttpContext context)
-                    throws HttpException, IOException {
-                // The idea here is to check the headers, and if they contain "gzip", then decompress
-                // the data transparently.
-                final HttpEntity entity = response.getEntity();
-                if (entity != null) {
-                    final Header header = entity.getContentEncoding();
-                    if (header != null) {
-                        for (HeaderElement element : header.getElements()) {
-                            if ("gzip".equalsIgnoreCase(element.getName())) {
-                                response.setEntity(new GzipDecompressingEntity(response.getEntity()));
-                                return;
-                            }
-                        }
-                    }
-                }
-            }
-        }
     }
 }

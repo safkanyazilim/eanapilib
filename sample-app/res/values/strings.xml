@@ -18,7 +18,9 @@
     <string name="price_details">Price Details</string>
     <string name="total_charges">Total Charges</string>
     <string name="security_notice_title">Secure Booking</string>
-    <string name="security_notice_text">We keep all your personal information secure and encrypted.\nWe won\'t share or sell your personal inforrmation.</string>
+    <string name="security_notice_text">We keep all your personal information secure and encrypted.\nWe won\'t share or
+        sell your personal information.
+    </string>
     <string name="guest_information">Guest Information:</string>
     <string name="guest_first_name">First Name</string>
     <string name="guest_last_name">Last Name</string>
@@ -32,10 +34,15 @@
     <string name="billing_country">Country</string>
     <string name="billing_zip">Zip</string>
     <string name="billing_cc_num">Credit Card Num</string>
-    <string name="billing_cc_expmo">MO</string>
-    <string name="billing_cc_expyr">YR</string>
+    <string name="billing_cc_expmo">MM</string>
+    <string name="billing_cc_expyr">YY</string>
     <string name="billing_cc_security">Security Code (See back of credit card)</string>
-    <string name="billing_legal_disclaimer">Legal stuff and junk goes here that includes links to the <u>Privacy Policy</u> and <u>Terms of Use</u> on a web page. Those pages will need to be built.</string>
+    <string name="billing_legal_disclaimer">Legal stuff and junk goes here that includes links to the
+        <u>Privacy Policy</u>
+        and
+        <u>Terms of Use</u>
+        on a web page. Those pages will need to be built.
+    </string>
     <string name="number_of_adults_prompt">Select number of adults</string>
     <string name="number_of_children_prompt">Select number of children</string>
     <string-array name="number_of_people_array">

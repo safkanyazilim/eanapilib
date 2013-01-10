@@ -24,6 +24,7 @@ import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.request.ListRequest;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -60,9 +61,9 @@ public class StartupSearch extends Activity {
         });
 
         // get the current date
-        DateTime now = DateTime.now();
-        SampleApp.arrivalDate = now;
-        SampleApp.departureDate = now.plusDays(1);
+        LocalDate today = LocalDate.now();
+        SampleApp.arrivalDate = today;
+        SampleApp.departureDate = today.plusDays(1);
 
 
         Button arrivalDate = (Button) findViewById(R.id.arrival_date_picker);
@@ -115,8 +116,8 @@ public class StartupSearch extends Activity {
     private void performSearch(final String searchQuery) {
         preSearch();
         SampleApp.searchQuery = searchQuery;
-        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseDateTime(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
-        SampleApp.departureDate = DATE_TIME_FORMATTER.parseDateTime(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
+        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
+        SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
         new PerformSearchTask().execute((Void) null);
     }
 
@@ -153,7 +154,7 @@ public class StartupSearch extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate);
+                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate, null, SampleApp.LOCALE.toString(), SampleApp.CURRENCY.toString());
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
@@ -196,7 +197,7 @@ public class StartupSearch extends Activity {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final DateTime date;
+            final LocalDate date;
             if (pickerId == R.id.arrival_date_picker) {
                 date = SampleApp.arrivalDate;
             } else {
@@ -208,7 +209,7 @@ public class StartupSearch extends Activity {
 
         @Override
         public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-            DateTime chosenDate = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0);
+            LocalDate chosenDate = new LocalDate(year, monthOfYear + 1, dayOfMonth);
             pickerButton.setText(DATE_TIME_FORMATTER.print(chosenDate));
             switch(pickerId) {
                 case R.id.arrival_date_picker:
