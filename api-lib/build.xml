@@ -57,9 +57,6 @@
         <main.javac destdir="${tests.dir}">
             <src path="${testsrc.dir}" />
         </main.javac>
-        <copy todir="${test.resource.dir}" failonerror="false">
-            <fileset dir="${testsrc.dir}/resources"/>
-        </copy>
     </target>
 
     <target name="test" depends="compile, compile.test">
