@@ -1,23 +1,28 @@
 #ean-android
 
 This project intends to:
+
 - Provide a java library to ease implementation of the EAN API within a native android app.
 - Provide a sample android app demonstrating use of this library.
 
 ##Building both the Library and the App
-It is possible to build the library and the app in a single step using the parent build.xml at the root of ean-android. This will build the library, publish it to a local repository, then resolve the dependencies of the android project and fix up the local android files and build the debug configuration of sample-app.
+It is possible to build the library and the app in a single step using the build.xml at the root of ean-android. This will build the library, publish it to a local artifactory repository, then resolve the dependencies of the android project and fix up the local android files and build the debug configuration of sample-app.
 
 ###Requirements
 - Java JDK (1.6+)
 - Apache Ant (1.7+)
+- Apache Ivy (2.2.0+)
 - Android sdk on path, with api at least level 14 (Android 4.0) installed
 
 ###Steps
-1. Clone the repository
+1. Download the source code via whatever method you choose
+    - With a git client:
+
+            git clone git://ExpediaInc/ean-android/ean-android.git
 2. cd to the newly cloned directory (ean-android)
 3. Now run the ant target to build the api-lib and sample-app
 
-        ant inital-build
+        ant
     - The library has now been built, published, and the app has had its dependencies resolved and has been built in the debug configuration.
 4. The output apk can be found at
 
@@ -32,12 +37,14 @@ It is possible to build the library and the app in a single step using the paren
 
 - Java JDK (1.6+)
 - Apache Ant (1.7+)
+- Apache Ivy (2.2.0+)
 
 ###Steps
-1. Download the source code via whatever method you choose
+1. Download the source code via whatever method you choose (this setup is redudant if you completed in the previous section).
+
     - With a git client:
-    
-            git clone git://github.com/aaronklor/ean-android.git
+
+            git clone git://ExpediaInc/ean-android/ean-android.git
 2. In the same directory as build.xml (ean-android/api-lib/) run ant.
 
         cd /path/to/ean-android
@@ -70,10 +77,13 @@ To build without publishing, just run the default ant target:
 - Android sdk on path, with api at least level 14 (Android 4.0) installed
 
 ###Steps
-1. Download the source code
-    - If you downloaded the libarary, you already have the source
-    - Otherwise, follow the same download instructions as the libarary above.
-2. Ensure the library has been published as described above.
+1. Download the source code via whatever method you choose (this setup is redudant if you completed either of the previous sections).
+
+    - With a git client:
+
+            git clone git://ExpediaInc/ean-android/ean-android.git
+    - Ensure the library has been published as described above.
+
 3. In a terminal, cd to the sample app's main directory (ean-android/sample-app).
 
         cd ean-android/sample-app
