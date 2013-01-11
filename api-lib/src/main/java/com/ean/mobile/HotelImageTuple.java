@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 EAN.com, L.P. All rights reserved.
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile;
@@ -29,6 +29,7 @@ public final class HotelImageTuple {
      */
     public final String caption;
 
+    //TODO: have this not store the drawables directly, but instead cache them in the image fetcher.
     /**
      * The thumbnail resource for this image.
      */

@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 EAN.com, L.P. All rights reserved.
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile;
@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -36,24 +35,22 @@ public final class NightlyRate {
     /**
      * The main constructor, building objects from a JSONObject.
      * @param nightlyRateJson The JSON representing this nightly rate.
-     * @throws JSONException If there is an error in the JSON
      */
-    public NightlyRate(final JSONObject nightlyRateJson) throws JSONException {
-        this.promo = nightlyRateJson.getBoolean("@promo");
-        this.rate = new BigDecimal(nightlyRateJson.getString("@rate"));
-        this.baseRate = new BigDecimal(nightlyRateJson.getString("@baseRate"));
+    public NightlyRate(final JSONObject nightlyRateJson) {
+        this.promo = nightlyRateJson.optBoolean("@promo");
+        this.rate = new BigDecimal(nightlyRateJson.optString("@rate"));
+        this.baseRate = new BigDecimal(nightlyRateJson.optString("@baseRate"));
     }
 
     /**
      * Constructs a list of nightly rates from a JSONArray of nightly rates.
      * @param nightlyRatesJson The JSON representing the array of nightly rates
      * @return The NightlyRate objects parsed from the array.
-     * @throws JSONException If there is an error in the JSON.
      */
-    public static List<NightlyRate> parseNightlyRates(final JSONArray nightlyRatesJson) throws JSONException {
+    public static List<NightlyRate> parseNightlyRates(final JSONArray nightlyRatesJson) {
         final List<NightlyRate> nightlyRates = new ArrayList<NightlyRate>(nightlyRatesJson.length());
         for (int j = 0; j < nightlyRatesJson.length(); j++) {
-            nightlyRates.add(new NightlyRate(nightlyRatesJson.getJSONObject(j)));
+            nightlyRates.add(new NightlyRate(nightlyRatesJson.optJSONObject(j)));
         }
         return nightlyRates;
     }
@@ -62,10 +59,9 @@ public final class NightlyRate {
      * Constructs a singleton list of NightlyRates from the JSONObject of nightly rate.
      * @param nightlyRatesJson The JSON representing the nightly rate
      * @return The NightlyRate object parsed from the object.
-     * @throws JSONException If there is an error in the JSON.
      */
-    public static List<NightlyRate> parseNightlyRates(final JSONObject nightlyRatesJson) throws JSONException {
-        return Collections.singletonList(new NightlyRate(nightlyRatesJson.getJSONObject("NightlyRate")));
+    public static List<NightlyRate> parseNightlyRates(final JSONObject nightlyRatesJson) {
+        return Collections.singletonList(new NightlyRate(nightlyRatesJson.optJSONObject("NightlyRate")));
     }
 }
 

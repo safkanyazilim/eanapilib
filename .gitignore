@@ -24,3 +24,9 @@ sdcard.*
 local.properties
 
 .DS_Store
+
+*.iws
+
+*.ipr
+
+*.log

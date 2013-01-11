@@ -6,6 +6,10 @@
     <import file="ivy.ant.xml" />
     <import file="checkstyle.ant.xml" />
 
+    <property name="clover.jar" location="${lib.dir}/JUnit/clover-3.1.8.jar"/>
+    <taskdef resource="cloverlib.xml" classpath="${clover.jar}"/>
+    <taskdef resource="cloverjunitlib.xml" classpath="${clover.jar}"/>
+
     <path id="project.classpath">
         <fileset dir="${lib.dir}"/>
         <!-- include compiler output -->
@@ -57,27 +61,61 @@
         <main.javac destdir="${tests.dir}">
             <src path="${testsrc.dir}" />
         </main.javac>
-        <copy todir="${test.resource.dir}" failonerror="false">
-            <fileset dir="${testsrc.dir}/resources"/>
-        </copy>
     </target>
 
     <target name="test" depends="compile, compile.test">
-        <junit printsummary="true" errorproperty="junit.error" failureproperty="junit.failure" haltonfailure="true" showoutput="true">
+        <mkdir dir="${test.reports.dir}" />
+
+        <junit printsummary="true"
+               errorproperty="junit.error"
+               failureproperty="junit.failure"
+               haltonfailure="false"
+               showoutput="true"
+               fork="true">
             <classpath refid="project.classpath"/>
             <classpath location="${tests.dir}"/>
             <classpath location="${test.resource.dir}"/>
-            <batchtest>
+
+            <batchtest todir="${test.reports.dir}">
                 <fileset dir="${tests.dir}" includes="**/*Test.*" />
             </batchtest>
-            <formatter type="plain" usefile="false" />
+            <formatter type="xml"/>
         </junit>
+
+        <junitreport todir="${test.reports.dir}">
+            <fileset dir="${test.reports.dir}">
+                <include name="TEST-*.xml" />
+            </fileset>
+        </junitreport>
     </target>
 
     <target name="clean">
         <delete dir="${build.dir}" />
     </target>
 
+    <target name="with.clover">
+        <condition property="clover.license.found">
+            <isset property="clover.license.path" />
+        </condition>
+
+        <!-- example: -Dclover.license.path=~/Developer/clover/lib/clover.license -->
+        <fail unless="clover.license.found"
+            message="Clover license not setup, please set -Dclover.license.path to the absolute path of the file and try again."/>
+        <clover-setup/>
+    </target>
+
+    <target name="clover.report">
+        <clover-report>
+            <current outfile="${test.clover.reports.dir}" title="ean-android">
+                <format type="html"/>
+            </current>
+            <current outfile="${test.clover.reports.dir}/coverage.xml">
+                <format type="xml"/>
+            </current>
+        </clover-report>
+    </target>
+
+    <target name="instrumented.test" depends="clean, with.clover, test, clover.report" description="Runs build with clover instrumentation"/>
 
     <target name="javadoc">
         <mkdir dir="${doc.dir}"/>

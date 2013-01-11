@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 EAN.com, L.P. All rights reserved.
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile;
@@ -16,7 +16,7 @@ import android.text.Html;
 /**
  * The holder for information about a particular hotel.
  */
-public final class HotelInfo {
+public final class HotelInfo implements Comparable<HotelInfo> {
 
     /**
      * The name of this hotel.
@@ -36,7 +36,7 @@ public final class HotelInfo {
     /**
      * The star rating of this hotel.
      */
-    public final String starRating;
+    public final BigDecimal starRating;
 
     /**
      * The main HotelImageTuple for this hotel.
@@ -56,17 +56,7 @@ public final class HotelInfo {
     /**
      * The street address of this hotel.
      */
-    public final String address;
-
-    /**
-     * The city in which the hotel exists.
-     */
-    public final String city;
-
-    /**
-     * The state/province code for the hotel.
-     */
-    public final String stateProvinceCode;
+    public final LatLongAddress address;
 
     /**
      * The type of supplier for the hotel.
@@ -84,28 +74,40 @@ public final class HotelInfo {
     public final BigDecimal lowPrice;
 
     /**
+     * The order in which this HotelInfo was returned from the list call.
+     */
+    public final Integer listOrder;
+
+    /**
      * The constructor that constructs the hotel info from a JSONObject.
      * @param hotelSummary The object holding the hotel's info.
+     * @param listOrder The place in the hotel list that this HotelInfo object intends to reside.
      * @throws JSONException If there is a problem with the JSON objects
      * @throws MalformedURLException If the thumbnail url is not correctly formatted.
      */
-    public HotelInfo(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
+    public HotelInfo(final JSONObject hotelSummary, final int listOrder) throws JSONException, MalformedURLException {
         this.name = Html.fromHtml(hotelSummary.optString("name")).toString();
         this.hotelId = hotelSummary.optLong("hotelId");
-        this.address = hotelSummary.getString("address1");
-        this.city = hotelSummary.getString("city");
-        this.stateProvinceCode = hotelSummary.optString("stateProvinceCode");
+        this.address = new LatLongAddress(hotelSummary);
         this.shortDescription =  Html.fromHtml(hotelSummary.optString("shortDescription")).toString();
         this.locDescription = Html.fromHtml(hotelSummary.optString("locationDescription")).toString();
-        final String starRatingRaw = hotelSummary.optString("hotelRating");
-        this.starRating = null == starRatingRaw || "".equals(starRatingRaw) ? "0" : starRatingRaw;
+        this.starRating = parseStarRating(hotelSummary.optString("hotelRating"));
         final String thumbnailString = hotelSummary.optString("thumbNailUrl").replace("_t.jpg", "_n.jpg");
         this.mainHotelImageTuple = new HotelImageTuple(ImageFetcher.getFullImageUrl(thumbnailString), null, null);
-        //TODO: figure a better way of scaling the rates.
         this.highPrice = new BigDecimal(hotelSummary.getDouble("highRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.currencyCode = hotelSummary.optString("rateCurrencyCode");
         this.supplierType = hotelSummary.optString("supplierType");
+        this.listOrder = listOrder;
+    }
+
+    /**
+     * Gets the star rating (a BigDecimal) from the string representation of the star rating.
+     * @param starRating The String representation of a star rating.
+     * @return The BigDecimal representation of a star rating.
+     */
+    public static BigDecimal parseStarRating(final String starRating) {
+        return starRating == null || "".equals(starRating) ? BigDecimal.ZERO : new BigDecimal(starRating).setScale(1);
     }
 
     /**
@@ -115,7 +117,14 @@ public final class HotelInfo {
      */
     @Override
     public String toString() {
-        return this.name;
+        return this.listOrder + " " + this.name;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int compareTo(final HotelInfo o) {
+        return this.listOrder.compareTo(o.listOrder);
+    }
 }

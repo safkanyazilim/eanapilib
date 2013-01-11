@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,8 +22,12 @@ import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
+import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
+import com.ean.mobile.request.ListRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Currency;
 
@@ -38,14 +44,15 @@ public class HotelList extends Activity {
     public void onStart() {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
-        ((ListView) findViewById(R.id.HotelList)).setAdapter(new HotelInfoAdapter(this, R.layout.hotelinfolistlayout));
+        ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
+        hotelListView.setAdapter(new HotelInfoAdapter(this, R.layout.hotelinfolistlayout));
+        hotelListView.setOnScrollListener(new HotelScrollListener());
     }
 
     private class HotelListAdapterListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             SampleApp.selectedHotel = (HotelInfo) parent.getItemAtPosition(position);
-            Intent intent = new Intent(HotelList.this, HotelFullInfo.class);
-            startActivity(intent);
+            startActivity(new Intent(HotelList.this, HotelFullInfo.class));
         }
     }
 
@@ -68,7 +75,6 @@ public class HotelList extends Activity {
         private HotelInfoAdapter(Context context, int resource) {
             super(context, resource, SampleApp.foundHotels);
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         }
 
         /**
@@ -148,6 +154,61 @@ public class HotelList extends Activity {
                 highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
         }
+    }
 
+
+    private class HotelScrollListener implements AbsListView.OnScrollListener {
+
+        private PerformLoadTask loadingTask;
+
+        @Override
+        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+            if (view.getLastVisiblePosition() >= SampleApp.foundHotels.size() - 7) {
+                if (loadingTask == null || loadingTask.getStatus() == AsyncTask.Status.FINISHED) {
+                    loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());
+                }
+                if (loadingTask.getStatus() == AsyncTask.Status.PENDING) {
+                    loadingTask.execute();
+                }
+            }
+        }
+
+        /**
+         * no op, implemented for the interface.
+         */
+        @Override
+        public void onScrollStateChanged(AbsListView absListView, int i) {
+            // see javadoc.
+        }
+    }
+
+    private class PerformLoadTask extends AsyncTask<Void, Integer, Void> {
+
+        private final ArrayAdapter adapter;
+
+        private PerformLoadTask(ArrayAdapter adapter) {
+            this.adapter = adapter;
+        }
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            try {
+                ListRequest.loadMoreResults(SampleApp.foundHotels);
+            } catch (IOException e) {
+                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
+            } catch (EanWsError ewe) {
+                //TODO: This should be handled better. If this exception occurs, it's likely an input error and
+                // should be recoverable.
+                Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            adapter.notifyDataSetChanged();
+        }
     }
 }

@@ -46,21 +46,22 @@
     />
 
 
-<!-- extension targets. Uncomment the ones where you want to do custom work
-     in between standard targets -->
-<!--
-    <target name="-pre-build">
-    </target>
-    <target name="-pre-compile">
-    </target>
-
-    /* This is typically used for code obfuscation.
-       Compiled code location: ${out.classes.absolute.dir}
-       If this is not done in place, override ${out.dex.input.absolute.dir} */
-    <target name="-post-compile">
-    </target>
--->
-
+    <!--
+        Import per project custom build rules if present at the root of the project.
+        This is the place to put custom intermediary targets such as:
+            -pre-build
+            -pre-compile
+            -post-compile (This is typically used for code obfuscation.
+                           Compiled code location: ${out.classes.absolute.dir}
+                           If this is not done in place, override ${out.dex.input.absolute.dir})
+            -post-package
+            -post-build
+            -pre-clean
+    -->
+    <!-- Since the build depends on the libraries being downloaded, it's a good idea to have them there before the build. -->
+    <!-- Overriding a target not specified above due to the problems outlined here http://stackoverflow.com/questions/12977077/why-does-resolving-dependencies-using-ivy-not-work-in-androids-pre-build-ant -->
+    <target name="-build-setup" depends="ivy.resolve.dependencies,android_rules.-build-setup"/>
+    <target name="-pre-clean" depends="ivy.clean.cache"/>
     <!-- Import the actual build file.
 
          To customize existing targets, there are two options:
@@ -79,10 +80,11 @@
          In all cases you must update the value of version-tag below to read 'custom' instead of an integer,
          in order to avoid having your file be overridden by tools such as "android update project"
     -->
-    <!-- version-tag: 1 -->
+    <!-- version-tag: custom -->
     <import file="${sdk.dir}/tools/ant/build.xml" />
-
-    <import file="ivy.ant.xml" />
     
-   <target name="build.with.dependencies" depends="ivy.resolve.dependencies, debug"/>
+    <!-- The ivy import has to happen after the sdk's build.xml because it relies on properties set there. -->
+    <import file="ivy.ant.xml" />
+
+    <target name="debug" depends="android_rules.debug" />
 </project>

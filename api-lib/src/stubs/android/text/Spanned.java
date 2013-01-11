@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 EAN.com, L.P. All rights reserved.
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 package android.text;
 

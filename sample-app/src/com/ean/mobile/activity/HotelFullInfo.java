@@ -4,7 +4,6 @@
 package com.ean.mobile.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -16,8 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import com.ean.mobile.Constants;
-import com.ean.mobile.HotelImageTuple;
+import com.ean.mobile.Constants;import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.R;
@@ -26,10 +24,12 @@ import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
 import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -97,7 +97,7 @@ public class HotelFullInfo extends Activity {
                 (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb12)
         };
 
-        address.setText(SampleApp.selectedHotel.address);
+        address.setText(SampleApp.selectedHotel.address.toString());
         HotelInfoExtended extended = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(extended.longDescription, "text/html", null);
         for(int i = 0; i < smallThumbs.length && i < extended.images.size(); i++){
@@ -114,15 +114,15 @@ public class HotelFullInfo extends Activity {
         private final long hotelId;
         private final int numberOfAdults;
         private final int numberOfChildren;
-        private final DateTime arrivalDate;
-        private final DateTime departureDate;
+        private final LocalDate arrivalDate;
+        private final LocalDate departureDate;
         private final String customerSessionId;
 
         public AvailabilityInformationLoaderTask(final long hotelId,
                                                  final int numberOfAdults,
                                                  final int numberOfChildren,
-                                                 final DateTime arrivalDate,
-                                                 final DateTime departureDate,
+                                                 final LocalDate arrivalDate,
+                                                 final LocalDate departureDate,
                                                  final String customerSessionId) {
             this.hotelId = hotelId;
             this.numberOfAdults = numberOfAdults;
@@ -131,22 +131,25 @@ public class HotelFullInfo extends Activity {
             this.departureDate = departureDate;
             this.customerSessionId = customerSessionId;
         }
-        
-        
+
+
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
                 return RoomAvailRequest.getRoomAvail(
                     hotelId,
-                    numberOfAdults,
-                    numberOfChildren,
+                    SampleApp.occupancy(),
                     arrivalDate,
                     departureDate,
-                    customerSessionId);
+                    customerSessionId,
+                    SampleApp.LOCALE.toString(),
+                    SampleApp.CURRENCY.getCurrencyCode());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
@@ -170,11 +173,16 @@ public class HotelFullInfo extends Activity {
         @Override
         protected HotelInfoExtended doInBackground(Void... voids) {
             try {
-                return InformationRequest.getHotelInformation(hotelId, SampleApp.foundHotels.customerSessionId);
+                return InformationRequest.getHotelInformation(
+                    hotelId,
+                    SampleApp.foundHotels.customerSessionId,
+                    SampleApp.LOCALE.toString());
             } catch (IOException ioe) {
-                Log.d(SampleConstants.DEBUG, "An ioerror occurred when performing information request", ioe);
+                Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
@@ -198,9 +206,8 @@ public class HotelFullInfo extends Activity {
         }
         TableLayout rateList = (TableLayout) findViewById(R.id.roomRateList);
         View view;
-        LayoutInflater inflater;
+        final LayoutInflater inflater = getLayoutInflater();
         for (HotelRoom room : SampleApp.HOTEL_ROOMS.get(hotelInfo.hotelId)) {
-            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = inflater.inflate(R.layout.roomtypelistlayout, null);
 
             TextView roomDesc = (TextView) view.findViewById(R.id.roomRateDescritpiton);
@@ -213,9 +220,9 @@ public class HotelFullInfo extends Activity {
             TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
             ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-            currencyFormat.setCurrency(Currency.getInstance(room.rate.currencyCode));
-            lowPrice.setText(currencyFormat.format(room.rate.getAverageRate()));
-            if(room.rate.areAverageRatesEqual()){
+            currencyFormat.setCurrency(Currency.getInstance(room.rate.chargeable.currencyCode));
+            lowPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageRate()));
+            if(room.rate.chargeable.areAverageRatesEqual()){
                 highPrice.setVisibility(TextView.GONE);
                 drrIcon.setVisibility(ImageView.GONE);
                 drrPromoText.setVisibility(ImageView.GONE);
@@ -223,7 +230,7 @@ public class HotelFullInfo extends Activity {
                 highPrice.setVisibility(TextView.VISIBLE);
                 drrIcon.setVisibility(ImageView.VISIBLE);
                 drrPromoText.setVisibility(ImageView.VISIBLE);
-                highPrice.setText(currencyFormat.format(room.rate.getAverageBaseRate()));
+                highPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageBaseRate()));
                 highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
             view.setTag(room);

@@ -1,11 +1,15 @@
 package com.ean.mobile.activity;
 
 import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Paint;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -13,8 +17,9 @@ import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.NightlyRate;
 import com.ean.mobile.R;
+import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.SampleApp;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -24,7 +29,11 @@ import java.util.Currency;
 public class BookingSummary extends Activity {
 
     private static final String DATE_FORMAT_STRING = "EEEE, MMMM dd, yyyy";
+    private static final String NIGHTLY_RATE_FORMAT_STRING = "MM-dd-yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
+    private static final DateTimeFormatter NIGHTLY_RATE_FORMATTER = DateTimeFormat.forPattern(NIGHTLY_RATE_FORMAT_STRING);
+    private static final int PICK_CONTACT = 1;
+
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,12 +53,14 @@ public class BookingSummary extends Activity {
         ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
         final HotelInfo hotelInfo = SampleApp.selectedHotel;
         HotelRoom hotelRoom = SampleApp.selectedRoom;
+        RoomOccupancy occupancy = hotelRoom.rate.roomGroup.get(0).occupancy;
 
         hotelName.setText(hotelInfo.name);
         checkIn.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
         checkOut.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
+        numGuests.setText(String.format(getString(R.string.adults_comma_children), occupancy.numberOfAdults, occupancy.childAges.size()));
         roomType.setText(hotelRoom.description);
-        numGuests.setText(String.format("%d Adult(s), %d Child(ren)", SampleApp.numberOfAdults, SampleApp.numberOfChildren));
+        bedType.setText(hotelRoom.bedTypes.get(0).description);
         drrPromoText.setText(hotelRoom.promoDescription);
 
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
@@ -73,19 +84,17 @@ public class BookingSummary extends Activity {
         }
 
         View view;
-        LayoutInflater inflater;
-        DateTimeFormatter nightlyRateFormatter = DateTimeFormat.forPattern("MM-dd-yyyy");
+        final LayoutInflater inflater = getLayoutInflater();
 
-        DateTime currentDate = SampleApp.arrivalDate.minusDays(1);
-        for (NightlyRate rate : SampleApp.selectedRoom.rate.nightlyRates) {
-            inflater = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LocalDate currentDate = SampleApp.arrivalDate.minusDays(1);
+        for (NightlyRate rate : SampleApp.selectedRoom.rate.chargeable.nightlyRates) {
             view = inflater.inflate(R.layout.pricebreakdownlayout, null);
             TextView date = (TextView) view.findViewById(R.id.priceBreakdownDate);
             TextView highPrice = (TextView) view.findViewById(R.id.priceBreakdownHighPrice);
             TextView lowPrice = (TextView) view.findViewById(R.id.priceBreakdownLowPrice);
 
             currentDate = currentDate.plusDays(1);
-            date.setText(nightlyRateFormatter.print(currentDate));
+            date.setText(NIGHTLY_RATE_FORMATTER.print(currentDate));
 
             currencyFormat.setCurrency(Currency.getInstance(hotelInfo.currencyCode));
             lowPrice.setText(currencyFormat.format(rate.rate));
@@ -97,6 +106,42 @@ public class BookingSummary extends Activity {
                 highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
             priceBreakdownList.addView(view);
+        }
+    }
+
+    public void onContactChooseButtonClick(View view) {
+        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+        startActivityForResult(intent, PICK_CONTACT);
+    }
+
+
+    @Override
+    public void onActivityResult(int reqCode, int resultCode, Intent data){
+        super.onActivityResult(reqCode, resultCode, data);
+
+        switch(reqCode) {
+            case (PICK_CONTACT):
+                if (resultCode == Activity.RESULT_OK) {
+                    Uri contactData = data.getData();
+                    Cursor c = getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, null, null, null);
+                    if (c.moveToNext()) {
+                        String firstName = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
+                        String lastName = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
+                        String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                        String email = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+
+
+                        EditText guestFirstName = (EditText) findViewById(R.id.guestFirstName);
+                        EditText guestLastName = (EditText) findViewById(R.id.guestLastName);
+                        EditText guestPhoneNumber = (EditText) findViewById(R.id.guestPhoneNumber);
+                        EditText guestEmail = (EditText) findViewById(R.id.guestEmail);
+
+                        guestFirstName.setText(firstName);
+                        guestLastName.setText(lastName);
+                        guestPhoneNumber.setText(number);
+                        guestEmail.setText(email);
+                    }
+                }
         }
     }
 }

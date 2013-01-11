@@ -1,5 +1,5 @@
 /*
- * Copyright 2012 EAN.com, L.P. All rights reserved.
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile.request;
@@ -22,7 +22,7 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.JsonParsingException;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * Uses getHotelInformation to get the rest of the hotel's information, including images
@@ -42,22 +42,26 @@ public final class InformationRequest extends Request {
      * Gets the rest of the information about a hotel not included in previous calls.
      * @param hotelId The hotelId for which to gather more information.
      * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
+     * @param locale The locale for which to get the information about a hotel.
      * @throws IOException If there is an error communicating on the network.
      * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the extended hotel information that was requested.
      */
-    public static HotelInfoExtended getHotelInformation(final long hotelId, final String customerSessionId)
-            throws IOException, EanWsError {
-        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("cid", CID),
-            new BasicNameValuePair("minorRev", MINOR_REV),
-            new BasicNameValuePair("apiKey", API_KEY),
-            new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("locale", LOCALE),
-            new BasicNameValuePair("currencyCode", CURRENCY_CODE),
-            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+    public static HotelInfoExtended getHotelInformation(final long hotelId,
+                                                        final String customerSessionId,
+                                                        final String locale)
+            throws IOException, EanWsError, UrlRedirectionException {
+        final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+                new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
+
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        //urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(requestParameters);
+        urlParameters.addAll(getBasicUrlParameters(locale, null));
         try {
             final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 
@@ -88,7 +92,7 @@ public final class InformationRequest extends Request {
             Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
             return new HotelInfoExtended(hotelId, longDescription, imageTuples);
         } catch (JSONException jse) {
-            throw new JsonParsingException(jse);
+            return null;
         }
     }
 }

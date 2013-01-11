@@ -6,8 +6,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,21 +24,26 @@ import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
+import com.ean.mobile.request.DestLookup;
 import com.ean.mobile.request.ListRequest;
-import org.joda.time.DateTime;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StartupSearch extends Activity {
-
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
-
     private ProgressDialog searchingDialog;
+
+    private List<String> suggestedDestinations = new ArrayList<String>();
 
     public final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,9 +67,9 @@ public class StartupSearch extends Activity {
         });
 
         // get the current date
-        DateTime now = DateTime.now();
-        SampleApp.arrivalDate = now;
-        SampleApp.departureDate = now.plusDays(1);
+        LocalDate today = LocalDate.now();
+        SampleApp.arrivalDate = today;
+        SampleApp.departureDate = today.plusDays(1);
 
 
         Button arrivalDate = (Button) findViewById(R.id.arrival_date_picker);
@@ -89,6 +97,7 @@ public class StartupSearch extends Activity {
 
     }
 
+
     public void showDatePickerDialog(View view) {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
@@ -114,8 +123,13 @@ public class StartupSearch extends Activity {
     private void performSearch(final String searchQuery) {
         preSearch();
         SampleApp.searchQuery = searchQuery;
-        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseDateTime(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
-        SampleApp.departureDate = DATE_TIME_FORMATTER.parseDateTime(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
+        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
+        SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
+
+        Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        adultsSpinner.getOnItemSelectedListener().onItemSelected(adultsSpinner, null, adultsSpinner.getSelectedItemPosition(), 0);
+        Spinner childSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        childSpinner.getOnItemSelectedListener().onItemSelected(childSpinner, null, childSpinner.getSelectedItemPosition(), 0);
         new PerformSearchTask().execute((Void) null);
     }
 
@@ -152,16 +166,18 @@ public class StartupSearch extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.numberOfAdults, SampleApp.numberOfChildren, SampleApp.arrivalDate, SampleApp.departureDate);
+                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate, null, SampleApp.LOCALE.toString(), SampleApp.CURRENCY.toString());
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better. If this exception occurs, it's likely an input error and
                 // should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
-        }
+         }
 
 
         @Override
@@ -181,6 +197,36 @@ public class StartupSearch extends Activity {
         }
     }
 
+    private class SuggestDestinationTask extends AsyncTask<String, Integer, JSONArray> {
+
+        @Override
+        protected JSONArray doInBackground(String... strings) {
+            try {
+                return DestLookup.getDestInfos(strings[0]);
+            } catch (IOException e) {
+                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray destinationsJSON) {
+            // convert the array to a list of strings.
+            List<String> destinations = new ArrayList<String>();
+            if (destinationsJSON != null) {
+                for (int i = 0; i < destinationsJSON.length(); i++) {
+                    destinations.add(destinationsJSON.optString(i));
+                }
+            }
+            if (suggestedDestinations == null) {
+                suggestedDestinations = new ArrayList<String>(destinations);
+            } else {
+                suggestedDestinations.clear();
+                suggestedDestinations.addAll(destinations);
+            }
+        }
+    }
+
     public static class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private final int pickerId;
@@ -195,7 +241,7 @@ public class StartupSearch extends Activity {
 
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
-            final DateTime date;
+            final LocalDate date;
             if (pickerId == R.id.arrival_date_picker) {
                 date = SampleApp.arrivalDate;
             } else {
@@ -207,7 +253,7 @@ public class StartupSearch extends Activity {
 
         @Override
         public void onDateSet(DatePicker datePicker, int year, int monthOfYear, int dayOfMonth) {
-            DateTime chosenDate = new DateTime(year, monthOfYear + 1, dayOfMonth, 0, 0);
+            LocalDate chosenDate = new LocalDate(year, monthOfYear + 1, dayOfMonth);
             pickerButton.setText(DATE_TIME_FORMATTER.print(chosenDate));
             switch(pickerId) {
                 case R.id.arrival_date_picker:

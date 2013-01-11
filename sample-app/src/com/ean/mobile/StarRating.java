@@ -7,8 +7,8 @@ import java.math.BigDecimal;
 
 public class StarRating {
 
-    public static void populate(LinearLayout parent,
-                                final String starRating) {
+    public static void populate(final LinearLayout parent,
+                                final BigDecimal starRating) {
         final ImageView[] stars = {
                 (ImageView) parent.findViewById(R.id.hotelInfoStar1),
                 (ImageView) parent.findViewById(R.id.hotelInfoStar2),
@@ -18,9 +18,9 @@ public class StarRating {
         };
         //Log.d("EANDebug starrating", starRating);
         //Log.d("EANDebug starbitslen", starBits.length+"");
-        int fullStars = new BigDecimal(starRating).intValue();
+        int fullStars = starRating == null ? 0 : starRating.intValue();
         //Log.d("EANDebug starbitsfullstar", fullStars+"");
-        boolean halfStars = starRating.length() > 2;
+        boolean halfStars = starRating != null && starRating.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0;
         //Log.d("EANDebug starbitshalfstar", halfStars+"");
 
         for (int i = 0; i < stars.length; i++) {

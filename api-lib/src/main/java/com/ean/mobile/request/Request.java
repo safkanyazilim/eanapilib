@@ -1,22 +1,24 @@
 /*
- * Copyright 2012 EAN.com, L.P. All rights reserved.
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile.request;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URLConnection;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.joda.time.DateTime;
+import org.apache.http.message.BasicNameValuePair;
+import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
@@ -26,40 +28,59 @@ import android.util.Log;
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UriCreationException;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The base class for all of the API requests that are implemented. Provides some easy-to use methods for performing
  * requests.
  */
 public abstract class Request {
-    //TODO: These should be defined in a .properties file.
-    protected static final String CID = "55505";
-    protected static final String MINOR_REV = "20";
-    protected static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
-    protected static final String LOCALE = "en_US";
-    protected static final String CURRENCY_CODE = "USD";
+    private static final List<NameValuePair> BASIC_URL_PARAMETERS;
 
-    protected static final String URI_SCHEME = "http";
-    //protected static final String URI_HOST = "stg1-www.travelnow.com";
-    //protected static final String URI_HOST = "stg5-www.travelnow.com";
-    //protected static final String URI_HOST = "xml.travelnow.com";
-    protected static final String URI_HOST = "mobile.eancdn.com";
-    protected static final String URI_BASE_PATH = "/ean-services/rs/hotel/v3/";
-    protected static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
-
-    protected static final URI FULL_URI;
-
-    static {
-        URI fullUri = null;
-        try {
-            fullUri = new URI(URI_SCHEME, URI_HOST, URI_BASE_PATH, null, null);
-        } catch (URISyntaxException use) {
-            Log.wtf(Constants.DEBUG_TAG, "Base uri is malformed");
-        }
-        FULL_URI = fullUri;
-    }
+    private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
+
+    private static final URI STANDARD_ENDPOINT;
+
+    private static final URI SECURE_ENDPOINT;
+
+    static {
+        final String standardUriScheme = "http";
+        final String standardUriHost = "api.ean.com";
+        final String secureUriScheme = "https";
+        final String secureUriHost = "book.api.ean.com";
+        final String uriBasePath = "/ean-services/rs/hotel/v3/";
+
+        URI standardUri = null;
+        URI secureUri = null;
+        try {
+            standardUri = new URI(standardUriScheme, standardUriHost, uriBasePath, null, null);
+            secureUri = new URI(secureUriScheme, secureUriHost, uriBasePath, null, null);
+        } catch (URISyntaxException use) {
+            // This exception can only be thrown if the static variables listed above are incorrectly
+            // formatted, or the usage of new URI(...) is incorrect, both of which should be found out
+            // long before the code is used in production, since the requests (particularly the int tests)
+            // would fail.
+            Log.wtf(Constants.DEBUG_TAG, "Base uri is malformed");
+        }
+        STANDARD_ENDPOINT = standardUri;
+        SECURE_ENDPOINT = secureUri;
+
+        //TODO: load CID, APIKey, and customerUserAgent from the classpath
+        final String cid = "55505";
+        final String apiKey = "cbrzfta369qwyrm9t5b8y8kf";
+        final String customerUserAgent = "Android";
+
+        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("cid", cid),
+                new BasicNameValuePair("apiKey", apiKey),
+                new BasicNameValuePair("minorRev", "20"),
+                new BasicNameValuePair("customerUserAgent", customerUserAgent)
+        );
+        BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
+    }
+
 
     /**
      * Performs an api request at the specified path with the parameters listed.
@@ -67,33 +88,49 @@ public abstract class Request {
      * @param params The URI parameters to pass in the request.
      * @return The String representation of the JSON returned from the request.
      * @throws IOException If there is a network error or some other connection issue.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    private static String performApiRequestForString(final String relativePath, final List<NameValuePair> params)
-            throws IOException {
+    private static String performApiRequestForString(final String relativePath,
+                                                     final List<NameValuePair> params)
+            throws IOException, UrlRedirectionException {
+        //TODO: refactor this to use java.net.HttpUrlConnection and javax.net.ssl.HttpsUrlConnection
         //Build the url
-        final HttpGet getRequest = new HttpGet(createFullUri(FULL_URI, relativePath, params));
-        getRequest.setHeader("Accept", "application/json, */*");
-        Log.d(Constants.DEBUG_TAG, "uri: " + getRequest.getURI());
-        Log.d(Constants.DEBUG_TAG, "getting response");
+        final URLConnection connection;
         final long startTime = System.currentTimeMillis();
-        final HttpResponse response = new DefaultHttpClient().execute(getRequest);
-        Log.d(Constants.DEBUG_TAG, "got response");
-        final StatusLine statusLine = response.getStatusLine();
+        final URI endpoint;
+        if ("res".equals(relativePath)) {
+            endpoint = SECURE_ENDPOINT;
+        } else {
+            endpoint = STANDARD_ENDPOINT;
+        }
+        connection = createFullUri(endpoint, relativePath, params).toURL().openConnection();
+        if ("res".equals(relativePath)) {
+            // cause booking requests to use post.
+            connection.setDoOutput(true);
+            ((HttpURLConnection) connection).setRequestMethod("POST");
+            ((HttpURLConnection) connection).setFixedLengthStreamingMode(0);
+        }
+        // force application/json
+        connection.setRequestProperty("Accept", "application/json, */*");
+
+        Log.d(Constants.DEBUG_TAG, "request endpoint: " + connection.getURL().getHost());
         final String jsonString;
         try {
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                jsonString = out.toString();
-            } else {
-                jsonString = null;
-                throw new IOException(statusLine.getReasonPhrase());
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            //before we go further, we must check to see if we were redirected.
+            if (!endpoint.getHost().equals(connection.getURL().getHost())) {
+                // then we were redirected!!
+                throw new UrlRedirectionException();
             }
+            final StringBuilder jsonBuilder = new StringBuilder();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                jsonBuilder.append(line);
+            }
+            jsonString = jsonBuilder.toString();
         } finally {
             // Always close the connection.
-            if (response.getEntity().isStreaming()) {
-                response.getEntity().getContent().close();
-            }
+            ((HttpURLConnection) connection).disconnect();
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
         Log.d(Constants.DEBUG_TAG, "Took " + timeTaken + " milliseconds.");
@@ -108,9 +145,10 @@ public abstract class Request {
      * @throws IOException If there is a network issue, or the network stream cannot otherwise be read.
      * @throws JSONException If the response does not contain valid JSON
      * @throws EanWsError If the response contains an EanWsError element
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     protected static JSONObject performApiRequest(final String relativePath, final List<NameValuePair> params)
-            throws IOException, JSONException, EanWsError {
+            throws IOException, JSONException, EanWsError, UrlRedirectionException {
         final JSONObject response = new JSONObject(performApiRequestForString(relativePath, params));
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
@@ -132,6 +170,7 @@ public abstract class Request {
             return null;
         }
         final URI relativeUri = relativePath == null ? baseUri : baseUri.resolve(relativePath);
+        //URLEncodedUtils cannot be used because the api cannot handle %2F instead of / for the date strings.
         final String queryString = createQueryString(params);
 
         try {
@@ -165,30 +204,59 @@ public abstract class Request {
             } else if (potentialQueryString.endsWith("&")) {
                 potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
             }
+            // URLEncoder.encode cannot be used since it encodes things in a way the api does not expect, particularly
+            // dates.
             queryString = potentialQueryString;
         }
         return queryString;
     }
 
     /**
-     * Formats a DateTime object as a date string expected by the API.
-     * @param dateTime The DateTime object to format.
-     * @return The date string for the API.
+     * Gets the url parameters that will need to be present for every request.
+     * @param locale The locale in which to request.
+     * @param currencyCode The currency code in which to perform this request.
+     * @param arrivalDate The arrival date for this request.
+     * @param departureDate The departure date for this request.
+     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
      */
-    public static String formatApiDate(final DateTime dateTime) {
-        return DATE_TIME_FORMATTER.print(dateTime);
+    public static List<NameValuePair> getBasicUrlParameters(final String locale,
+                                                            final String currencyCode,
+                                                            final LocalDate arrivalDate,
+                                                            final LocalDate departureDate) {
+        //TODO: force locale to be a java Locale object?
+        final List<NameValuePair> params = new LinkedList<NameValuePair>();
+        params.addAll(BASIC_URL_PARAMETERS);
+        if (locale != null) {
+            params.add(new BasicNameValuePair("locale", locale));
+        }
+        if (currencyCode != null) {
+            params.add(new BasicNameValuePair("currencyCode", currencyCode));
+        }
+        if (arrivalDate != null) {
+            params.add(new BasicNameValuePair("arrivalDate", DATE_TIME_FORMATTER.print(arrivalDate)));
+        }
+        if (departureDate != null) {
+            params.add(new BasicNameValuePair("departureDate", DATE_TIME_FORMATTER.print(departureDate)));
+        }
+        return params;
     }
 
     /**
-     * Gets a string containing the simplified specification for the number of adults and children requested for a room.
-     * @param numberOfAdults The number of adults to be in the room.
-     * @param numberOfChildren The number of children (as specified by the EAN API) to be included in the request.
-     * @return The requested string.
+     * Gets the url parameters that will need to be present for every request.
+     * @param locale The locale in which to request.
+     * @param currencyCode The currency code in which to perform this request.
+     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
      */
-    public static String formatRoomOccupancy(final int numberOfAdults, final int numberOfChildren) {
-        if (numberOfChildren > 0) {
-            return String.format("%d,%d", numberOfAdults, numberOfChildren);
-        }
-        return Integer.toString(numberOfAdults);
+    public static List<NameValuePair> getBasicUrlParameters(final String locale,
+                                                            final String currencyCode) {
+        return getBasicUrlParameters(locale, currencyCode, null, null);
+    }
+
+    /**
+     * Gets the url parameters that will need to be present for every request.
+     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
+     */
+    public static List<NameValuePair> getBasicUrlParameters() {
+        return getBasicUrlParameters(null, null, null, null);
     }
 }
