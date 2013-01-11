@@ -1,6 +1,8 @@
 package com.ean.mobile;
 
 import android.app.Application;
+import android.content.Context;
+import android.widget.Toast;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
@@ -37,5 +39,9 @@ public class SampleApp extends Application {
 
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
+    }
+
+    public static void sendRedirectionToast(final Context context) {
+        Toast.makeText(context, R.string.redirected, Toast.LENGTH_LONG).show();
     }
 }

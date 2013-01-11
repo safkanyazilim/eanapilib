@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Dakkar</string>
-    <string name="search_bar_autotext">Please enter a city</string>
+    <string name="search_bar_autotext">Search for hotels in a destination.</string>
     <string name="from">from</string>
     <string name="loading_address">loading address…</string>
     <string name="loading_descriptions">loading description…</string>
@@ -53,4 +53,7 @@
         <item>5</item>
     </string-array>
     <string name="taxes_and_fees">Taxes &amp; Fees</string>
+    <string name="redirected">Couldn\'t connect to EAN API network.</string>
+    <string name="adults_comma_children">%1$d Adult(s), %2$d Child(ren)</string>
+    <string name="choose_contact">Choose from contacts</string>
 </resources>

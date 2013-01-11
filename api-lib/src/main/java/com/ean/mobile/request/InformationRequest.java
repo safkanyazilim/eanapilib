@@ -22,6 +22,7 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * Uses getHotelInformation to get the rest of the hotel's information, including images
@@ -44,12 +45,13 @@ public final class InformationRequest extends Request {
      * @param locale The locale for which to get the information about a hotel.
      * @throws IOException If there is an error communicating on the network.
      * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the extended hotel information that was requested.
      */
     public static HotelInfoExtended getHotelInformation(final long hotelId,
                                                         final String customerSessionId,
                                                         final String locale)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", Long.toString(hotelId)),

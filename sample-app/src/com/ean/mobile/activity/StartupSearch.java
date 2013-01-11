@@ -6,8 +6,11 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -18,26 +21,29 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
 import com.ean.mobile.R;
-import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
+import com.ean.mobile.request.DestLookup;
 import com.ean.mobile.request.ListRequest;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.json.JSONArray;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class StartupSearch extends Activity {
-
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
-
     private ProgressDialog searchingDialog;
+
+    private List<String> suggestedDestinations = new ArrayList<String>();
 
     public final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,6 +97,7 @@ public class StartupSearch extends Activity {
 
     }
 
+
     public void showDatePickerDialog(View view) {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
@@ -118,6 +125,11 @@ public class StartupSearch extends Activity {
         SampleApp.searchQuery = searchQuery;
         SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
         SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
+
+        Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        adultsSpinner.getOnItemSelectedListener().onItemSelected(adultsSpinner, null, adultsSpinner.getSelectedItemPosition(), 0);
+        Spinner childSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        childSpinner.getOnItemSelectedListener().onItemSelected(childSpinner, null, childSpinner.getSelectedItemPosition(), 0);
         new PerformSearchTask().execute((Void) null);
     }
 
@@ -161,9 +173,11 @@ public class StartupSearch extends Activity {
                 //TODO: This should be handled better. If this exception occurs, it's likely an input error and
                 // should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
-        }
+         }
 
 
         @Override
@@ -180,6 +194,36 @@ public class StartupSearch extends Activity {
         @Override
         protected void onCancelled() {
             StartupSearch.this.searchingDialog.dismiss();
+        }
+    }
+
+    private class SuggestDestinationTask extends AsyncTask<String, Integer, JSONArray> {
+
+        @Override
+        protected JSONArray doInBackground(String... strings) {
+            try {
+                return DestLookup.getDestInfos(strings[0]);
+            } catch (IOException e) {
+                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(JSONArray destinationsJSON) {
+            // convert the array to a list of strings.
+            List<String> destinations = new ArrayList<String>();
+            if (destinationsJSON != null) {
+                for (int i = 0; i < destinationsJSON.length(); i++) {
+                    destinations.add(destinationsJSON.optString(i));
+                }
+            }
+            if (suggestedDestinations == null) {
+                suggestedDestinations = new ArrayList<String>(destinations);
+            } else {
+                suggestedDestinations.clear();
+                suggestedDestinations.addAll(destinations);
+            }
         }
     }
 

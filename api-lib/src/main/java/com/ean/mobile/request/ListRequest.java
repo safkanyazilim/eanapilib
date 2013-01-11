@@ -21,6 +21,7 @@ import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
@@ -53,11 +54,12 @@ public final class ListRequest extends Request {
      * @return The list of HotelInfo that were requested by the search parameters.
      * @throws IOException If there was a network-level error.
      * @throws EanWsError If the API encountered an error and was unable to return results.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     public static HotelInfoList searchForHotels(final String destination,
             final RoomOccupancy occupancy, final LocalDate arrivalDate, final LocalDate departureDate,
             final String customerSessionId, final String locale, final String currencyCode)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
 
         return searchForHotels(destination, Collections.singletonList(occupancy), arrivalDate, departureDate,
             customerSessionId, locale, currencyCode);
@@ -79,12 +81,12 @@ public final class ListRequest extends Request {
      * @return The list of HotelInfo that were requested by the search parameters.
      * @throws IOException If there was a network-level error.
      * @throws EanWsError If the API encountered an error and was unable to return results.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     public static HotelInfoList searchForHotels(final String destination,
             final List<RoomOccupancy> occupancies, final LocalDate arrivalDate, final LocalDate departureDate,
             final String customerSessionId, final String locale, final String currencyCode)
-            throws IOException, EanWsError {
-
+            throws IOException, EanWsError, UrlRedirectionException {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("destinationString", destination),
             new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
@@ -145,8 +147,10 @@ public final class ListRequest extends Request {
      * @return The newly grown HotelInfoList
      * @throws IOException If there is a network connection issue.
      * @throws EanWsError If there is an error with the API request.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public static HotelInfoList loadMoreResults(final HotelInfoList list) throws IOException, EanWsError {
+    public static HotelInfoList loadMoreResults(final HotelInfoList list)
+            throws IOException, EanWsError, UrlRedirectionException {
         final int myPageIndex = list.allocateNewPageIndex();
         final int myStartIndex = list.pageSize * myPageIndex;
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(

@@ -28,6 +28,7 @@ import android.util.Log;
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UriCreationException;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The base class for all of the API requests that are implemented. Provides some easy-to use methods for performing
@@ -87,21 +88,27 @@ public abstract class Request {
      * @param params The URI parameters to pass in the request.
      * @return The String representation of the JSON returned from the request.
      * @throws IOException If there is a network error or some other connection issue.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     private static String performApiRequestForString(final String relativePath,
-                                                     final List<NameValuePair> params) throws IOException {
+                                                     final List<NameValuePair> params)
+            throws IOException, UrlRedirectionException {
         //TODO: refactor this to use java.net.HttpUrlConnection and javax.net.ssl.HttpsUrlConnection
         //Build the url
         final URLConnection connection;
         final long startTime = System.currentTimeMillis();
+        final URI endpoint;
         if ("res".equals(relativePath)) {
-            connection = createFullUri(SECURE_ENDPOINT, relativePath, params).toURL().openConnection();
+            endpoint = SECURE_ENDPOINT;
+        } else {
+            endpoint = STANDARD_ENDPOINT;
+        }
+        connection = createFullUri(endpoint, relativePath, params).toURL().openConnection();
+        if ("res".equals(relativePath)) {
             // cause booking requests to use post.
             connection.setDoOutput(true);
             ((HttpURLConnection) connection).setRequestMethod("POST");
             ((HttpURLConnection) connection).setFixedLengthStreamingMode(0);
-        } else {
-            connection = createFullUri(STANDARD_ENDPOINT, relativePath, params).toURL().openConnection();
         }
         // force application/json
         connection.setRequestProperty("Accept", "application/json, */*");
@@ -110,6 +117,11 @@ public abstract class Request {
         final String jsonString;
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+            //before we go further, we must check to see if we were redirected.
+            if (!endpoint.getHost().equals(connection.getURL().getHost())) {
+                // then we were redirected!!
+                throw new UrlRedirectionException();
+            }
             final StringBuilder jsonBuilder = new StringBuilder();
             String line;
             while ((line = reader.readLine()) != null) {
@@ -133,9 +145,10 @@ public abstract class Request {
      * @throws IOException If there is a network issue, or the network stream cannot otherwise be read.
      * @throws JSONException If the response does not contain valid JSON
      * @throws EanWsError If the response contains an EanWsError element
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     protected static JSONObject performApiRequest(final String relativePath, final List<NameValuePair> params)
-            throws IOException, JSONException, EanWsError {
+            throws IOException, JSONException, EanWsError, UrlRedirectionException {
         final JSONObject response = new JSONObject(performApiRequestForString(relativePath, params));
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));

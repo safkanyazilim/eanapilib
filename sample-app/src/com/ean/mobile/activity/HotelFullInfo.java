@@ -4,7 +4,6 @@
 package com.ean.mobile.activity;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.AsyncTask;
@@ -16,8 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import com.ean.mobile.Constants;
-import com.ean.mobile.HotelImageTuple;
+import com.ean.mobile.Constants;import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.R;
@@ -26,6 +24,7 @@ import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
@@ -149,6 +148,8 @@ public class HotelFullInfo extends Activity {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
@@ -180,6 +181,8 @@ public class HotelFullInfo extends Activity {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
@@ -227,7 +230,7 @@ public class HotelFullInfo extends Activity {
                 highPrice.setVisibility(TextView.VISIBLE);
                 drrIcon.setVisibility(ImageView.VISIBLE);
                 drrPromoText.setVisibility(ImageView.VISIBLE);
-                highPrice.setText(currencyFormat.format(room.rate.converted.getAverageBaseRate()));
+                highPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageBaseRate()));
                 highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
             view.setTag(room);

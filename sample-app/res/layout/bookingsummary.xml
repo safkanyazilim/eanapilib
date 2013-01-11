@@ -206,10 +206,12 @@
                           android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
+
                 <LinearLayout android:id="@+id/guestinfolayout"
                               android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
                               android:orientation="vertical">
+
                     <TextView android:layout_height="wrap_content"
                               android:layout_width="fill_parent"
                               android:text="@string/guest_information" />
@@ -321,7 +323,18 @@
                               android:layout_height="wrap_content"
                               android:text="@string/billing_legal_disclaimer" />
                 </LinearLayout>
+
             </LinearLayout>
+
+            <Button
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/choose_contact"
+                    android:id="@+id/choose_contact_button"
+                    android:layout_weight="500"
+                    android:layout_gravity="top"
+                    android:singleLine="true"
+                    android:onClick="onContactChooseButtonClick"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

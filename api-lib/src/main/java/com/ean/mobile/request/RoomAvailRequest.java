@@ -21,6 +21,7 @@ import org.json.JSONObject;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The class to use to get specific availability of rooms for a particular hotel, occupancy, and occupancy dates.
@@ -52,6 +53,7 @@ public final class RoomAvailRequest extends Request {
      * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     public static List<HotelRoom> getRoomAvail(final long hotelId,
                                                final RoomOccupancy room,
@@ -60,7 +62,7 @@ public final class RoomAvailRequest extends Request {
                                                final String customerSessionId,
                                                final String locale,
                                                final String currencyCode)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
         return getRoomAvail(
                 hotelId,
                 Collections.singletonList(room),
@@ -88,6 +90,7 @@ public final class RoomAvailRequest extends Request {
      * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
 
     public static List<HotelRoom> getRoomAvail(final long hotelId,
@@ -97,7 +100,7 @@ public final class RoomAvailRequest extends Request {
                                                final String customerSessionId,
                                                final String locale,
                                                final String currencyCode)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", Long.toString(hotelId)),

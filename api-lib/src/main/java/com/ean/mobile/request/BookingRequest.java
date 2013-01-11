@@ -25,8 +25,8 @@ import com.ean.mobile.Address;
 import com.ean.mobile.Individual;
 import com.ean.mobile.Reservation;
 import com.ean.mobile.ReservationRoom;
-
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The class that performs booking requests.
@@ -63,6 +63,7 @@ public final class BookingRequest extends Request {
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
@@ -75,7 +76,7 @@ public final class BookingRequest extends Request {
                                       final String customerSessionId,
                                       final String locale,
                                       final String currencyCode)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
         return performBooking(
                 hotelId,
                 arrivalDate,
@@ -104,6 +105,7 @@ public final class BookingRequest extends Request {
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
@@ -116,7 +118,7 @@ public final class BookingRequest extends Request {
                                       final String customerSessionId,
                                       final String locale,
                                       final String currencyCode)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
         return performBooking(
                 hotelId,
                 arrivalDate,
@@ -146,6 +148,7 @@ public final class BookingRequest extends Request {
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
+     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
@@ -159,7 +162,7 @@ public final class BookingRequest extends Request {
                                       final List<NameValuePair> extraBookingData,
                                       final String locale,
                                       final String currencyCode)
-            throws IOException, EanWsError {
+            throws IOException, EanWsError, UrlRedirectionException {
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", hotelId.toString()),
