@@ -55,20 +55,12 @@ public final class ListRequest extends Request {
      * @throws EanWsError If the API encountered an error and was unable to return results.
      */
     public static HotelInfoList searchForHotels(final String destination,
-                                                final RoomOccupancy occupancy,
-                                                final LocalDate arrivalDate,
-                                                final LocalDate departureDate,
-                                                final String customerSessionId,
-                                                final String locale,
-                                                final String currencyCode) throws IOException, EanWsError {
-        return searchForHotels(
-                destination,
-                Collections.singletonList(occupancy),
-                arrivalDate,
-                departureDate,
-                customerSessionId,
-                locale,
-                currencyCode);
+            final RoomOccupancy occupancy, final LocalDate arrivalDate, final LocalDate departureDate,
+            final String customerSessionId, final String locale, final String currencyCode)
+            throws IOException, EanWsError {
+
+        return searchForHotels(destination, Collections.singletonList(occupancy), arrivalDate, departureDate,
+            customerSessionId, locale, currencyCode);
     }
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
@@ -89,16 +81,13 @@ public final class ListRequest extends Request {
      * @throws EanWsError If the API encountered an error and was unable to return results.
      */
     public static HotelInfoList searchForHotels(final String destination,
-                                                final List<RoomOccupancy> occupancies,
-                                                final LocalDate arrivalDate,
-                                                final LocalDate departureDate,
-                                                final String customerSessionId,
-                                                final String locale,
-                                                final String currencyCode) throws IOException, EanWsError {
+            final List<RoomOccupancy> occupancies, final LocalDate arrivalDate, final LocalDate departureDate,
+            final String customerSessionId, final String locale, final String currencyCode)
+            throws IOException, EanWsError {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("destinationString", destination),
-                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
+            new BasicNameValuePair("destinationString", destination),
+            new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
         );
 
         final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
@@ -124,7 +113,7 @@ public final class ListRequest extends Request {
         // TODO: Support pagination via cachekey and so forth
         try {
             final JSONObject listResponse
-                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
+                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
 
             if (listResponse.has("EanWsError")) {
                 throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
@@ -143,15 +132,8 @@ public final class ListRequest extends Request {
                 hotels.add(new HotelInfo(hotelList.getJSONObject(i), i));
             }
 
-            return new HotelInfoList(
-                    hotels,
-                    cacheKey,
-                    cacheLocation,
-                    outgoingCustomerSessionId,
-                    pageSize,
-                    totalNumberOfResults,
-                    locale,
-                    currencyCode);
+            return new HotelInfoList(hotels, cacheKey, cacheLocation, outgoingCustomerSessionId, pageSize,
+                totalNumberOfResults, locale, currencyCode);
         } catch (JSONException jse) {
             return HotelInfoList.empty();
         }
@@ -168,9 +150,9 @@ public final class ListRequest extends Request {
         final int myPageIndex = list.allocateNewPageIndex();
         final int myStartIndex = list.pageSize * myPageIndex;
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("cacheKey", list.cacheKey),
-                new BasicNameValuePair("cacheLocation", list.cacheLocation),
-                new BasicNameValuePair("customerSessionId", list.customerSessionId)
+            new BasicNameValuePair("cacheKey", list.cacheKey),
+            new BasicNameValuePair("cacheLocation", list.cacheLocation),
+            new BasicNameValuePair("customerSessionId", list.customerSessionId)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -178,15 +160,15 @@ public final class ListRequest extends Request {
         urlParameters.addAll(requestParameters);
         try {
             final JSONObject listResponse
-                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
+                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
 
             if (listResponse.has("EanWsError")) {
                 throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
             }
 
             final JSONArray newHotelJson = listResponse
-                    .getJSONObject("HotelList")
-                    .getJSONArray("HotelSummary");
+                .getJSONObject("HotelList")
+                .getJSONArray("HotelSummary");
             final List<HotelInfo> newHotels = new ArrayList<HotelInfo>(newHotelJson.length());
             for (int i = 0; i < newHotelJson.length(); i++) {
                 newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i), i + myStartIndex));
