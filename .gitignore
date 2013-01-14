@@ -29,4 +29,8 @@ local.properties
 
 *.ipr
 
+<<<<<<< HEAD
 *.log
+=======
+api-lib/.clover/*
+>>>>>>> Added a new unit test and set to ignore all clover output.
