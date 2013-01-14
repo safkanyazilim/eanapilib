@@ -14,23 +14,25 @@ gen/
 build/
 lib/
 libs/
-.idea/
-*.iml
-atlassian-ide-plugin.xml
 .gradle/
 out/
 sdcard.*
+
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Mac stuff
 .DS_Store
 
+# IntelliJ Stuff
 *.iws
-
 *.ipr
+.idea/
+*.iml
+atlassian-ide-plugin.xml
 
-<<<<<<< HEAD
+# Logs
 *.log
-=======
+
+# Clover output
 api-lib/.clover/*
->>>>>>> Added a new unit test and set to ignore all clover output.
