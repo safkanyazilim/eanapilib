@@ -14,19 +14,25 @@ gen/
 build/
 lib/
 libs/
-.idea/
-*.iml
-atlassian-ide-plugin.xml
 .gradle/
 out/
 sdcard.*
+
 # Local configuration file (sdk path, etc)
 local.properties
 
+# Mac stuff
 .DS_Store
 
+# IntelliJ Stuff
 *.iws
-
 *.ipr
+.idea/
+*.iml
+atlassian-ide-plugin.xml
 
+# Logs
 *.log
+
+# Clover output
+api-lib/.clover/*
