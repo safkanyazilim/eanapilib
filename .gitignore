@@ -20,6 +20,8 @@ atlassian-ide-plugin.xml
 .gradle/
 out/
 sdcard.*
+*/build.number.properties
+
 # Local configuration file (sdk path, etc)
 local.properties
 
