@@ -108,6 +108,7 @@ To build without publishing, just run the default ant target:
 - Do not include android.jar on the classpath. The unit tests will be unable to run due to stubbing issues.
 - Include src/app and src/stubs as project files. 
     - src/stubs provides functionality that allows us to not need android.jar during development and testing, but does not need to be included with the output jar.
+- Add .json as a resource file type. This will allow certain IDEs (Intellij) to include the .json resources in the classpath for the tests that need them.
 
 ###sample-app
 - run ant resolve.dependencies before setting up the project in your ide, as it will include all dependencies necessary.

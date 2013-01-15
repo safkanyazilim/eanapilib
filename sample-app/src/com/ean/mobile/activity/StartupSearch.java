@@ -6,11 +6,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -20,6 +17,7 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
+import com.ean.mobile.Destination;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
@@ -30,7 +28,6 @@ import com.ean.mobile.request.ListRequest;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
-import org.json.JSONArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +40,7 @@ public class StartupSearch extends Activity {
 
     private ProgressDialog searchingDialog;
 
-    private List<String> suggestedDestinations = new ArrayList<String>();
+    private List<Destination> suggestedDestinations = new ArrayList<Destination>();
 
     public final void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -94,7 +91,7 @@ public class StartupSearch extends Activity {
         Spinner childrenSpinner = (Spinner) findViewById(R.id.children_spinner);
         childrenSpinner.setAdapter(childrenSpinnerAdapter);
         childrenSpinner.setOnItemSelectedListener(new PeopleSpinnerListener(false));
-
+        onSearchRequested();
     }
 
 
@@ -197,10 +194,10 @@ public class StartupSearch extends Activity {
         }
     }
 
-    private class SuggestDestinationTask extends AsyncTask<String, Integer, JSONArray> {
+    private class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
 
         @Override
-        protected JSONArray doInBackground(String... strings) {
+        protected List<Destination> doInBackground(String... strings) {
             try {
                 return DestLookup.getDestInfos(strings[0]);
             } catch (IOException e) {
@@ -210,19 +207,14 @@ public class StartupSearch extends Activity {
         }
 
         @Override
-        protected void onPostExecute(JSONArray destinationsJSON) {
-            // convert the array to a list of strings.
-            List<String> destinations = new ArrayList<String>();
-            if (destinationsJSON != null) {
-                for (int i = 0; i < destinationsJSON.length(); i++) {
-                    destinations.add(destinationsJSON.optString(i));
+        protected void onPostExecute(List<Destination> destinations) {
+            if (destinations != null) {
+                if (suggestedDestinations == null) {
+                    suggestedDestinations = new ArrayList<Destination>(destinations);
+                } else {
+                    suggestedDestinations.clear();
+                    suggestedDestinations.addAll(destinations);
                 }
-            }
-            if (suggestedDestinations == null) {
-                suggestedDestinations = new ArrayList<String>(destinations);
-            } else {
-                suggestedDestinations.clear();
-                suggestedDestinations.addAll(destinations);
             }
         }
     }

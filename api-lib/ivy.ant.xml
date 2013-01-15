@@ -44,8 +44,8 @@
     <target name="resolve.dependencies"
             description="Retrieve dependencies with Ivy"
             depends="install, resolve">
-        <ivy:retrieve conf="build" pattern="${lib.dir}/[artifact]-[revision].[ext]"/>
-        <ivy:retrieve conf="JUnit,check" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]"/>
+        <ivy:retrieve conf="build" pattern="${lib.dir}/[artifact]-[revision].[ext]" sync="true" symlink="true"/>
+        <ivy:retrieve conf="JUnit,check" pattern="${lib.dir}/[conf]/[artifact]-[revision].[ext]" sync="true" symlink="true"/>
         <delete dir="${ivy.report.dir}" failonerror="false"/>
         <mkdir dir="${ivy.report.dir}"/>
         <ivy:report todir="${ivy.report.dir}"/>

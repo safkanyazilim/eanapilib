@@ -84,8 +84,6 @@ public class HotelList extends Activity {
             View view = convertView;
             if (view == null) {
                 view = layoutInflater.inflate(R.layout.hotelinfolistlayout, null);
-            } else {
-                //return v;
             }
 
             //Get the hotel.
@@ -197,8 +195,6 @@ public class HotelList extends Activity {
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
-                //TODO: This should be handled better. If this exception occurs, it's likely an input error and
-                // should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());

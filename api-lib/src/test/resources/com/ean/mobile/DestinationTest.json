@@ -1,0 +1,13 @@
+{
+    "well-behaved": {
+        "id": "testId|somethingelse|anotherthing",
+        "categoryLocalized": "Cities",
+        "category": "cities",
+        "name": "Test Hotel, amazing"
+    },
+    "null-category": {
+        "id": "testId|somethingelse|anotherthing",
+        "categoryLocalized": "Cities",
+        "name": "Test Hotel, amazing"
+    }
+}

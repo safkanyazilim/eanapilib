@@ -6,24 +6,27 @@ package com.ean.mobile.request;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
 import com.ean.mobile.Constants;
+import com.ean.mobile.Destination;
 
 /**
  * Looks up possible destinations based on the destinationString passed to getDestInfos.
  */
 public final class DestLookup {
-    private static final String ENDPOINT_FORMAT = "http://api.ean.com/ean-services/lookup/?propertyName=%s";
+    private static final String ENDPOINT_FORMAT
+            = "http://www.travelnow.com/templates/349176/destination?propertyName=%s";
 
     /**
      * Private no-op constructor to prevent instantiation.
@@ -38,9 +41,9 @@ public final class DestLookup {
      * @return The array of possible destinations meant by the destinationString
      * @throws IOException If there is a problem communicating on the network.
      */
-    public static JSONArray getDestInfos(final String destinationString) throws IOException {
+    public static List<Destination> getDestInfos(final String destinationString) throws IOException {
         if ("".equals(destinationString) || destinationString == null) {
-            return new JSONArray();
+            return Collections.emptyList();
         }
         final String baseUrl = String.format(ENDPOINT_FORMAT, destinationString);
         Log.d(Constants.DEBUG_TAG, baseUrl);
@@ -65,7 +68,7 @@ public final class DestLookup {
                 response.getEntity().getContent().close();
                 throw new IOException(statusLine.getReasonPhrase());
             }
-            return json.getJSONArray("items");
+            return Destination.getDestinations(json.getJSONArray("items"));
         } catch (JSONException jse) {
             return null;
         }
