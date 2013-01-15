@@ -44,7 +44,7 @@
     <target name="resolve.dependencies"
             description="Retrieve dependencies with Ivy"
             depends="ivy.install, ivy.resolve">
-        <ivy:retrieve conf="build" pattern="${jar.libs.absolute.dir}/[artifact]-[revision].[ext]"/>
+        <ivy:retrieve conf="build" pattern="${jar.libs.absolute.dir}/[artifact]-[revision].[ext]" overwriteMode="always"/>
         <ivy:retrieve conf="JUnit,check" pattern="${jar.libs.absolute.dir}/[conf]/[artifact]-[revision].[ext]"/>
         <delete dir="${ivy.report.dir}" failonerror="false"/>
         <mkdir dir="${ivy.report.dir}"/>

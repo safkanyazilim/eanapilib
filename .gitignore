@@ -1,14 +1,14 @@
-# built application files
+# Built application files
 *.apk
 *.ap_
 
-# files for the dex VM
+# Files for the dex VM
 *.dex
 
 # Java class files
 *.class
 
-# generated files
+# Generated files
 bin/
 gen/
 build/
@@ -18,13 +18,13 @@ libs/
 out/
 sdcard.*
 
-# Local configuration file (sdk path, etc)
+# Local configuration file (sdk path, etc).
 local.properties
 
-# Mac stuff
+# Mac folder info store.
 .DS_Store
 
-# IntelliJ Stuff
+# IntelliJ project and module configuration.
 *.iws
 *.ipr
 .idea/
@@ -35,4 +35,4 @@ atlassian-ide-plugin.xml
 *.log
 
 # Clover output
-api-lib/.clover/*
+api-lib/.clover/
