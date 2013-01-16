@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="ean-android" default="inital-build">
+<project name="ean-android" default="initial-build">
 
     <property environment="env" />
 
@@ -41,5 +41,9 @@
         <ant dir="${api-lib.dir}" target="ivy.publish" />
         <update-android-project />
         <ant dir="${sample-app.dir}" target="debug" />
+    </target>
+
+    <target name="clean.cache" description="Cleans ivy cache of artifacts.">
+        <ant dir="${api-lib.dir}" target="clean.cache" />
     </target>
 </project>
