@@ -124,43 +124,46 @@ public final class ListRequest extends Request {
             final String cacheKey = listResponse.optString("cacheKey");
             final String cacheLocation = listResponse.optString("cacheLocation");
             final String outgoingCustomerSessionId = listResponse.optString("customerSessionId");
-            final int pageSize = listResponse.optJSONObject("HotelList").optInt("@size");
             final int totalNumberOfResults = listResponse.optJSONObject("HotelList").optInt("@activePropertyCount");
             final JSONArray hotelList = listResponse
                 .getJSONObject("HotelList")
                 .getJSONArray("HotelSummary");
             final List<HotelInfo> hotels = new ArrayList<HotelInfo>(hotelList.length());
             for (int i = 0; i < hotelList.length(); i++) {
-                hotels.add(new HotelInfo(hotelList.getJSONObject(i), i));
+                hotels.add(new HotelInfo(hotelList.getJSONObject(i)));
             }
 
-            return new HotelInfoList(hotels, cacheKey, cacheLocation, outgoingCustomerSessionId, pageSize,
-                totalNumberOfResults, locale, currencyCode);
+            return new HotelInfoList(hotels, cacheKey, cacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
         } catch (JSONException jse) {
-            return HotelInfoList.empty();
+            return HotelInfoList.emptyList();
         }
     }
 
     /**
      * Loads more results into a HotelInfoList so pagination can be supported.
-     * @param list The HotelInfoList that is being loaded.
+     * @param locale Locale
+     * @param currencyCode Currency Code
+     * @param cacheKey Cache key from previous request
+     * @param cacheLocation Cache location from previous request
+     * @param customerSessionId Customer Session Id obtained from previous requests, pass
+     *      in to track as the user moves around requests and booking flow.
      * @return The newly grown HotelInfoList
      * @throws IOException If there is a network connection issue.
      * @throws EanWsError If there is an error with the API request.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public static HotelInfoList loadMoreResults(final HotelInfoList list)
-            throws IOException, EanWsError, UrlRedirectionException {
-        final int myPageIndex = list.allocateNewPageIndex();
-        final int myStartIndex = list.pageSize * myPageIndex;
+    public static HotelInfoList loadMoreResults(final String locale, final String currencyCode,
+            final String cacheKey, final String cacheLocation,
+            final String customerSessionId) throws IOException, EanWsError, UrlRedirectionException {
+
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("cacheKey", list.cacheKey),
-            new BasicNameValuePair("cacheLocation", list.cacheLocation),
-            new BasicNameValuePair("customerSessionId", list.customerSessionId)
+            new BasicNameValuePair("cacheKey", cacheKey),
+            new BasicNameValuePair("cacheLocation", cacheLocation),
+            new BasicNameValuePair("customerSessionId", customerSessionId)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(list.locale, list.currencyCode));
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
         try {
             final JSONObject listResponse
@@ -170,19 +173,24 @@ public final class ListRequest extends Request {
                 throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
             }
 
+            final String newCacheKey = listResponse.optString("cacheKey");
+            final String newCacheLocation = listResponse.optString("cacheLocation");
+            final String outgoingCustomerSessionId = listResponse.optString("customerSessionId");
+            final int totalNumberOfResults = listResponse.optJSONObject("HotelList").optInt("@activePropertyCount");
+
             final JSONArray newHotelJson = listResponse
                 .getJSONObject("HotelList")
                 .getJSONArray("HotelSummary");
             final List<HotelInfo> newHotels = new ArrayList<HotelInfo>(newHotelJson.length());
             for (int i = 0; i < newHotelJson.length(); i++) {
-                newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i), i + myStartIndex));
+                newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i)));
             }
 
-            list.addAll(myStartIndex, newHotels);
-            return list;
+            return new HotelInfoList(newHotels,
+                newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
         } catch (JSONException jse) {
             // we'll do nothing.
-            return list;
+            return HotelInfoList.emptyList();
         }
     }
 }

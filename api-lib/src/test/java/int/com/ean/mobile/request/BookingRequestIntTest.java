@@ -34,7 +34,7 @@ public class BookingRequestIntTest {
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
 
         List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
-                hotelList.get(0).hotelId,
+                hotelList.hotelInfos.get(0).hotelId,
                 OCCUPANCY,
                 dateTimes[0],
                 dateTimes[1],
@@ -62,10 +62,10 @@ public class BookingRequestIntTest {
 
 
         BookingRequest.performBooking(
-                hotelList.get(0).hotelId,
+                hotelList.hotelInfos.get(0).hotelId,
                 dateTimes[0],
                 dateTimes[1],
-                hotelList.get(0).supplierType,
+                hotelList.hotelInfos.get(0).supplierType,
                 room,
                 resInfo,
                 ADDRESS,
@@ -90,7 +90,7 @@ public class BookingRequestIntTest {
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
 
         List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
-                hotelList.get(0).hotelId,
+                hotelList.hotelInfos.get(0).hotelId,
                 occupancies,
                 dateTimes[0],
                 dateTimes[1],
@@ -133,10 +133,10 @@ public class BookingRequestIntTest {
 
 
         BookingRequest.performBooking(
-                hotelList.get(0).hotelId,
+                hotelList.hotelInfos.get(0).hotelId,
                 dateTimes[0],
                 dateTimes[1],
-                hotelList.get(0).supplierType,
+                hotelList.hotelInfos.get(0).supplierType,
                 bookingRooms,
                 resInfo,
                 ADDRESS,

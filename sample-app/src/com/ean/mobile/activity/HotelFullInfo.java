@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import com.ean.mobile.Constants;import com.ean.mobile.HotelImageTuple;
+import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.R;
@@ -28,7 +28,6 @@ import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.io.IOException;
@@ -62,7 +61,7 @@ public class HotelFullInfo extends Activity {
                     SampleApp.numberOfChildren,
                     SampleApp.arrivalDate,
                     SampleApp.departureDate,
-                    SampleApp.foundHotels.customerSessionId).execute((Void) null);
+                    SampleApp.customerSessionId).execute((Void) null);
         }
 
 
@@ -142,8 +141,8 @@ public class HotelFullInfo extends Activity {
                     arrivalDate,
                     departureDate,
                     customerSessionId,
-                    SampleApp.LOCALE.toString(),
-                    SampleApp.CURRENCY.getCurrencyCode());
+                    SampleApp.DEFAULT_LOCALE.toString(),
+                    SampleApp.DEFAULT_CURRENCY.getCurrencyCode());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
@@ -175,8 +174,8 @@ public class HotelFullInfo extends Activity {
             try {
                 return InformationRequest.getHotelInformation(
                     hotelId,
-                    SampleApp.foundHotels.customerSessionId,
-                    SampleApp.LOCALE.toString());
+                    SampleApp.customerSessionId,
+                    SampleApp.DEFAULT_LOCALE.toString());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {

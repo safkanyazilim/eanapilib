@@ -41,7 +41,7 @@ public class ListRequestTest {
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
 
         assertNotNull(results);
-        assertEquals(0, results.size());
+        assertEquals(0, results.hotelInfos.size());
         assertNull(results.customerSessionId);
         assertNull(results.cacheKey);
         assertNull(results.cacheLocation);
