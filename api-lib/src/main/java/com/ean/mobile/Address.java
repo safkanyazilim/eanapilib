@@ -25,7 +25,7 @@ public abstract class Address {
      * The country codes wherein a state code is supported and required.
      */
     public static final List<String> VALID_STATE_PROVINCE_CODE_COUNTRY_CODES
-            = Collections.unmodifiableList(Arrays.asList("US", "CA", "AU"));
+        = Collections.unmodifiableList(Arrays.asList("US", "CA", "AU"));
 
     /**
      * An ordered list of address lines, starting with address line 1 and maxing out around 3.
@@ -104,10 +104,8 @@ public abstract class Address {
      */
     public List<NameValuePair> asBookingRequestPairs() {
         final List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
-        int i = 1;
-        for (String line : lines) {
-            addressPairs.add(new BasicNameValuePair("address" + i, line));
-            i++;
+        for (int i = 0; i < lines.size(); i++) {
+            addressPairs.add(new BasicNameValuePair("address" + (i + 1), lines.get(i)));
         }
         addressPairs.add(new BasicNameValuePair("city", city));
         if (VALID_STATE_PROVINCE_CODE_COUNTRY_CODES.contains(countryCode)) {

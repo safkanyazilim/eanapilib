@@ -5,7 +5,9 @@
 package com.ean.mobile.request;
 
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.joda.time.LocalDate;
 import org.junit.Test;
@@ -15,12 +17,8 @@ import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.DataValidationException;
 
-import static org.hamcrest.Matchers.both;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.lessThanOrEqualTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertFalse;
 
 public class ListRequestIntTest {
 
@@ -37,7 +35,7 @@ public class ListRequestIntTest {
         HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
 
-        assertThat(results.size(), both(greaterThan(0)).and(lessThanOrEqualTo(results.pageSize)));
+        assertEquals(10, results.hotelInfos.size());
     }
 
     @Test(expected = DataValidationException.class)
@@ -51,65 +49,50 @@ public class ListRequestIntTest {
     public void testSearchForHotelsLocationException() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        ListRequest.searchForHotels(
-                "sea of tranquility, moon",
-                OCCUPANCY,
-                dateTimes[0],
-                dateTimes[1],
-                null,
-                LOCALE,
-                CURRENCY_CODE);
+        ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1], null,
+            LOCALE, CURRENCY_CODE);
     }
 
     @Test
     public void testSearchForHotelsMultiRoomType() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        List<RoomOccupancy> occupancies = Arrays.asList(
-                OCCUPANCY,
-                new RoomOccupancy(1, 3)
-        );
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
 
-        HotelInfoList results = ListRequest.searchForHotels(
-                "rome, it",
-                occupancies,
-                dateTimes[0],
-                dateTimes[1],
-                null,
-                LOCALE,
-                CURRENCY_CODE);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", occupancies, dateTimes[0], dateTimes[1],
+            null, LOCALE, CURRENCY_CODE);
 
-        assertThat(results.size(), both(greaterThan(0)).and(lessThanOrEqualTo(results.pageSize)));
+        assertEquals(10, results.hotelInfos.size());
     }
 
     @Test
     public void testSearchForHotelsPaging() throws Exception {
+        Set<Long> hotelIdsReturned = new HashSet<Long>();
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
         HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
-
-        //multiply page size by 4 since we will load 4 "pages"
-        assertThat(results.totalNumberOfResults, greaterThanOrEqualTo(results.pageSize * 4));
-        assertEquals(results.pageSize, results.size());
+        checkForDuplicateHotelId(hotelIdsReturned, results);
 
         // Paginate a few times and make sure they are ordered correctly.
-        results = ListRequest.loadMoreResults(results);
-        assertPagination(results);
-        results = ListRequest.loadMoreResults(results);
-        assertPagination(results);
-        results = ListRequest.loadMoreResults(results);
-        assertPagination(results);
+        results = ListRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+            results.cacheKey, results.cacheLocation, results.customerSessionId);
+        checkForDuplicateHotelId(hotelIdsReturned, results);
+
+        results = ListRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+            results.cacheKey, results.cacheLocation, results.customerSessionId);
+        checkForDuplicateHotelId(hotelIdsReturned, results);
+
+        results = ListRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+            results.cacheKey, results.cacheLocation, results.customerSessionId);
+        checkForDuplicateHotelId(hotelIdsReturned, results);
     }
 
-    private static void assertPagination(final HotelInfoList results) {
-
-        // now we assert that the list has grown expectedly.
-        assertEquals(results.pageSize * (results.getCurrentPageIndex() + 1), results.size());
-
-        // now we need to asset that the list has grown in the correct way.
-        for (HotelInfo info : results) {
-            assertEquals("List out of order.", (long) info.listOrder, (long) results.indexOf(info));
+    private void checkForDuplicateHotelId(final Set<Long> hotelIdsReturned, final HotelInfoList results) {
+        for (HotelInfo hotelInfo : results.hotelInfos) {
+            assertFalse(hotelIdsReturned.contains(hotelInfo.hotelId));
+            hotelIdsReturned.add(hotelInfo.hotelId);
         }
     }
+
 }

@@ -73,10 +73,10 @@ public abstract class Request {
         final String customerUserAgent = "Android";
 
         final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("cid", cid),
-                new BasicNameValuePair("apiKey", apiKey),
-                new BasicNameValuePair("minorRev", "20"),
-                new BasicNameValuePair("customerUserAgent", customerUserAgent)
+            new BasicNameValuePair("cid", cid),
+            new BasicNameValuePair("apiKey", apiKey),
+            new BasicNameValuePair("minorRev", "20"),
+            new BasicNameValuePair("customerUserAgent", customerUserAgent)
         );
         BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
     }
@@ -163,9 +163,7 @@ public abstract class Request {
      * @param params The URI parameters to include in the query string.
      * @return The fully-formed URI based on the inputs.
      */
-    protected static URI createFullUri(final URI baseUri,
-                                       final String relativePath,
-                                       final List<NameValuePair> params) {
+    protected static URI createFullUri(final URI baseUri, final String relativePath, final List<NameValuePair> params) {
         if (baseUri == null) {
             return null;
         }
@@ -219,10 +217,8 @@ public abstract class Request {
      * @param departureDate The departure date for this request.
      * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
      */
-    public static List<NameValuePair> getBasicUrlParameters(final String locale,
-                                                            final String currencyCode,
-                                                            final LocalDate arrivalDate,
-                                                            final LocalDate departureDate) {
+    public static List<NameValuePair> getBasicUrlParameters(final String locale, final String currencyCode,
+            final LocalDate arrivalDate, final LocalDate departureDate) {
         //TODO: force locale to be a java Locale object?
         final List<NameValuePair> params = new LinkedList<NameValuePair>();
         params.addAll(BASIC_URL_PARAMETERS);
@@ -247,8 +243,7 @@ public abstract class Request {
      * @param currencyCode The currency code in which to perform this request.
      * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
      */
-    public static List<NameValuePair> getBasicUrlParameters(final String locale,
-                                                            final String currencyCode) {
+    public static List<NameValuePair> getBasicUrlParameters(final String locale, final String currencyCode) {
         return getBasicUrlParameters(locale, currencyCode, null, null);
     }
 

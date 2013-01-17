@@ -64,21 +64,30 @@ public final class HotelRoom {
      * @param arrivalDate The arrival date of the room. Used to calculate the cancellation policy.
      */
     public HotelRoom(final JSONObject roomRateDetail, final LocalDate arrivalDate) {
-
         this.description = roomRateDetail.optString("roomTypeDescription");
         this.rateCode = roomRateDetail.optString("rateCode");
         this.roomTypeCode = roomRateDetail.optString("roomTypeCode");
         this.promoDescription = roomRateDetail.optString("promoDescription");
         this.smokingPreference = roomRateDetail.optString("smokingPreferences");
-        if (roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType") != null) {
-            this.bedTypes = BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType"));
-        } else if (roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType") != null) {
-            this.bedTypes = BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType"));
-        } else {
-            this.bedTypes = Collections.emptyList();
-        }
+        this.bedTypes = extractBedTypesFromJsonObject(roomRateDetail);
         this.rate = Rate.parseFromRateInfos(roomRateDetail).get(0);
         this.cancellationPolicy = new CancellationPolicy(roomRateDetail, arrivalDate);
+    }
+
+    /**
+     * Parses bed types from JSON response and returns objects.
+     * @param roomRateDetail Object to pull BedTypes field values from.
+     * @return Parsed list of bed type objects, extracted from input.
+     */
+    private List<BedType> extractBedTypesFromJsonObject(final JSONObject roomRateDetail) {
+        if (roomRateDetail.optJSONObject("BedTypes") != null) {
+            if (roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType") != null) {
+                return BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType"));
+            } else if (roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType") != null) {
+                return BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType"));
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
@@ -104,7 +113,7 @@ public final class HotelRoom {
      * @return The newly formed HotelRoom object
      */
     public static List<HotelRoom> parseRoomRateDetails(final JSONObject hotelRoomResponseJson,
-                                                       final LocalDate arrivalDate) {
+            final LocalDate arrivalDate) {
         return Collections.singletonList(new HotelRoom(hotelRoomResponseJson, arrivalDate));
     }
 
@@ -164,7 +173,7 @@ public final class HotelRoom {
          */
         public static List<BedType> fromJson(final JSONObject bedTypeJson) {
             return Collections.unmodifiableList(Collections.singletonList(
-                    new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description"))));
+                new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description"))));
         }
 
         /**

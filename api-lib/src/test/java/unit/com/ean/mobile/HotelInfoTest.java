@@ -14,22 +14,10 @@ import static org.junit.Assert.assertEquals;
 public class HotelInfoTest {
 
     @Test
-    public void testCompareTo() throws MalformedURLException, JSONException {
-        JSONObject stubJsonObject = createJsonObject();
-        HotelInfo hotelInfoZero = new HotelInfo(stubJsonObject, 0);
-        HotelInfo hotelInfoOne = new HotelInfo(stubJsonObject, 1);
-
-        assertEquals(-1, hotelInfoZero.compareTo(hotelInfoOne));
-        assertEquals(1, hotelInfoOne.compareTo(hotelInfoZero));
-        assertEquals(0, hotelInfoOne.compareTo(hotelInfoOne));
-        assertEquals(0, hotelInfoZero.compareTo(hotelInfoZero));
-    }
-
-    @Test
     public void testToString() throws JSONException, MalformedURLException {
         JSONObject stubJsonObject = createJsonObject();
-        HotelInfo hotelInfo = new HotelInfo(stubJsonObject, 0);
-        assertEquals("0 The Benjamin", hotelInfo.toString());
+        HotelInfo hotelInfo = new HotelInfo(stubJsonObject);
+        assertEquals("The Benjamin", hotelInfo.toString());
     }
 
     private JSONObject createJsonObject() throws JSONException {

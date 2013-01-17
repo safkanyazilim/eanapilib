@@ -36,4 +36,4 @@ atlassian-ide-plugin.xml
 *.log
 
 # Clover output
-api-lib/.clover/
+.clover/

@@ -47,11 +47,8 @@ public abstract class Individual {
      * @param homePhone The individual's home telephone number.
      * @param workPhone The individual's work telephone number.
      */
-    public Individual(final String email,
-                      final String firstName,
-                      final String lastName,
-                      final String homePhone,
-                      final String workPhone) {
+    public Individual(final String email, final String firstName, final String lastName,
+            final String homePhone, final String workPhone) {
         this.email = email;
         this.name = new Name(firstName, lastName);
         this.homePhone = homePhone;
@@ -76,11 +73,11 @@ public abstract class Individual {
      */
     public List<NameValuePair> asNameValuePairs() {
         return Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("email", email),
-                new BasicNameValuePair("firstName", name.first),
-                new BasicNameValuePair("lastName", name.last),
-                homePhone == null ? null : new BasicNameValuePair("homePhone", homePhone),
-                workPhone == null ? null : new BasicNameValuePair("workPhone", workPhone)
+            new BasicNameValuePair("email", email),
+            new BasicNameValuePair("firstName", name.first),
+            new BasicNameValuePair("lastName", name.last),
+            homePhone == null ? null : new BasicNameValuePair("homePhone", homePhone),
+            workPhone == null ? null : new BasicNameValuePair("workPhone", workPhone)
         );
     }
 }
