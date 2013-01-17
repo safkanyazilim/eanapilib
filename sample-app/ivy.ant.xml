@@ -37,15 +37,14 @@
     </target>
 
     <target name="resolve" depends="ivy.install">
-        <ivy:resolve file="ivy.xml"
-                     conf="build,JUnit,check"/>
+        <ivy:resolve file="ivy.xml" conf="build"/>
     </target>
 
     <target name="resolve.dependencies"
             description="Retrieve dependencies with Ivy"
             depends="ivy.install, ivy.resolve">
         <echo message="${ivy.jar.file}" />
-        <ivy:retrieve conf="build,JUnit,check" pattern="${jar.libs.absolute.dir}/[conf]/[artifact]-[revision].[ext]" symlink="true"/>
+        <ivy:retrieve conf="build" pattern="${jar.libs.absolute.dir}/[artifact]-[revision].[ext]" symlink="true"/>
         <delete dir="${ivy.report.dir}" failonerror="false"/>
         <mkdir dir="${ivy.report.dir}"/>
         <ivy:report todir="${ivy.report.dir}"/>

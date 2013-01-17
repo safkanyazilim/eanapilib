@@ -92,10 +92,12 @@ public class HotelList extends Activity {
 
             //Set the name field
             final TextView name = (TextView) view.findViewById(R.id.hotelInfoName);
+            //TODO: use ellipsize
             name.setText(maxLengthString(hotelInfo.name, MAX_HOTEL_NAME_LEN));
 
             //Set the short location description
             final TextView locDesc = (TextView) view.findViewById(R.id.hotelInfoLocationDesc);
+            //TODO: use ellipsize
             locDesc.setText(maxLengthString(hotelInfo.locDescription, MAX_HOTEL_LOC_LEN));
 
             //Populate the star rating
