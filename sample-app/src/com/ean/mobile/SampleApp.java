@@ -18,10 +18,10 @@ import java.util.Map;
  */
 public class SampleApp extends Application {
 
-    public static final Locale DEFAULT_LOCALE = Locale.US;
+    private static final Locale DEFAULT_LOCALE = Locale.US;
     public static Locale locale = DEFAULT_LOCALE;
 
-    public static final Currency DEFAULT_CURRENCY = Currency.getInstance(DEFAULT_LOCALE);
+    private static final Currency DEFAULT_CURRENCY = Currency.getInstance(DEFAULT_LOCALE);
     public static Currency currency = DEFAULT_CURRENCY;
 
     public static String searchQuery;

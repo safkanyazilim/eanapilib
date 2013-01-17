@@ -33,46 +33,19 @@ public class BookingRequestIntTest {
         HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
 
-        List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
-                hotelList.hotelInfos.get(0).hotelId,
-                OCCUPANCY,
-                dateTimes[0],
-                dateTimes[1],
-                hotelList.customerSessionId,
-                "en_US",
-                "USD");
+        List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(hotelList.hotelInfos.get(0).hotelId, OCCUPANCY,
+            dateTimes[0], dateTimes[1], hotelList.customerSessionId, "en_US", "USD");
 
         BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo(
-                "test@expedia.com",
-                "test",
-                "tester",
-                "1234567890",
-                null,
-                "CA",
-                "5401999999999999",
-                "123",
-                YearMonth.now().plusYears(1)
-        );
+            "test@expedia.com", "test", "tester", "1234567890",
+            null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
 
         ReservationRoom room = new ReservationRoom(
-                resInfo.individual.name,
-                rooms.get(0),
-                rooms.get(0).bedTypes.get(0).id,
-                OCCUPANCY);
+            resInfo.individual.name, rooms.get(0), rooms.get(0).bedTypes.get(0).id, OCCUPANCY);
 
-
-        BookingRequest.performBooking(
-                hotelList.hotelInfos.get(0).hotelId,
-                dateTimes[0],
-                dateTimes[1],
-                hotelList.hotelInfos.get(0).supplierType,
-                room,
-                resInfo,
-                ADDRESS,
-                hotelList.customerSessionId,
-                "en_US",
-                "USD"
-        );
+        BookingRequest.performBooking(hotelList.hotelInfos.get(0).hotelId, dateTimes[0], dateTimes[1],
+            hotelList.hotelInfos.get(0).supplierType, room, resInfo, ADDRESS,
+            hotelList.customerSessionId, "en_US", "USD");
 
         // TODO: some assertions here on hotel/date/occupancy, etc.
         assertTrue(true);
@@ -81,69 +54,27 @@ public class BookingRequestIntTest {
     @Test
     public void testBookMultiRoomInSeattle() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
 
-        List<RoomOccupancy> occupancies = Arrays.asList(
-                OCCUPANCY,
-                new RoomOccupancy(1, 3)
-        );
         HotelInfoList hotelList = ListRequest.searchForHotels("Seattle, WA", occupancies,
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
 
-        List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(
-                hotelList.hotelInfos.get(0).hotelId,
-                occupancies,
-                dateTimes[0],
-                dateTimes[1],
-                hotelList.customerSessionId,
-                "en_US",
-                "USD");
+        List<HotelRoom> rooms = RoomAvailRequest.getRoomAvail(hotelList.hotelInfos.get(0).hotelId,
+            occupancies, dateTimes[0], dateTimes[1], hotelList.customerSessionId, "en_US", "USD");
 
-        List<Name> checkInNames = Arrays.asList(
-                new Name("test", "tester"),
-                new Name("test", "testerson")
-        );
+        List<Name> checkInNames = Arrays.asList(new Name("test", "tester"), new Name("test", "testerson"));
 
-        BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo(
-                "test@expedia.com",
-                checkInNames.get(0).first,
-                checkInNames.get(0).last,
-                "1234567890",
-                null,
-                "CA",
-                "5401999999999999",
-                "123",
-                YearMonth.now().plusYears(1)
-        );
-
-
-
+        BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo("test@expedia.com",
+            checkInNames.get(0).first, checkInNames.get(0).last, "1234567890",
+            null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
 
         List<ReservationRoom> bookingRooms = Arrays.asList(
-                new ReservationRoom(
-                    checkInNames.get(0),
-                    rooms.get(0),
-                    rooms.get(0).bedTypes.get(0).id,
-                    occupancies.get(0)),
-                new ReservationRoom(
-                        checkInNames.get(1),
-                        rooms.get(0),
-                        rooms.get(0).bedTypes.get(0).id,
-                        occupancies.get(1))
-        );
+            new ReservationRoom(checkInNames.get(0), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(0)),
+            new ReservationRoom(checkInNames.get(1), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(1)));
 
-
-        BookingRequest.performBooking(
-                hotelList.hotelInfos.get(0).hotelId,
-                dateTimes[0],
-                dateTimes[1],
-                hotelList.hotelInfos.get(0).supplierType,
-                bookingRooms,
-                resInfo,
-                ADDRESS,
-                hotelList.customerSessionId,
-                "en_US",
-                "USD"
-        );
+        BookingRequest.performBooking(hotelList.hotelInfos.get(0).hotelId, dateTimes[0], dateTimes[1],
+            hotelList.hotelInfos.get(0).supplierType, bookingRooms, resInfo, ADDRESS,
+            hotelList.customerSessionId, "en_US", "USD");
 
         // TODO: some assertions here on hotel/date/occupancy, etc.
         assertTrue(true);

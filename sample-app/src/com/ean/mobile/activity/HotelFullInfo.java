@@ -141,8 +141,8 @@ public class HotelFullInfo extends Activity {
                     arrivalDate,
                     departureDate,
                     customerSessionId,
-                    SampleApp.DEFAULT_LOCALE.toString(),
-                    SampleApp.DEFAULT_CURRENCY.getCurrencyCode());
+                    SampleApp.locale.toString(),
+                    SampleApp.currency.getCurrencyCode());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
@@ -175,7 +175,7 @@ public class HotelFullInfo extends Activity {
                 return InformationRequest.getHotelInformation(
                     hotelId,
                     SampleApp.customerSessionId,
-                    SampleApp.DEFAULT_LOCALE.toString());
+                    SampleApp.locale.toString());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {

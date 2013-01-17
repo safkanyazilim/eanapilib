@@ -22,8 +22,6 @@ public final class ImageTupleLoaderTask extends AsyncTask<HotelImageTuple, Integ
         this.loadMain = loadMain;
     }
 
-
-
     @Override
     protected Drawable doInBackground(HotelImageTuple... hotelImageTuples) {
         try {

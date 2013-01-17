@@ -67,27 +67,12 @@ public final class BookingRequest extends Request {
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
-                                      final LocalDate arrivalDate,
-                                      final LocalDate departureDate,
-                                      final String supplierType,
-                                      final ReservationRoom room,
-                                      final ReservationInfo reservationInfo,
-                                      final Address address,
-                                      final String customerSessionId,
-                                      final String locale,
-                                      final String currencyCode)
+            final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
+            final ReservationRoom room, final ReservationInfo reservationInfo, final Address address,
+            final String customerSessionId, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
-        return performBooking(
-                hotelId,
-                arrivalDate,
-                departureDate,
-                supplierType,
-                Collections.singletonList(room),
-                reservationInfo,
-                address,
-                customerSessionId,
-                locale,
-                currencyCode);
+        return performBooking(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
+                reservationInfo, address, customerSessionId, locale, currencyCode);
     }
 
     /**
@@ -109,28 +94,12 @@ public final class BookingRequest extends Request {
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public static Reservation performBooking(final Long hotelId,
-                                      final LocalDate arrivalDate,
-                                      final LocalDate departureDate,
-                                      final String supplierType,
-                                      final List<ReservationRoom> roomGroup,
-                                      final ReservationInfo reservationInfo,
-                                      final Address address,
-                                      final String customerSessionId,
-                                      final String locale,
-                                      final String currencyCode)
+            final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
+            final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo, final Address address,
+            final String customerSessionId, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
-        return performBooking(
-                hotelId,
-                arrivalDate,
-                departureDate,
-                supplierType,
-                roomGroup,
-                reservationInfo,
-                address,
-                customerSessionId,
-                null,
-                locale,
-                currencyCode);
+        return performBooking(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInfo, address,
+                customerSessionId, null, locale, currencyCode);
     }
 
     /**
@@ -151,22 +120,16 @@ public final class BookingRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId,
-                                      final LocalDate arrivalDate,
-                                      final LocalDate departureDate,
-                                      final String supplierType,
-                                      final List<ReservationRoom> roomGroup,
-                                      final ReservationInfo reservationInfo,
-                                      final Address address,
-                                      final String customerSessionId,
-                                      final List<NameValuePair> extraBookingData,
-                                      final String locale,
-                                      final String currencyCode)
+    public static Reservation performBooking(final Long hotelId, final LocalDate arrivalDate,
+        final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
+        final ReservationInfo reservationInfo, final Address address, final String customerSessionId,
+        final List<NameValuePair> extraBookingData, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
+
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("customerSessionId", customerSessionId),
-                new BasicNameValuePair("hotelId", hotelId.toString()),
-                new BasicNameValuePair("supplierType", supplierType)
+            new BasicNameValuePair("customerSessionId", customerSessionId),
+            new BasicNameValuePair("hotelId", hotelId.toString()),
+            new BasicNameValuePair("supplierType", supplierType)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -179,7 +142,7 @@ public final class BookingRequest extends Request {
 
         try {
             final JSONObject json
-                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomReservationResponse");
+                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomReservationResponse");
             if (json.has("EanWsError")) {
                 System.out.println(json.toString());
                 //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
@@ -220,26 +183,13 @@ public final class BookingRequest extends Request {
          * @param creditCardIdentifier The credit card identifier (CCID, CID, etc.)
          * @param creditCardExpirationDate The expiration date of the credit card.
          */
-        public ReservationInfo(final String email,
-                               final String firstName,
-                               final String lastName,
-                               final String homePhone,
-                               final String workPhone,
-                               final String creditCardType,
-                               final String creditCardNumber,
-                               final String creditCardIdentifier,
-                               final YearMonth creditCardExpirationDate) {
-            this.individual = new BookingIndividual(
-                    email,
-                    firstName,
-                    lastName,
-                    homePhone,
-                    workPhone);
+        public ReservationInfo(final String email, final String firstName, final String lastName,
+                final String homePhone, final String workPhone, final String creditCardType,
+                final String creditCardNumber, final String creditCardIdentifier,
+                final YearMonth creditCardExpirationDate) {
+            this.individual = new BookingIndividual( email, firstName, lastName, homePhone, workPhone);
             this.creditCardInfo = new CreditCardInfo(
-                    creditCardType,
-                    creditCardNumber,
-                    creditCardIdentifier,
-                    creditCardExpirationDate);
+                creditCardType, creditCardNumber, creditCardIdentifier, creditCardExpirationDate);
         }
 
         /**
@@ -269,11 +219,8 @@ public final class BookingRequest extends Request {
          * @param homePhone The individual's home telephone number.
          * @param workPhone The individual's work telephone number.
          */
-        public BookingIndividual(final String email,
-                                 final String firstName,
-                                 final String lastName,
-                                 final String homePhone,
-                                 final String workPhone) {
+        public BookingIndividual(final String email, final String firstName, final String lastName,
+                final String homePhone, final String workPhone) {
             super(email, firstName, lastName, homePhone, workPhone);
         }
     }
@@ -321,10 +268,8 @@ public final class BookingRequest extends Request {
          * @param identifier The credit card's identifier.
          * @param expirationDate The credit card's expiration date.
          */
-        public CreditCardInfo(final String type,
-                              final String number,
-                              final String identifier,
-                              final YearMonth expirationDate) {
+        public CreditCardInfo(
+                final String type, final String number, final String identifier, final YearMonth expirationDate) {
             this.type = type;
             this.number = number;
             this.identifier = identifier;
@@ -337,11 +282,11 @@ public final class BookingRequest extends Request {
          */
         public List<NameValuePair> asNameValuePairs() {
             return Arrays.<NameValuePair>asList(
-                    new BasicNameValuePair("creditCardType", type),
-                    new BasicNameValuePair("creditCardNumber", number),
-                    new BasicNameValuePair("creditCardIdentifier", identifier),
-                    new BasicNameValuePair("creditCardExpirationMonth", MONTH_FORMATTER.print(expirationDate)),
-                    new BasicNameValuePair("creditCardExpirationYear", YEAR_FORMATTER.print(expirationDate)));
+                new BasicNameValuePair("creditCardType", type),
+                new BasicNameValuePair("creditCardNumber", number),
+                new BasicNameValuePair("creditCardIdentifier", identifier),
+                new BasicNameValuePair("creditCardExpirationMonth", MONTH_FORMATTER.print(expirationDate)),
+                new BasicNameValuePair("creditCardExpirationYear", YEAR_FORMATTER.print(expirationDate)));
         }
     }
 

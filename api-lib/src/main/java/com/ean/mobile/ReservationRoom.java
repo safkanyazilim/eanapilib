@@ -67,13 +67,8 @@ public final class ReservationRoom {
      * @param rate see {@link HotelRoom#rate}.
      * @param occupancy Stated occupancy for the room.
      */
-    public ReservationRoom(final Name checkInName,
-                           final String bedTypeId,
-                           final String smokingPreference,
-                           final String roomTypeCode,
-                           final String rateCode,
-                           final Rate rate,
-                           final RoomOccupancy occupancy) {
+    public ReservationRoom(final Name checkInName, final String bedTypeId, final String smokingPreference,
+            final String roomTypeCode, final String rateCode, final Rate rate, final RoomOccupancy occupancy) {
         this.checkInName = checkInName;
         this.bedTypeId = bedTypeId;
         this.smokingPreference = smokingPreference;
@@ -94,21 +89,11 @@ public final class ReservationRoom {
      * @param numberOfAdults The number of adults in this occupancy.
      * @param childAges The list of children's ages for this room.
      */
-    public ReservationRoom(final Name checkInName,
-                           final String bedTypeId,
-                           final String smokingPreference,
-                           final String roomTypeCode,
-                           final String rateCode,
-                           final Rate rate,
-                           final int numberOfAdults,
-                           final List<Integer> childAges) {
-        this(checkInName,
-                bedTypeId,
-                smokingPreference,
-                roomTypeCode,
-                rateCode,
-                rate,
-                new RoomOccupancy(numberOfAdults, childAges));
+    public ReservationRoom(final Name checkInName, final String bedTypeId, final String smokingPreference,
+            final String roomTypeCode, final String rateCode, final Rate rate, final int numberOfAdults,
+            final List<Integer> childAges) {
+        this(checkInName, bedTypeId, smokingPreference, roomTypeCode, rateCode, rate,
+            new RoomOccupancy(numberOfAdults, childAges));
     }
 
     /**
@@ -120,16 +105,9 @@ public final class ReservationRoom {
      *                          in "room". See {@link HotelRoom#bedTypes}.
      * @param occupancy The stated occupancy of the room.
      */
-    public ReservationRoom(final Name checkInName,
-                           final HotelRoom room,
-                           final String selectedBedTypeId,
-                           final RoomOccupancy occupancy) {
-        this(checkInName,
-                selectedBedTypeId,
-                room.smokingPreference,
-                room.roomTypeCode,
-                room.rateCode,
-                room.rate,
+    public ReservationRoom(final Name checkInName, final HotelRoom room, final String selectedBedTypeId,
+            final RoomOccupancy occupancy) {
+        this(checkInName, selectedBedTypeId, room.smokingPreference, room.roomTypeCode, room.rateCode, room.rate,
                 occupancy);
     }
 
@@ -193,7 +171,7 @@ public final class ReservationRoom {
                     // chargeable rate, therefore we can simply multiply the chargeable rate by the number
                     // of rooms for the total chargeable rate.
                     final BigDecimal chargeable
-                            = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
+                        = room.rate.chargeable.getTotal().multiply(new BigDecimal(rooms.size()));
                     pairs.add(new BasicNameValuePair("roomTypeCode", room.roomTypeCode));
                     pairs.add(new BasicNameValuePair("rateCode", room.rateCode));
                     pairs.add(new BasicNameValuePair("chargeableRate", chargeable.toString()));
@@ -204,9 +182,9 @@ public final class ReservationRoom {
                     pairs.add(new BasicNameValuePair(roomId + "RoomTypeCode", room.roomTypeCode));
                     pairs.add(new BasicNameValuePair(roomId + "RateCode", room.rateCode));
                     pairs.add(new BasicNameValuePair(roomId + "ChargeableRate",
-                            room.rate.chargeable.getTotal().toString()));
+                        room.rate.chargeable.getTotal().toString()));
                     pairs.add(new BasicNameValuePair(roomId + "RateKey",
-                            room.rate.getRateKeyForOccupancy(room.occupancy)));
+                        room.rate.getRateKeyForOccupancy(room.occupancy)));
                 }
             }
             roomNumber++;

@@ -48,14 +48,12 @@ public final class InformationRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the extended hotel information that was requested.
      */
-    public static HotelInfoExtended getHotelInformation(final long hotelId,
-                                                        final String customerSessionId,
-                                                        final String locale)
-            throws IOException, EanWsError, UrlRedirectionException {
+    public static HotelInfoExtended getHotelInformation(final long hotelId, final String customerSessionId,
+            final String locale) throws IOException, EanWsError, UrlRedirectionException {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("customerSessionId", customerSessionId),
-                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-                new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+            new BasicNameValuePair("customerSessionId", customerSessionId),
+            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -74,8 +72,6 @@ public final class InformationRequest extends Request {
             final JSONArray images = infoResp.getJSONObject("HotelImages")
                 .getJSONArray("HotelImage");
 
-
-
             final String longDescription = Html.fromHtml(details.optString("propertyDescription")).toString();
 
             final List<HotelImageTuple> imageTuples = new ArrayList<HotelImageTuple>();
@@ -84,10 +80,8 @@ public final class InformationRequest extends Request {
             for (int i = 0; i < images.length(); i++) {
                 image = images.getJSONObject(i);
                 imageTuples.add(
-                    new HotelImageTuple(
-                        new URL(image.optString("thumbnailUrl")),
-                        new URL(image.optString("url")),
-                        image.optString("caption")));
+                    new HotelImageTuple(new URL(image.optString("thumbnailUrl")),
+                        new URL(image.optString("url")), image.optString("caption")));
             }
             Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
             return new HotelInfoExtended(hotelId, longDescription, imageTuples);

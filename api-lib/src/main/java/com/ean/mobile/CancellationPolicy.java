@@ -54,7 +54,7 @@ public final class CancellationPolicy {
                 }
             } else {
                 localPolicies = Collections.singletonList(
-                        new CancellationPolicyInfo(listJson.optJSONObject("CancelPolicyInfo"), arrivalDate));
+                    new CancellationPolicyInfo(listJson.optJSONObject("CancelPolicyInfo"), arrivalDate));
             }
         } else {
             localPolicies = Collections.emptyList();
@@ -143,7 +143,7 @@ public final class CancellationPolicy {
             }
 
             this.lastInstantApplicable
-                    = arrivalDate.toDateTime(cancelTime).withZone(cancelZone).minusHours(startWindowHours);
+                = arrivalDate.toDateTime(cancelTime).withZone(cancelZone).minusHours(startWindowHours);
 
         }
     }

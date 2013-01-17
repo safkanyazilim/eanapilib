@@ -49,33 +49,18 @@ public class ListRequestIntTest {
     public void testSearchForHotelsLocationException() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        ListRequest.searchForHotels(
-                "sea of tranquility, moon",
-                OCCUPANCY,
-                dateTimes[0],
-                dateTimes[1],
-                null,
-                LOCALE,
-                CURRENCY_CODE);
+        ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1], null,
+            LOCALE, CURRENCY_CODE);
     }
 
     @Test
     public void testSearchForHotelsMultiRoomType() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        List<RoomOccupancy> occupancies = Arrays.asList(
-                OCCUPANCY,
-                new RoomOccupancy(1, 3)
-        );
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
 
-        HotelInfoList results = ListRequest.searchForHotels(
-                "rome, it",
-                occupancies,
-                dateTimes[0],
-                dateTimes[1],
-                null,
-                LOCALE,
-                CURRENCY_CODE);
+        HotelInfoList results = ListRequest.searchForHotels("rome, it", occupancies, dateTimes[0], dateTimes[1],
+            null, LOCALE, CURRENCY_CODE);
 
         assertEquals(10, results.hotelInfos.size());
     }
