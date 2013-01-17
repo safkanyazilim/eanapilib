@@ -5,6 +5,7 @@ import android.content.Context;
 import android.widget.Toast;
 import org.joda.time.LocalDate;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
@@ -53,5 +54,21 @@ public class SampleApp extends Application {
 
     public static void sendRedirectionToast(final Context context) {
         Toast.makeText(context, R.string.redirected, Toast.LENGTH_LONG).show();
+    }
+
+    public static void updateFoundHotels(HotelInfoList hotelInfoList) {
+        updateFoundHotels(hotelInfoList, false);
+    }
+
+    public static synchronized void updateFoundHotels(HotelInfoList hotelInfoList, boolean clearOnUpdate) {
+        if (SampleApp.foundHotels == null) {
+            SampleApp.foundHotels = new ArrayList<HotelInfo>();
+        } else if (clearOnUpdate) {
+            SampleApp.foundHotels.clear();
+        }
+        SampleApp.foundHotels.addAll(hotelInfoList.hotelInfos);
+        SampleApp.customerSessionId = hotelInfoList.customerSessionId;
+        SampleApp.cacheKey = hotelInfoList.cacheKey;
+        SampleApp.cacheLocation = hotelInfoList.cacheLocation;
     }
 }

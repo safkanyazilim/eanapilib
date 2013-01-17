@@ -17,8 +17,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Spinner;
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
@@ -165,20 +163,11 @@ public class StartupSearch extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                HotelInfoList list = ListRequest.searchForHotels(
-                    SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate, null,
-                    SampleApp.DEFAULT_LOCALE.toString(), SampleApp.DEFAULT_CURRENCY.toString());
-
-                if (SampleApp.foundHotels == null) {
-                    SampleApp.foundHotels = new ArrayList<HotelInfo>();
-                } else {
-                    SampleApp.foundHotels.clear();
-                }
-                SampleApp.foundHotels.addAll(list.hotelInfos);
-                SampleApp.customerSessionId = list.customerSessionId;
-                SampleApp.cacheKey = list.cacheKey;
-                SampleApp.cacheLocation = list.cacheLocation;
-
+                SampleApp.updateFoundHotels(
+                    ListRequest.searchForHotels(
+                        SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate,
+                        null, SampleApp.DEFAULT_LOCALE.toString(), SampleApp.DEFAULT_CURRENCY.toString()),
+                    true);
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {

@@ -19,7 +19,6 @@ import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.widget.Toast;
 import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
@@ -35,7 +34,7 @@ import java.util.Currency;
 
 public class HotelList extends Activity {
 
-    Toast loadingMoreHotelsToast;
+    private Toast loadingMoreHotelsToast;
 
     /** Called when the activity is first created. */
     @Override
@@ -202,15 +201,10 @@ public class HotelList extends Activity {
         protected Void doInBackground(Void... voids) {
             try {
                 loadingMoreHotelsToast.show();
-                HotelInfoList list = ListRequest.loadMoreResults(
+                SampleApp.updateFoundHotels(ListRequest.loadMoreResults(
                     SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode(),
                     SampleApp.cacheKey, SampleApp.cacheLocation,
-                    SampleApp.customerSessionId);
-
-                SampleApp.cacheKey = list.cacheKey;
-                SampleApp.cacheLocation = list.cacheLocation;
-                SampleApp.customerSessionId = list.customerSessionId;
-                SampleApp.foundHotels.addAll(list.hotelInfos);
+                    SampleApp.customerSessionId));
                 loadingMoreHotelsToast.cancel();
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
