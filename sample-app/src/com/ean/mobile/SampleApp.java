@@ -44,4 +44,21 @@ public class SampleApp extends Application {
     public static void sendRedirectionToast(final Context context) {
         Toast.makeText(context, R.string.redirected, Toast.LENGTH_LONG).show();
     }
+
+    public static void clearSearch() {
+        SampleApp.searchQuery = null;
+        SampleApp.numberOfAdults = 0;
+        SampleApp.numberOfChildren = 0;
+        SampleApp.arrivalDate = null;
+        SampleApp.departureDate = null;
+        SampleApp.foundHotels = null;
+
+        SampleApp.selectedHotel = null;
+
+        SampleApp.selectedRoom = null;
+
+        SampleApp.EXTENDED_INFOS.clear();
+
+        SampleApp.HOTEL_ROOMS.clear();
+    }
 }

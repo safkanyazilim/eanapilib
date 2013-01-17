@@ -33,13 +33,13 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.DestLookup;
 import com.ean.mobile.request.ListRequest;
+import com.ean.mobile.task.SuggestionFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 
 public class StartupSearch extends Activity {
@@ -64,97 +64,49 @@ public class StartupSearch extends Activity {
         arrivalDate.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
         departureDate.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
 
-        ArrayAdapter<CharSequence> adultsSpinnerAdapter
-                = ArrayAdapter.createFromResource(this, R.array.number_of_people_array, android.R.layout.simple_spinner_item);
-        adultsSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-
-        Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
-        adultsSpinner.setAdapter(adultsSpinnerAdapter);
-        adultsSpinner.setOnItemSelectedListener(new PeopleSpinnerListener(true));
-
-        ArrayAdapter<CharSequence> childrenSpinnerAdapter
-                = ArrayAdapter.createFromResource(this, R.array.number_of_people_array, android.R.layout.simple_spinner_item);
-        childrenSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        Spinner childrenSpinner = (Spinner) findViewById(R.id.children_spinner);
-        childrenSpinner.setAdapter(childrenSpinnerAdapter);
-        childrenSpinner.setOnItemSelectedListener(new PeopleSpinnerListener(false));
+        setUpPeopleSpinner(R.id.adults_spinner);
+        setUpPeopleSpinner(R.id.children_spinner);
 
         final ArrayAdapter<Destination> suggestionAdapter = new DestinationSuggestionAdapter(this, R.id.suggestionsView);
+        final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
 
-        final ListView suggestions = (ListView) findViewById(R.id.suggestionsView);
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
         searchBox.setOnKeyListener(new SearchBoxKeyListener(searchBox));
-        final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
         searchBox.addTextChangedListener(watcher);
 
+        final ListView suggestions = (ListView) findViewById(R.id.suggestionsView);
         suggestions.setAdapter(suggestionAdapter);
         suggestions.setOnItemClickListener(new SuggestionListAdapterClickListener(searchBox, watcher));
+    }
 
+    private void setUpPeopleSpinner(int resourceId) {
+        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.number_of_people_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        final Spinner spinner = (Spinner) findViewById(resourceId);
+        spinner.setAdapter(spinnerAdapter);
     }
 
     public void showDatePickerDialog(View view) {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
 
-    private void preSearch() {
-        SampleApp.searchQuery = null;
-        SampleApp.numberOfAdults = 0;
-        SampleApp.numberOfChildren = 0;
-        SampleApp.arrivalDate = null;
-        SampleApp.departureDate = null;
-        SampleApp.foundHotels = null;
-
-        SampleApp.selectedHotel = null;
-
-        SampleApp.selectedRoom = null;
-
-        SampleApp.EXTENDED_INFOS.clear();
-
-        SampleApp.HOTEL_ROOMS.clear();
-    }
-
     private void performSearch(final String searchQuery, final ProgressDialog searchingDialog) {
-        preSearch();
-        SampleApp.searchQuery = searchQuery;
-        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.arrival_date_picker)).getText().toString());
-        SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(((Button) findViewById(R.id.departure_date_picker)).getText().toString());
+        SuggestionFactory.killSuggestDestinationTask();
+        SampleApp.clearSearch();
 
+        Button arrivalDatePicker = (Button) findViewById(R.id.arrival_date_picker);
+        Button departureDatePicker = (Button) findViewById(R.id.departure_date_picker);
         Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
-        adultsSpinner.getOnItemSelectedListener().onItemSelected(adultsSpinner, null, adultsSpinner.getSelectedItemPosition(), 0);
         Spinner childSpinner = (Spinner) findViewById(R.id.adults_spinner);
-        childSpinner.getOnItemSelectedListener().onItemSelected(childSpinner, null, childSpinner.getSelectedItemPosition(), 0);
+
+        SampleApp.searchQuery = searchQuery;
+        SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(arrivalDatePicker.getText().toString());
+        SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(departureDatePicker.getText().toString());
+        SampleApp.numberOfAdults = Integer.parseInt((String) adultsSpinner.getSelectedItem());
+        SampleApp.numberOfChildren = Integer.parseInt((String) childSpinner.getSelectedItem());
+        
         new PerformSearchTask(searchingDialog).execute((Void) null);
-    }
-
-    private class PeopleSpinnerListener implements AdapterView.OnItemSelectedListener {
-
-        private final boolean adults;
-
-        /**
-         * This is the main constructor.
-         * @param adults Whether or not the spinner is the adults spinner. If false, assumes the children spinner.
-         */
-        public PeopleSpinnerListener(boolean adults) {
-            this.adults = adults;
-        }
-
-        @Override
-        public void onItemSelected(AdapterView<?> adapterView, View view, int pos, long id) {
-            final int count = Integer.parseInt(adapterView.getItemAtPosition(pos).toString());
-            if (adults) {
-                SampleApp.numberOfAdults = count;
-            } else {
-                SampleApp.numberOfChildren = count;
-            }
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> adapterView) {
-            //do nothing because you can't
-        }
     }
 
     private class PerformSearchTask extends AsyncTask<Void, Integer, Void> {
@@ -172,15 +124,13 @@ public class StartupSearch extends Activity {
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
-                //TODO: This should be handled better. If this exception occurs, it's likely an input error and
-                // should be recoverable.
+                //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
          }
-
 
         @Override
         protected void onPostExecute(Void aLong) {
@@ -196,70 +146,6 @@ public class StartupSearch extends Activity {
         @Override
         protected void onCancelled() {
             searchingDialog.dismiss();
-        }
-    }
-
-    private class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
-
-        private final ArrayAdapter<Destination> suggestionAdapter;
-
-        private SuggestDestinationTask(ArrayAdapter<Destination> suggestionAdapter) {
-            this.suggestionAdapter = suggestionAdapter;
-        }
-
-        @Override
-        protected List<Destination> doInBackground(String... strings) {
-            try {
-                return DestLookup.getDestInfos(strings[0]);
-            } catch (IOException e) {
-                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(List<Destination> destinations) {
-            if (destinations != null) {
-                List<Destination> cities = new ArrayList<Destination>();
-                for (Destination destination : destinations) {
-                    if (destination.category == Destination.Category.CITIES) {
-                        cities.add(destination);
-                        if (cities.size() > 5) {
-                            break;
-                        }
-                    }
-                }
-                suggestionAdapter.clear();
-                suggestionAdapter.addAll(cities);
-                suggestionAdapter.notifyDataSetChanged();
-            }
-        }
-    }
-
-    private class SuggestionListAdapterClickListener implements AdapterView.OnItemClickListener {
-
-        private final EditText searchBox;
-
-        private final TextWatcher textWatcher;
-
-        public SuggestionListAdapterClickListener(final EditText searchBox, final TextWatcher textWatcher) {
-            this.searchBox = searchBox;
-            this.textWatcher = textWatcher;
-        }
-
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            //replace the text in the search box with the string at position.
-            Destination selectedDestination = (Destination) parent.getItemAtPosition(position);
-            //disable the text change listener.
-            searchBox.removeTextChangedListener(textWatcher);
-            //set the text.
-            searchBox.setText(selectedDestination.name);
-            //clear the suggestions
-            ArrayAdapter suggestionAdapter = (ArrayAdapter) parent.getAdapter();
-            suggestionAdapter.clear();
-            suggestionAdapter.notifyDataSetChanged();
-            //re-enable the change listener.
-            searchBox.addTextChangedListener(textWatcher);
         }
     }
 
@@ -304,19 +190,42 @@ public class StartupSearch extends Activity {
         }
     }
 
-    /**
-     * Only hears hardware keys and enter.
-     */
-    private class SearchBoxKeyListener implements View.OnKeyListener {
+    private class SuggestionListAdapterClickListener implements AdapterView.OnItemClickListener {
+
         private final EditText searchBox;
 
-        private ProgressDialog searchingDialog;
+        private final TextWatcher textWatcher;
+
+        public SuggestionListAdapterClickListener(final EditText searchBox, final TextWatcher textWatcher) {
+            this.searchBox = searchBox;
+            this.textWatcher = textWatcher;
+        }
+
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            //replace the text in the search box with the string at position.
+            Destination selectedDestination = (Destination) parent.getItemAtPosition(position);
+            //disable the text change listener.
+            searchBox.removeTextChangedListener(textWatcher);
+            //set the text.
+            searchBox.setText(selectedDestination.name);
+            //clear the suggestions
+            ArrayAdapter suggestionAdapter = (ArrayAdapter) parent.getAdapter();
+            suggestionAdapter.clear();
+            suggestionAdapter.notifyDataSetChanged();
+            //re-enable the change listener.
+            searchBox.addTextChangedListener(textWatcher);
+        }
+    }
+
+    private class SearchBoxKeyListener implements View.OnKeyListener {
+        private final EditText searchBox;
 
         public SearchBoxKeyListener(final EditText searchBox) {
             this.searchBox = searchBox;
         }
 
         public boolean onKey(View v, int keyCode, KeyEvent event) {
+            // Only hears hardware keys and enter per OnKeyListener's javadoc.
             // If the event is a key-down event on the "enter" button
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 // Perform action on key press
@@ -331,8 +240,6 @@ public class StartupSearch extends Activity {
 
         private final ArrayAdapter<Destination> suggestionAdapter;
 
-        private SuggestDestinationTask suggestDestinationTask = null;
-
         private SearchBoxTextWatcher(ArrayAdapter<Destination> suggestionAdapter) {
             this.suggestionAdapter = suggestionAdapter;
         }
@@ -345,13 +252,7 @@ public class StartupSearch extends Activity {
 
         @Override
         public void afterTextChanged(Editable editable) {
-            if (suggestDestinationTask == null || suggestDestinationTask.getStatus() == AsyncTask.Status.RUNNING || suggestDestinationTask.getStatus() == AsyncTask.Status.FINISHED) {
-                if (suggestDestinationTask != null && suggestDestinationTask.getStatus() == AsyncTask.Status.RUNNING) {
-                    suggestDestinationTask.cancel(true);
-                }
-                suggestDestinationTask = new SuggestDestinationTask(suggestionAdapter);
-                suggestDestinationTask.execute(editable.toString());
-            }
+            SuggestionFactory.suggest(editable.toString(), suggestionAdapter);
         }
     }
 

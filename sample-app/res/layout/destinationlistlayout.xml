@@ -9,5 +9,11 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="New Text"
-            android:id="@+id/destinationSuggestionName"/>
+            android:id="@+id/destinationSuggestionName"
+            android:autoText="false"
+            android:ellipsize="end"
+            android:textSize="20dip"
+            android:maxLines="1"
+            android:paddingTop="2dip"
+            android:paddingBottom="2dip"/>
 </LinearLayout>
