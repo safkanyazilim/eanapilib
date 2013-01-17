@@ -1,6 +1,7 @@
 package com.ean.mobile.activity;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
@@ -123,25 +124,35 @@ public class BookingSummary extends Activity {
             case (PICK_CONTACT):
                 if (resultCode == Activity.RESULT_OK) {
                     Uri contactData = data.getData();
-                    Cursor c = getContentResolver().query(ContactsContract.Data.CONTENT_URI, null, null, null, null);
-                    if (c.moveToNext()) {
-                        String firstName = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME));
-                        String lastName = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME));
-                        String number = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                        String email = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Email.ADDRESS));
+                    String id = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts._ID);
+                    String[] idAsSelectionArgs = new String[] {id};
+                    String[] displayNamePieces = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts.DISPLAY_NAME).split(" ");
+                    String firstName = displayNamePieces[0];
+                    String lastName = displayNamePieces[displayNamePieces.length - 1];
 
+                    String email = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Email.CONTENT_URI, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Email.ADDRESS);
+                    String phoneNumber = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Phone.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-                        EditText guestFirstName = (EditText) findViewById(R.id.guestFirstName);
-                        EditText guestLastName = (EditText) findViewById(R.id.guestLastName);
-                        EditText guestPhoneNumber = (EditText) findViewById(R.id.guestPhoneNumber);
-                        EditText guestEmail = (EditText) findViewById(R.id.guestEmail);
+                    EditText guestFirstName = (EditText) findViewById(R.id.guestFirstName);
+                    EditText guestLastName = (EditText) findViewById(R.id.guestLastName);
+                    EditText guestPhoneNumber = (EditText) findViewById(R.id.guestPhoneNumber);
+                    EditText guestEmail = (EditText) findViewById(R.id.guestEmail);
 
-                        guestFirstName.setText(firstName);
-                        guestLastName.setText(lastName);
-                        guestPhoneNumber.setText(number);
-                        guestEmail.setText(email);
-                    }
+                    guestFirstName.setText(firstName);
+                    guestLastName.setText(lastName);
+                    guestPhoneNumber.setText(phoneNumber);
+                    guestEmail.setText(email);
                 }
         }
+    }
+
+    private static String getStringForUriQueryAndContactId(ContentResolver resolver, Uri uri, String selection, String[] selectionArgs, String columnName) {
+        String value = "";
+        Cursor cursor = resolver.query(uri, null, selection, selectionArgs, null, null);
+        if(cursor.moveToNext()){
+            value = cursor.getString(cursor.getColumnIndex(columnName));
+        }
+        cursor.close();
+        return value;
     }
 }
