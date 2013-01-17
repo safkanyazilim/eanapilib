@@ -175,6 +175,7 @@ public class HotelList extends Activity {
                     loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());
                 }
                 if (loadingTask.getStatus() == AsyncTask.Status.PENDING) {
+                    loadingMoreHotelsToast.show();
                     loadingTask.execute((Void) null);
                 }
             }
@@ -200,12 +201,10 @@ public class HotelList extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                loadingMoreHotelsToast.show();
                 SampleApp.updateFoundHotels(ListRequest.loadMoreResults(
                     SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode(),
                     SampleApp.cacheKey, SampleApp.cacheLocation,
                     SampleApp.customerSessionId));
-                loadingMoreHotelsToast.cancel();
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
@@ -221,6 +220,7 @@ public class HotelList extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             adapter.notifyDataSetChanged();
+            loadingMoreHotelsToast.cancel();
         }
     }
 }
