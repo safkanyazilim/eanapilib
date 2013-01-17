@@ -70,15 +70,20 @@ public final class HotelRoom {
         this.roomTypeCode = roomRateDetail.optString("roomTypeCode");
         this.promoDescription = roomRateDetail.optString("promoDescription");
         this.smokingPreference = roomRateDetail.optString("smokingPreferences");
-        if (roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType") != null) {
-            this.bedTypes = BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType"));
-        } else if (roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType") != null) {
-            this.bedTypes = BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType"));
-        } else {
-            this.bedTypes = Collections.emptyList();
-        }
+        this.bedTypes = extractBedTypesFromJsonObject(roomRateDetail);
         this.rate = Rate.parseFromRateInfos(roomRateDetail).get(0);
         this.cancellationPolicy = new CancellationPolicy(roomRateDetail, arrivalDate);
+    }
+
+    private List<BedType> extractBedTypesFromJsonObject(JSONObject roomRateDetail) {
+        if (roomRateDetail.optJSONObject("BedTypes") != null) {
+            if (roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType") != null) {
+                return BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONArray("BedType"));
+            } else if (roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType") != null) {
+                return BedType.fromJson(roomRateDetail.optJSONObject("BedTypes").optJSONObject("BedType"));
+            }
+        }
+        return Collections.emptyList();
     }
 
     /**
