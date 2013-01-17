@@ -16,7 +16,7 @@ import android.text.Html;
 /**
  * The holder for information about a particular hotel.
  */
-public final class HotelInfo implements Comparable<HotelInfo> {
+public final class HotelInfo {
 
     /**
      * The name of this hotel.
@@ -74,18 +74,12 @@ public final class HotelInfo implements Comparable<HotelInfo> {
     public final BigDecimal lowPrice;
 
     /**
-     * The order in which this HotelInfo was returned from the list call.
-     */
-    public final Integer listOrder;
-
-    /**
      * The constructor that constructs the hotel info from a JSONObject.
      * @param hotelSummary The object holding the hotel's info.
-     * @param listOrder The place in the hotel list that this HotelInfo object intends to reside.
      * @throws JSONException If there is a problem with the JSON objects
      * @throws MalformedURLException If the thumbnail url is not correctly formatted.
      */
-    public HotelInfo(final JSONObject hotelSummary, final int listOrder) throws JSONException, MalformedURLException {
+    public HotelInfo(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
         this.name = Html.fromHtml(hotelSummary.optString("name")).toString();
         this.hotelId = hotelSummary.optLong("hotelId");
         this.address = new LatLongAddress(hotelSummary);
@@ -98,7 +92,6 @@ public final class HotelInfo implements Comparable<HotelInfo> {
         this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.currencyCode = hotelSummary.optString("rateCurrencyCode");
         this.supplierType = hotelSummary.optString("supplierType");
-        this.listOrder = listOrder;
     }
 
     /**
@@ -117,14 +110,6 @@ public final class HotelInfo implements Comparable<HotelInfo> {
      */
     @Override
     public String toString() {
-        return this.listOrder + " " + this.name;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public int compareTo(final HotelInfo o) {
-        return this.listOrder.compareTo(o.listOrder);
+        return this.name;
     }
 }

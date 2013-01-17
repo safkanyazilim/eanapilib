@@ -6,11 +6,8 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -166,7 +163,11 @@ public class StartupSearch extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                SampleApp.foundHotels = ListRequest.searchForHotels(SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate, null, SampleApp.LOCALE.toString(), SampleApp.CURRENCY.toString());
+                SampleApp.updateFoundHotels(
+                    ListRequest.searchForHotels(
+                        SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate,
+                        null, SampleApp.locale.toString(), SampleApp.currency.toString()),
+                    true);
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {

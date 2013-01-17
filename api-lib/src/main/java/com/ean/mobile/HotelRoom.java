@@ -104,7 +104,7 @@ public final class HotelRoom {
      * @return The newly formed HotelRoom object
      */
     public static List<HotelRoom> parseRoomRateDetails(final JSONObject hotelRoomResponseJson,
-                                                       final LocalDate arrivalDate) {
+            final LocalDate arrivalDate) {
         return Collections.singletonList(new HotelRoom(hotelRoomResponseJson, arrivalDate));
     }
 
@@ -164,7 +164,7 @@ public final class HotelRoom {
          */
         public static List<BedType> fromJson(final JSONObject bedTypeJson) {
             return Collections.unmodifiableList(Collections.singletonList(
-                    new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description"))));
+                new BedType(bedTypeJson.optString("@id"), bedTypeJson.optString("description"))));
         }
 
         /**

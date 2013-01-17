@@ -168,8 +168,8 @@ public final class Rate {
             } else if (rate.optJSONObject(nightlyRatesPerRoom) != null) {
                 if (rate.optJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate) != null) {
                     localNightlyRates.addAll(
-                            NightlyRate.parseNightlyRates(
-                                    rate.optJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate)));
+                        NightlyRate.parseNightlyRates(
+                            rate.optJSONObject(nightlyRatesPerRoom).optJSONArray(nightlyRate)));
                 } else {
                     localNightlyRates.addAll(NightlyRate.parseNightlyRates(rate.optJSONObject(nightlyRatesPerRoom)));
                 }
@@ -181,14 +181,14 @@ public final class Rate {
                 for (int i = 0; i < jsonSurcharges.length(); i++) {
                     final JSONObject surchargeJson = jsonSurcharges.optJSONObject(i);
                     localSurcharges.put(
-                            surchargeJson.optString("@type"),
-                            new BigDecimal(surchargeJson.optString("@amount")));
+                        surchargeJson.optString("@type"),
+                        new BigDecimal(surchargeJson.optString("@amount")));
                 }
             } else if (rate.optJSONObject("Surcharges") != null) {
                 final JSONObject jsonSurcharge = rate.optJSONObject("Surcharges").optJSONObject("Surcharge");
                 localSurcharges.put(
-                        jsonSurcharge.optString("@type"),
-                        new BigDecimal(jsonSurcharge.optString("@amount")));
+                    jsonSurcharge.optString("@type"),
+                    new BigDecimal(jsonSurcharge.optString("@amount")));
             }
 
             currencyCode = rate.optString("@currencyCode");

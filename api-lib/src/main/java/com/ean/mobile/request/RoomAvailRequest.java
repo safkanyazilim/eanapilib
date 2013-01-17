@@ -55,22 +55,11 @@ public final class RoomAvailRequest extends Request {
      * @throws EanWsError If there is an error in the API that was returned.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public static List<HotelRoom> getRoomAvail(final long hotelId,
-                                               final RoomOccupancy room,
-                                               final LocalDate arrivalDate,
-                                               final LocalDate departureDate,
-                                               final String customerSessionId,
-                                               final String locale,
-                                               final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
-        return getRoomAvail(
-                hotelId,
-                Collections.singletonList(room),
-                arrivalDate,
-                departureDate,
-                customerSessionId,
-                locale,
-                currencyCode);
+    public static List<HotelRoom> getRoomAvail(final long hotelId, final RoomOccupancy room,
+            final LocalDate arrivalDate, final LocalDate departureDate, final String customerSessionId,
+            final String locale, final String currencyCode) throws IOException, EanWsError, UrlRedirectionException {
+        return getRoomAvail(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId,
+                locale, currencyCode);
     }
     /**
      * Gets the room availability for the specified information.
@@ -93,25 +82,19 @@ public final class RoomAvailRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
 
-    public static List<HotelRoom> getRoomAvail(final long hotelId,
-                                               final List<RoomOccupancy> rooms,
-                                               final LocalDate arrivalDate,
-                                               final LocalDate departureDate,
-                                               final String customerSessionId,
-                                               final String locale,
-                                               final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
+    public static List<HotelRoom> getRoomAvail(final long hotelId, final List<RoomOccupancy> rooms,
+            final LocalDate arrivalDate, final LocalDate departureDate, final String customerSessionId,
+            final String locale, final String currencyCode) throws IOException, EanWsError, UrlRedirectionException {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("customerSessionId", customerSessionId),
-                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-                new BasicNameValuePair("includeDetails", "true")
+            new BasicNameValuePair("customerSessionId", customerSessionId),
+            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+            new BasicNameValuePair("includeDetails", "true")
         );
 
         final List<NameValuePair> roomPairs = new ArrayList<NameValuePair>(rooms.size());
         for (RoomOccupancy occupancy : rooms) {
-            roomPairs.add(new BasicNameValuePair(
-                    "room" + (roomPairs.size() + 1),
-                    occupancy.asAbbreviatedRequestString()));
+            roomPairs.add(new BasicNameValuePair("room" + (roomPairs.size() + 1),
+                occupancy.asAbbreviatedRequestString()));
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -121,7 +104,7 @@ public final class RoomAvailRequest extends Request {
 
         try {
             final JSONObject response
-                    = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomAvailabilityResponse");
+                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomAvailabilityResponse");
             // TODO: handler EanWsError objects, such as sold out rooms
             if (response.has("EanWsError")) {
                 throw EanWsError.fromJson(response.getJSONObject("EanWsError"));

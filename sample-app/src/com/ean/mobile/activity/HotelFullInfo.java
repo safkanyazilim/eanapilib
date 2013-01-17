@@ -15,7 +15,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
-import com.ean.mobile.Constants;import com.ean.mobile.HotelImageTuple;
+import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.R;
@@ -28,7 +28,6 @@ import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
-import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 
 import java.io.IOException;
@@ -57,14 +56,9 @@ public class HotelFullInfo extends Activity {
             populateRateList();
         } else {
             new AvailabilityInformationLoaderTask(
-                    hotelInfo.hotelId,
-                    SampleApp.numberOfAdults,
-                    SampleApp.numberOfChildren,
-                    SampleApp.arrivalDate,
-                    SampleApp.departureDate,
-                    SampleApp.foundHotels.customerSessionId).execute((Void) null);
+                hotelInfo.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
+                SampleApp.arrivalDate, SampleApp.departureDate, SampleApp.customerSessionId).execute((Void) null);
         }
-
 
         final ImageView thumb = (ImageView) this.findViewById(R.id.hotelFullInfoThumb);
         if (hotelInfo.mainHotelImageTuple.thumbnailUrl != null) {
@@ -74,9 +68,6 @@ public class HotelFullInfo extends Activity {
                 new ImageTupleLoaderTask(thumb, false).execute(hotelInfo.mainHotelImageTuple);
             }
         }
-
-
-
 
         if(SampleApp.EXTENDED_INFOS.containsKey(hotelInfo.hotelId)){
             setExtendedInfoFields();
@@ -89,12 +80,12 @@ public class HotelFullInfo extends Activity {
         final WebView description = (WebView) this.findViewById(R.id.hotelFullInfoDescription);
         final TextView address = (TextView) this.findViewById(R.id.hotelFullInfoAddress);
         final ImageView[] smallThumbs = {
-                (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb00),
-                (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb01),
-                (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb02),
-                (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb10),
-                (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb11),
-                (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb12)
+            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb00),
+            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb01),
+            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb02),
+            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb10),
+            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb11),
+            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb12)
         };
 
         address.setText(SampleApp.selectedHotel.address.toString());
@@ -119,11 +110,9 @@ public class HotelFullInfo extends Activity {
         private final String customerSessionId;
 
         public AvailabilityInformationLoaderTask(final long hotelId,
-                                                 final int numberOfAdults,
-                                                 final int numberOfChildren,
-                                                 final LocalDate arrivalDate,
-                                                 final LocalDate departureDate,
-                                                 final String customerSessionId) {
+                final int numberOfAdults,  final int numberOfChildren,
+                final LocalDate arrivalDate, final LocalDate departureDate,
+                final String customerSessionId) {
             this.hotelId = hotelId;
             this.numberOfAdults = numberOfAdults;
             this.numberOfChildren = numberOfChildren;
@@ -136,14 +125,8 @@ public class HotelFullInfo extends Activity {
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
-                return RoomAvailRequest.getRoomAvail(
-                    hotelId,
-                    SampleApp.occupancy(),
-                    arrivalDate,
-                    departureDate,
-                    customerSessionId,
-                    SampleApp.LOCALE.toString(),
-                    SampleApp.CURRENCY.getCurrencyCode());
+                return RoomAvailRequest.getRoomAvail(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
+                    customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
@@ -173,10 +156,8 @@ public class HotelFullInfo extends Activity {
         @Override
         protected HotelInfoExtended doInBackground(Void... voids) {
             try {
-                return InformationRequest.getHotelInformation(
-                    hotelId,
-                    SampleApp.foundHotels.customerSessionId,
-                    SampleApp.LOCALE.toString());
+                return InformationRequest.getHotelInformation(hotelId, SampleApp.customerSessionId,
+                    SampleApp.locale.toString());
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {
@@ -238,9 +219,9 @@ public class HotelFullInfo extends Activity {
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    SampleApp.selectedRoom = (HotelRoom) view.getTag();
-                    Intent intent = new Intent(HotelFullInfo.this, BookingSummary.class);
-                    startActivity(intent);
+                SampleApp.selectedRoom = (HotelRoom) view.getTag();
+                Intent intent = new Intent(HotelFullInfo.this, BookingSummary.class);
+                startActivity(intent);
                 }
             });
             rateList.addView(view);

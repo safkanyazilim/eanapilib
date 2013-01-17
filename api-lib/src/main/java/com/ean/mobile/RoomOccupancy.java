@@ -44,9 +44,9 @@ public final class RoomOccupancy {
     public RoomOccupancy(final int numberOfAdults, final List<Integer> childAges) {
         this.numberOfAdults = numberOfAdults;
         this.childAges
-                = childAges == null
-                ? Collections.<Integer>emptyList()
-                : Collections.unmodifiableList(childAges);
+            = childAges == null
+            ? Collections.<Integer>emptyList()
+            : Collections.unmodifiableList(childAges);
         this.hashCode = preCalculateHashCode(this);
     }
 

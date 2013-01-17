@@ -17,6 +17,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.util.Log;
+import android.widget.Toast;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
@@ -32,12 +33,18 @@ import java.text.NumberFormat;
 import java.util.Currency;
 
 public class HotelList extends Activity {
+
+    private Toast loadingMoreHotelsToast;
+
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hotellist);
         ((ListView) findViewById(R.id.HotelList)).setOnItemClickListener(new HotelListAdapterListener());
+
+        loadingMoreHotelsToast = Toast.makeText(getApplicationContext(),
+            getString(R.string.loading_more_hotels), Toast.LENGTH_LONG);
     }
 
     @Override
@@ -168,7 +175,8 @@ public class HotelList extends Activity {
                     loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());
                 }
                 if (loadingTask.getStatus() == AsyncTask.Status.PENDING) {
-                    loadingTask.execute();
+                    loadingMoreHotelsToast.show();
+                    loadingTask.execute((Void) null);
                 }
             }
         }
@@ -193,7 +201,10 @@ public class HotelList extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                ListRequest.loadMoreResults(SampleApp.foundHotels);
+                SampleApp.updateFoundHotels(ListRequest.loadMoreResults(
+                    SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode(),
+                    SampleApp.cacheKey, SampleApp.cacheLocation,
+                    SampleApp.customerSessionId));
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
@@ -209,6 +220,7 @@ public class HotelList extends Activity {
         @Override
         protected void onPostExecute(Void aVoid) {
             adapter.notifyDataSetChanged();
+            loadingMoreHotelsToast.cancel();
         }
     }
 }

@@ -56,4 +56,5 @@
     <string name="redirected">Couldn\'t connect to EAN API network.</string>
     <string name="adults_comma_children">%1$d Adult(s), %2$d Child(ren)</string>
     <string name="choose_contact">Choose from contacts</string>
+    <string name="loading_more_hotels">Loading more hotels...</string>
 </resources>

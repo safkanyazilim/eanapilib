@@ -7,14 +7,13 @@ import java.math.BigDecimal;
 
 public class StarRating {
 
-    public static void populate(final LinearLayout parent,
-                                final BigDecimal starRating) {
+    public static void populate(final LinearLayout parent, final BigDecimal starRating) {
         final ImageView[] stars = {
-                (ImageView) parent.findViewById(R.id.hotelInfoStar1),
-                (ImageView) parent.findViewById(R.id.hotelInfoStar2),
-                (ImageView) parent.findViewById(R.id.hotelInfoStar3),
-                (ImageView) parent.findViewById(R.id.hotelInfoStar4),
-                (ImageView) parent.findViewById(R.id.hotelInfoStar5),
+            (ImageView) parent.findViewById(R.id.hotelInfoStar1),
+            (ImageView) parent.findViewById(R.id.hotelInfoStar2),
+            (ImageView) parent.findViewById(R.id.hotelInfoStar3),
+            (ImageView) parent.findViewById(R.id.hotelInfoStar4),
+            (ImageView) parent.findViewById(R.id.hotelInfoStar5),
         };
         //Log.d("EANDebug starrating", starRating);
         //Log.d("EANDebug starbitslen", starBits.length+"");
