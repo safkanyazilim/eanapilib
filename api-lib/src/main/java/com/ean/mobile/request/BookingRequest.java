@@ -187,7 +187,7 @@ public final class BookingRequest extends Request {
                 final String homePhone, final String workPhone, final String creditCardType,
                 final String creditCardNumber, final String creditCardIdentifier,
                 final YearMonth creditCardExpirationDate) {
-            this.individual = new BookingIndividual( email, firstName, lastName, homePhone, workPhone);
+            this.individual = new BookingIndividual(email, firstName, lastName, homePhone, workPhone);
             this.creditCardInfo = new CreditCardInfo(
                 creditCardType, creditCardNumber, creditCardIdentifier, creditCardExpirationDate);
         }

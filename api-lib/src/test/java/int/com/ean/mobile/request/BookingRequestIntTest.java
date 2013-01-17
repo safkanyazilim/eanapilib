@@ -69,8 +69,10 @@ public class BookingRequestIntTest {
             null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
 
         List<ReservationRoom> bookingRooms = Arrays.asList(
-            new ReservationRoom(checkInNames.get(0), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(0)),
-            new ReservationRoom(checkInNames.get(1), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(1)));
+            new ReservationRoom(
+                checkInNames.get(0), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(0)),
+            new ReservationRoom(
+                checkInNames.get(1), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(1)));
 
         BookingRequest.performBooking(hotelList.hotelInfos.get(0).hotelId, dateTimes[0], dateTimes[1],
             hotelList.hotelInfos.get(0).supplierType, bookingRooms, resInfo, ADDRESS,

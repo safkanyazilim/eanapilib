@@ -108,7 +108,7 @@ public final class ReservationRoom {
     public ReservationRoom(final Name checkInName, final HotelRoom room, final String selectedBedTypeId,
             final RoomOccupancy occupancy) {
         this(checkInName, selectedBedTypeId, room.smokingPreference, room.roomTypeCode, room.rateCode, room.rate,
-                occupancy);
+            occupancy);
     }
 
     /**

@@ -4,7 +4,6 @@
 
 package com.ean.mobile;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -33,6 +32,9 @@ public final class HotelInfoList  {
      */
     public final int totalNumberOfResults;
 
+    /**
+     * Holds the hotel info objects from the api response.
+     */
     public final List<HotelInfo> hotelInfos;
 
     /**
