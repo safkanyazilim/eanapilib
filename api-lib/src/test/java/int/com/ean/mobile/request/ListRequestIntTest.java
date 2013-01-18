@@ -32,8 +32,10 @@ public class ListRequestIntTest {
     public void testSearchForHotelsHappy() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
+        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
+
+        HotelInfoList results = RequestProcessor.run(listRequest);
 
         assertEquals(10, results.hotelInfos.size());
     }
@@ -42,15 +44,20 @@ public class ListRequestIntTest {
     public void testSearchForHotelsCauseError() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
 
-        ListRequest.searchForHotels("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
+        ListRequest listRequest
+            = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
+
+        RequestProcessor.run(listRequest);
     }
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        ListRequest.searchForHotels("sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1], null,
-            LOCALE, CURRENCY_CODE);
+        ListRequest listRequest = new ListRequest(
+            "sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
+
+        RequestProcessor.run(listRequest);
     }
 
     @Test
@@ -59,8 +66,10 @@ public class ListRequestIntTest {
 
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", occupancies, dateTimes[0], dateTimes[1],
+        ListRequest listRequest = new ListRequest("rome, it", occupancies, dateTimes[0], dateTimes[1],
             null, LOCALE, CURRENCY_CODE);
+
+        HotelInfoList results = RequestProcessor.run(listRequest);
 
         assertEquals(10, results.hotelInfos.size());
     }
@@ -70,21 +79,25 @@ public class ListRequestIntTest {
         Set<Long> hotelIdsReturned = new HashSet<Long>();
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
+        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
+        HotelInfoList results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
         // Paginate a few times and make sure they are ordered correctly.
-        results = ListRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+        listRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
             results.cacheKey, results.cacheLocation, results.customerSessionId);
+        results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        results = ListRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+        listRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
             results.cacheKey, results.cacheLocation, results.customerSessionId);
+        results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        results = ListRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+        listRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
             results.cacheKey, results.cacheLocation, results.customerSessionId);
+        results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
     }
 

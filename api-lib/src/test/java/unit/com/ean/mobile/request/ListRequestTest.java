@@ -4,7 +4,6 @@
 
 package com.ean.mobile.request;
 
-import org.apache.http.NameValuePair;
 import org.joda.time.LocalDate;
 import org.json.JSONException;
 import org.junit.Test;
@@ -19,8 +18,7 @@ import com.ean.mobile.RoomOccupancy;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.*;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.mockStatic;
 
@@ -32,13 +30,15 @@ public class ListRequestTest {
 
     @Test
     public void testSearchForHotelsNullResponse() throws Exception {
-        mockStatic(Request.class);
-        when(Request.performApiRequest(anyString(), anyListOf(NameValuePair.class))).thenThrow(new JSONException(""));
+        mockStatic(RequestProcessor.class);
+        when(RequestProcessor.run(any(Request.class))).thenThrow(new JSONException(""));
 
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        HotelInfoList results = ListRequest.searchForHotels("rome, it", OCCUPANCY,
-            dateTimes[0], dateTimes[1], null, "en_US", "USD");
+        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY,
+                dateTimes[0], dateTimes[1], null, "en_US", "USD");
+
+        HotelInfoList results = RequestProcessor.run(listRequest);
 
         assertNotNull(results);
         assertEquals(0, results.hotelInfos.size());
