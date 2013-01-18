@@ -26,6 +26,7 @@ import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
+import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
 import org.joda.time.LocalDate;
@@ -125,8 +126,10 @@ public class HotelFullInfo extends Activity {
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
-                return RoomAvailRequest.getRoomAvail(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
-                    customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
+                RoomAvailRequest request
+                    = new RoomAvailRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
+                        customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
+                return RequestProcessor.run(request);
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
@@ -156,8 +159,9 @@ public class HotelFullInfo extends Activity {
         @Override
         protected HotelInfoExtended doInBackground(Void... voids) {
             try {
-                return InformationRequest.getHotelInformation(hotelId, SampleApp.customerSessionId,
-                    SampleApp.locale.toString());
+                InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
+                        SampleApp.locale.toString());
+                return RequestProcessor.run(request);
             } catch (IOException ioe) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {
@@ -170,7 +174,6 @@ public class HotelFullInfo extends Activity {
 
         @Override
         protected void onPostExecute(HotelInfoExtended extended) {
-            super.onPostExecute(extended);
             SampleApp.EXTENDED_INFOS.put(hotelId, extended);
             setExtendedInfoFields();
         }

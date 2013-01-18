@@ -83,12 +83,11 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
                     new HotelImageTuple(new URL(image.optString("thumbnailUrl")),
                         new URL(image.optString("url")), image.optString("caption")));
             } catch (MalformedURLException me) {
-                Log.e("Unable to process JSON", me.getMessage());
+                Log.e(Constants.DEBUG_TAG, "Unable to process JSON", me);
             }
         }
         Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
-        return new HotelInfoExtended(
-            infoResp.getJSONObject("HotelSummary").getLong("hotelId"), longDescription, imageTuples);
+        return new HotelInfoExtended(infoResp.optLong("@hotelId"), longDescription, imageTuples);
     }
 
     /**

@@ -21,6 +21,11 @@ public final class Log {
         return 0;
     }
 
+    public static int e(final String tag, final String message, final Throwable throwable) {
+        LOG.error(tag + " : " + message, throwable);
+        return 0;
+    }
+
     public static int wtf(final String tag, final String message) {
         LOG.fatal(tag + " : " + message);
         return 0;
