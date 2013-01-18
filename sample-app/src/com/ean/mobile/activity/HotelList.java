@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.widget.Toast;
 import com.ean.mobile.HotelInfo;
+import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
@@ -26,7 +27,7 @@ import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.ListRequest;
-import com.ean.mobile.task.ImageTupleLoaderTask;
+import com.ean.mobile.task.ImageDrawableLoaderTask;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -112,13 +113,7 @@ public class HotelList extends Activity {
             // reset the thumb to eliminate possible flickering
             thumb.setImageResource(R.drawable.noimg_large);
 
-            if (hotelInfo.mainHotelImageTuple.thumbnailUrl != null) {
-                if (hotelInfo.mainHotelImageTuple.isThumbnailLoaded()){
-                    thumb.setImageDrawable(hotelInfo.mainHotelImageTuple.getThumbnailImage());
-                } else {
-                    new ImageTupleLoaderTask(thumb, false).execute(hotelInfo.mainHotelImageTuple);
-                }
-            }
+            ImageFetcher.loadThumbnailIntoImageView(thumb, hotelInfo.mainHotelImageTuple);
 
             //TODO: INCLUDE THE DRRPROMO WHEN APPROPRIATE
 
@@ -183,9 +178,9 @@ public class HotelList extends Activity {
         protected Void doInBackground(Void... voids) {
             try {
                 SampleApp.updateFoundHotels(ListRequest.loadMoreResults(
-                    SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode(),
-                    SampleApp.cacheKey, SampleApp.cacheLocation,
-                    SampleApp.customerSessionId));
+                        SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode(),
+                        SampleApp.cacheKey, SampleApp.cacheLocation,
+                        SampleApp.customerSessionId));
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {

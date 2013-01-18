@@ -15,9 +15,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+import com.ean.mobile.HotelImageDrawable;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoExtended;
+import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.SampleApp;
@@ -27,7 +29,7 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RoomAvailRequest;
-import com.ean.mobile.task.ImageTupleLoaderTask;
+import com.ean.mobile.task.ImageDrawableLoaderTask;
 import org.joda.time.LocalDate;
 
 import java.io.IOException;
@@ -60,14 +62,9 @@ public class HotelFullInfo extends Activity {
                 SampleApp.arrivalDate, SampleApp.departureDate, SampleApp.customerSessionId).execute((Void) null);
         }
 
-        final ImageView thumb = (ImageView) this.findViewById(R.id.hotelFullInfoThumb);
-        if (hotelInfo.mainHotelImageTuple.thumbnailUrl != null) {
-            if (hotelInfo.mainHotelImageTuple.isThumbnailLoaded()){
-                thumb.setImageDrawable(hotelInfo.mainHotelImageTuple.getThumbnailImage());
-            } else {
-                new ImageTupleLoaderTask(thumb, false).execute(hotelInfo.mainHotelImageTuple);
-            }
-        }
+        ImageFetcher.loadThumbnailIntoImageView(
+            (ImageView) findViewById(R.id.hotelFullInfoThumb),
+            hotelInfo.mainHotelImageTuple);
 
         if(SampleApp.EXTENDED_INFOS.containsKey(hotelInfo.hotelId)){
             setExtendedInfoFields();
@@ -92,11 +89,11 @@ public class HotelFullInfo extends Activity {
         HotelInfoExtended extended = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(extended.longDescription, "text/html", null);
         for(int i = 0; i < smallThumbs.length && i < extended.images.size(); i++){
-            HotelImageTuple thisImage = extended.images.get(i);
-            if (thisImage.isThumbnailLoaded()) {
-                smallThumbs[i].setImageDrawable(thisImage.getThumbnailImage());
+            HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(extended.images.get(i));
+            if (thisDrawable.isThumbnailLoaded()) {
+                smallThumbs[i].setImageDrawable(thisDrawable.getThumbnailImage());
             } else {
-                new ImageTupleLoaderTask(smallThumbs[i], false).execute(thisImage);
+                new ImageDrawableLoaderTask(smallThumbs[i], false).execute(thisDrawable);
             }
         }
     }

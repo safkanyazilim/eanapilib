@@ -51,6 +51,9 @@ public class SampleApp extends Application {
     public static final Map<Long, List<HotelRoom>> HOTEL_ROOMS
             = Collections.synchronizedMap(new HashMap<Long, List<HotelRoom>>());
 
+    public static final Map<HotelImageTuple, HotelImageDrawable> IMAGE_DRAWABLES
+            = Collections.synchronizedMap(new HotelImageDrawableMap());
+
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
     }
@@ -76,6 +79,7 @@ public class SampleApp extends Application {
         selectedRoom = null;
         EXTENDED_INFOS.clear();
         HOTEL_ROOMS.clear();
+        IMAGE_DRAWABLES.clear();
     }
 
     public static void updateFoundHotels(HotelInfoList hotelInfoList) {
