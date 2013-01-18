@@ -11,10 +11,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.ean.mobile.HotelInfoExtended;
-import com.ean.mobile.HotelImageTuple;
-import com.ean.mobile.Constants;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
@@ -23,6 +19,10 @@ import org.json.JSONObject;
 
 import android.text.Html;
 import android.util.Log;
+
+import com.ean.mobile.Constants;
+import com.ean.mobile.HotelImageTuple;
+import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 
@@ -40,7 +40,6 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      * @throws IOException If there is an error communicating on the network.
      * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the extended hotel information that was requested.
      */
     public InformationRequest(final long hotelId, final String customerSessionId, final String locale)
             throws IOException, EanWsError, UrlRedirectionException {
@@ -59,7 +58,11 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
         setUrlParameters(urlParameters);
     }
 
-    public HotelInfoExtended consume(JSONObject jsonObject) throws JSONException, EanWsError {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HotelInfoExtended consume(final JSONObject jsonObject) throws JSONException, EanWsError {
         if (jsonObject == null) {
             return null;
         }
@@ -80,7 +83,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
                     new HotelImageTuple(new URL(image.optString("thumbnailUrl")),
                         new URL(image.optString("url")), image.optString("caption")));
             } catch (MalformedURLException me) {
-                // TODO: handle bad URLs!
+                Log.e("Unable to process JSON", me.getMessage());
             }
         }
         Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
@@ -88,10 +91,18 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
             infoResp.getJSONObject("HotelSummary").getLong("hotelId"), longDescription, imageTuples);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getPath() {
         return "info";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isSecure() {
         return false;
     }

@@ -11,11 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.ean.mobile.Reservation;
-import com.ean.mobile.ReservationRoom;
-import com.ean.mobile.Individual;
-import com.ean.mobile.Address;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -26,6 +21,10 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ean.mobile.Address;
+import com.ean.mobile.Individual;
+import com.ean.mobile.Reservation;
+import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 
@@ -49,7 +48,6 @@ public final class BookingRequest extends Request<Reservation> {
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public BookingRequest(final Long hotelId,
                           final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
@@ -76,7 +74,6 @@ public final class BookingRequest extends Request<Reservation> {
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
             final String supplierType, final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo,
@@ -103,7 +100,6 @@ public final class BookingRequest extends Request<Reservation> {
      * @throws IOException If there is some sort of network error while making the booking.
      * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
             final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
@@ -128,12 +124,16 @@ public final class BookingRequest extends Request<Reservation> {
         setUrlParameters(urlParameters);
     }
 
-    public Reservation consume(JSONObject jsonObject) throws JSONException, EanWsError{
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Reservation consume(final JSONObject jsonObject) throws JSONException, EanWsError {
         if (jsonObject == null) {
             return null;
         }
 
-        JSONObject response = jsonObject.getJSONObject("HotelListResponse");
+        final JSONObject response = jsonObject.getJSONObject("HotelListResponse");
 
         if (response.has("EanWsError")) {
             System.out.println(response.toString());
@@ -144,10 +144,18 @@ public final class BookingRequest extends Request<Reservation> {
         return new Reservation(response);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getPath() {
         return "res";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isSecure() {
         return true;
     }

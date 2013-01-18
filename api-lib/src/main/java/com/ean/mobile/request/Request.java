@@ -20,25 +20,35 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.util.Log;
+
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 
 /**
  * The base class for all of the API requests that are implemented. Provides some easy-to use methods for performing
  * requests.
+ * @param <T> a response object used to store converted JSON data
  */
 public abstract class Request<T> {
-    private static final List<NameValuePair> BASIC_URL_PARAMETERS;
 
-    private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
-
-    private List<NameValuePair> urlParameters;
-
+    /**
+     * The standard endpoint for a non-secure request.
+     */
     public static final URI STANDARD_ENDPOINT;
 
+    /**
+     * The endpoint for a secure request.
+     */
     public static final URI SECURE_ENDPOINT;
 
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
+    /**
+     * A formatter to use for all date/string conversions.
+     */
+    public static final DateTimeFormatter DATE_TIME_FORMATTER;
+
+    private static final List<NameValuePair> BASIC_URL_PARAMETERS;
+    private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
+    private List<NameValuePair> urlParameters;
 
     static {
         final String standardUriScheme = "http";
@@ -46,6 +56,8 @@ public abstract class Request<T> {
         final String secureUriScheme = "https";
         final String secureUriHost = "book.api.ean.com";
         final String uriBasePath = "/ean-services/rs/hotel/v3/";
+
+        DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
         URI standardUri = null;
         URI secureUri = null;
@@ -76,10 +88,25 @@ public abstract class Request<T> {
         BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
     }
 
-    public abstract T consume(JSONObject jsonObject) throws JSONException, EanWsError;
+    /**
+     * Parses the specified JSON and returns the appropriate object containing the response data.
+     * @param jsonObject a raw JSON response
+     * @return an object representing the converted JSON data
+     * @throws JSONException thrown if the provided JSON data cannot be parsed
+     * @throws EanWsError thrown if an error message is included in the JSON data
+     */
+    public abstract T consume(final JSONObject jsonObject) throws JSONException, EanWsError;
 
+    /**
+     * Returns the path name of the implemented request.
+     * @return a path representing the request (info, res, avail, etc)
+     */
     public abstract String getPath();
 
+    /**
+     * Return true if the implemented request should use a secure connection.
+     * @return true if secure, false if not
+     */
     public abstract boolean isSecure();
 
     /**
@@ -128,11 +155,19 @@ public abstract class Request<T> {
         return getBasicUrlParameters(null, null, null, null);
     }
 
+    /**
+     * Getter method for urlParameters.
+     * @return urlParameters
+     */
     public List<NameValuePair> getUrlParameters() {
         return urlParameters;
     }
 
-    public void setUrlParameters(List<NameValuePair> urlParameters) {
+    /**
+     * Setter method for urlParameters.
+     * @param urlParameters the new value for urlParameters
+     */
+    public void setUrlParameters(final List<NameValuePair> urlParameters) {
         this.urlParameters = urlParameters;
     }
 }

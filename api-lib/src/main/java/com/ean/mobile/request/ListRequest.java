@@ -11,8 +11,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.ean.mobile.HotelInfo;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.joda.time.LocalDate;
@@ -20,6 +18,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
+import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
@@ -45,7 +46,6 @@ public final class ListRequest extends Request<HotelInfoList> {
      *     The same customerSessionId as returned in other API requests
      * @param locale The locale in which to perform the request.
      * @param currencyCode The currency which is desired in the response.
-     * @return The list of HotelInfo that were requested by the search parameters.
      * @throws IOException If there was a network-level error.
      * @throws EanWsError If the API encountered an error and was unable to return results.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
@@ -72,7 +72,6 @@ public final class ListRequest extends Request<HotelInfoList> {
      * @param locale The locale to search for the hotels in.
      * @param currencyCode The currency code to search for.
      *                     Can be any valid currency, but can only book chargeable currencies.
-     * @return The list of HotelInfo that were requested by the search parameters.
      * @throws IOException If there was a network-level error.
      * @throws EanWsError If the API encountered an error and was unable to return results.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
@@ -83,8 +82,8 @@ public final class ListRequest extends Request<HotelInfoList> {
             throws IOException, EanWsError, UrlRedirectionException {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("destinationString", destination),
-                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
+            new BasicNameValuePair("destinationString", destination),
+            new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
         );
 
         final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
@@ -106,12 +105,16 @@ public final class ListRequest extends Request<HotelInfoList> {
         setUrlParameters(urlParameters);
     }
 
-    public HotelInfoList consume(JSONObject jsonObject) throws JSONException, EanWsError {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public HotelInfoList consume(final JSONObject jsonObject) throws JSONException, EanWsError {
         if (jsonObject == null) {
             return null;
         }
 
-        JSONObject response = jsonObject.getJSONObject("HotelListResponse");
+        final JSONObject response = jsonObject.getJSONObject("HotelListResponse");
 
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
@@ -128,7 +131,7 @@ public final class ListRequest extends Request<HotelInfoList> {
             try {
                 newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i)));
             } catch (MalformedURLException me) {
-                // TODO: handle bad URLs!
+                Log.e("Unable to process JSON", me.getMessage());
             }
         }
 
@@ -136,10 +139,18 @@ public final class ListRequest extends Request<HotelInfoList> {
             newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getPath() {
         return "list";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isSecure() {
         return false;
     }
@@ -152,7 +163,6 @@ public final class ListRequest extends Request<HotelInfoList> {
      * @param cacheLocation Cache location from previous request
      * @param customerSessionId Customer Session Id obtained from previous requests, pass
      *      in to track as the user moves around requests and booking flow.
-     * @return The newly grown HotelInfoList
      * @throws IOException If there is a network connection issue.
      * @throws EanWsError If there is an error with the API request.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.

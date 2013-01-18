@@ -3,15 +3,6 @@
  */
 package com.ean.mobile.request;
 
-import android.util.Log;
-import com.ean.mobile.Constants;
-import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UriCreationException;
-import com.ean.mobile.exception.UrlRedirectionException;
-import org.apache.http.NameValuePair;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -21,11 +12,39 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.List;
 
-public class RequestProcessor {
+import org.apache.http.NameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    public static <T> T run(Request<T> request) throws EanWsError {
+import android.util.Log;
+
+import com.ean.mobile.Constants;
+import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UriCreationException;
+import com.ean.mobile.exception.UrlRedirectionException;
+
+/**
+ * Responsible for the logic that executes requests through the EAN API.
+ */
+public final class RequestProcessor {
+
+    /**
+     * Constructor to prevent instantiation.
+     */
+    private RequestProcessor() {
+        // empty code block
+    }
+
+    /**
+     * Executes a request using the data provided in the Request object.
+     * @param request contains all necessary data to execute a request and parse a response
+     * @param <T> the response data
+     * @return a response object populated by the JSON data retrieved from the API
+     * @throws EanWsError thrown if any error messages are returned via the API call
+     */
+    public static <T> T run(final Request<T> request) throws EanWsError {
         try {
-            JSONObject jsonResponse = performApiRequest(request);
+            final JSONObject jsonResponse = performApiRequest(request);
             return request.consume(jsonResponse);
         } catch (JSONException jsone) {
             return null;
@@ -38,11 +57,12 @@ public class RequestProcessor {
 
     /**
      * Performs an api request at the specified path with the parameters listed.
+     * @param request contains all necessary data to execute a request and parse a response
      * @return The String representation of the JSON returned from the request.
      * @throws IOException If there is a network error or some other connection issue.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    private static String performApiRequestForString(Request request)
+    private static String performApiRequestForString(final Request request)
             throws IOException, UrlRedirectionException {
         //Build the url
         final URLConnection connection;
@@ -89,13 +109,14 @@ public class RequestProcessor {
 
     /**
      * Performs an API request.
+     * @param request contains all necessary data to execute a request and parse a response
      * @return The JSONObject that represents the content returned by the API
      * @throws IOException If there is a network issue, or the network stream cannot otherwise be read.
      * @throws JSONException If the response does not contain valid JSON
      * @throws EanWsError If the response contains an EanWsError element
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    private static JSONObject performApiRequest(Request request)
+    private static JSONObject performApiRequest(final Request request)
             throws IOException, JSONException, EanWsError, UrlRedirectionException {
         final JSONObject response = new JSONObject(performApiRequestForString(request));
         if (response.has("EanWsError")) {
@@ -136,7 +157,12 @@ public class RequestProcessor {
         return queryString;
     }
 
-    private static URI getUri(Request request) {
+    /**
+     * Builds and returns a valid URI used to contact the EAN API.
+     * @param request contains all necessary data to execute a request and parse a response
+     * @return a valid URI
+     */
+    private static URI getUri(final Request request) {
         final URI relativeUri = request.isSecure() ? request.SECURE_ENDPOINT : request.STANDARD_ENDPOINT;
         //URLEncodedUtils cannot be used because the api cannot handle %2F instead of / for the date strings.
         final String queryString = createQueryString(request.getUrlParameters());

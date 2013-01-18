@@ -10,9 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import com.ean.mobile.HotelRoom;
-import com.ean.mobile.RoomOccupancy;
-
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -21,6 +18,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.ean.mobile.HotelRoom;
+import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 
@@ -43,7 +42,6 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      *                          Can be null.
      * @param locale The locale to retrieve the availability with.
      * @param currencyCode The currency code to use in the request.
-     * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
@@ -70,7 +68,6 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      *                          {@link com.ean.mobile.HotelInfoList#customerSessionId}.
      * @param locale The locale to retrieve the availability with.
      * @param currencyCode The currency code to use in the request.
-     * @return The list of HotelRoom objects returned by the API request.
      * @throws IOException If there is a communication issue while getting the response.
      * @throws EanWsError If there is an error in the API that was returned.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
@@ -100,12 +97,16 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
         setUrlParameters(urlParameters);
     }
 
-    public List<HotelRoom> consume(JSONObject jsonObject) throws JSONException, EanWsError {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<HotelRoom> consume(final JSONObject jsonObject) throws JSONException, EanWsError {
         if (jsonObject == null) {
             return null;
         }
 
-        JSONObject response = jsonObject.getJSONObject("HotelRoomAvailabilityResponse");
+        final JSONObject response = jsonObject.getJSONObject("HotelRoomAvailabilityResponse");
 
         // TODO: handler EanWsError objects, such as sold out rooms
         if (response.has("EanWsError")) {
@@ -117,7 +118,7 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
             // we know that it has HotelRoomResponse, just don't know if it'll be
             // parsed as an object or as an array. If there's only one in the collection,
             // it'll be parsed as a singular object, otherwise it'll be an array.
-            LocalDate arrivalDate = LocalDate.parse(response.getString("arrivalDate"), DATE_TIME_FORMATTER);
+            final LocalDate arrivalDate = LocalDate.parse(response.getString("arrivalDate"), DATE_TIME_FORMATTER);
             if (response.optJSONArray("HotelRoomResponse") != null) {
                 final JSONArray hotelRoomResponse = response.optJSONArray("HotelRoomResponse");
                 hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse, arrivalDate);
@@ -134,10 +135,18 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
         return hotelRooms;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public String getPath() {
         return "avail";
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public boolean isSecure() {
         return false;
     }
