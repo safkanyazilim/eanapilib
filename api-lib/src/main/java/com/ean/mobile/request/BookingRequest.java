@@ -129,13 +129,15 @@ public final class BookingRequest extends Request<Reservation> {
     }
 
     public Reservation consume(JSONObject jsonObject) throws JSONException, EanWsError{
-        if (jsonObject.has("EanWsError")) {
-            System.out.println(jsonObject.toString());
+        JSONObject response = jsonObject.getJSONObject("HotelListResponse");
+
+        if (response.has("EanWsError")) {
+            System.out.println(response.toString());
             //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
-            throw EanWsError.fromJson(jsonObject.getJSONObject("EanWsError"));
+            throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
         //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
-        return new Reservation(jsonObject);
+        return new Reservation(response);
     }
 
     public String getPath() {
