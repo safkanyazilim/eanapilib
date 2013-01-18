@@ -11,6 +11,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.ean.mobile.Reservation;
+import com.ean.mobile.ReservationRoom;
+import com.ean.mobile.Individual;
+import com.ean.mobile.Address;
+
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
@@ -21,33 +26,13 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.Address;
-import com.ean.mobile.Individual;
-import com.ean.mobile.Reservation;
-import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The class that performs booking requests.
  */
-public final class BookingRequest extends Request {
-
-    /**
-     * This is the subdir that is used to make booking requests.
-     */
-    private static final String URL_SUBDIR = "res";
-
-    /**
-     * Private no-op constructor to prevent instantiation.
-     */
-    private BookingRequest() {
-        // see javadoc.
-    }
-
-    //TODO: Overload performBooking so that it takes a HotelRoom object rather than Room and infers the rest
-    // of the information from the other fields, similar to the BookingRequestIntTest.
-
+public final class BookingRequest extends Request<Reservation> {
 
     /**
      * This method actually performs the booking request with the passed room and occupancy information.
@@ -66,12 +51,12 @@ public final class BookingRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId,
-            final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
-            final ReservationRoom room, final ReservationInfo reservationInfo, final Address address,
-            final String customerSessionId, final String locale, final String currencyCode)
+    public BookingRequest(final Long hotelId,
+                          final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
+                          final ReservationRoom room, final ReservationInfo reservationInfo, final Address address,
+                          final String customerSessionId, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
-        return performBooking(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
+        this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
                 reservationInfo, address, customerSessionId, locale, currencyCode);
     }
 
@@ -93,12 +78,12 @@ public final class BookingRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId,
-            final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
-            final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo, final Address address,
-            final String customerSessionId, final String locale, final String currencyCode)
+    public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
+            final String supplierType, final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo,
+            final Address address, final String customerSessionId, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
-        return performBooking(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInfo, address,
+
+        this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInfo, address,
                 customerSessionId, null, locale, currencyCode);
     }
 
@@ -120,16 +105,16 @@ public final class BookingRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId, final LocalDate arrivalDate,
-        final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
-        final ReservationInfo reservationInfo, final Address address, final String customerSessionId,
-        final List<NameValuePair> extraBookingData, final String locale, final String currencyCode)
+    public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
+            final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
+            final ReservationInfo reservationInfo, final Address address, final String customerSessionId,
+            final List<NameValuePair> extraBookingData, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
 
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("hotelId", hotelId.toString()),
-            new BasicNameValuePair("supplierType", supplierType)
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", hotelId.toString()),
+                new BasicNameValuePair("supplierType", supplierType)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -140,20 +125,25 @@ public final class BookingRequest extends Request {
         urlParameters.addAll(address.asBookingRequestPairs());
         urlParameters.addAll(extraBookingData == null ? Collections.<NameValuePair>emptyList() : extraBookingData);
 
-        try {
-            final JSONObject json
-                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomReservationResponse");
-            if (json.has("EanWsError")) {
-                System.out.println(json.toString());
-                //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
-                throw EanWsError.fromJson(json.getJSONObject("EanWsError"));
-            }
-            //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
-            return new Reservation(json);
-        } catch (JSONException jse) {
-            //TODO: THIS SHOULD BE HANDLED BETTER.
-            return null;
+        setUrlParameters(urlParameters);
+    }
+
+    public Reservation consume(JSONObject jsonObject) throws JSONException, EanWsError{
+        if (jsonObject.has("EanWsError")) {
+            System.out.println(jsonObject.toString());
+            //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
+            throw EanWsError.fromJson(jsonObject.getJSONObject("EanWsError"));
         }
+        //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
+        return new Reservation(jsonObject);
+    }
+
+    public String getPath() {
+        return "res";
+    }
+
+    public boolean isSecure() {
+        return true;
     }
 
     /**

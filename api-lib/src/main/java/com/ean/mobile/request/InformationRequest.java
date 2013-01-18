@@ -5,10 +5,15 @@
 package com.ean.mobile.request;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.ean.mobile.HotelInfoExtended;
+import com.ean.mobile.HotelImageTuple;
+import com.ean.mobile.Constants;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -18,9 +23,6 @@ import org.json.JSONObject;
 
 import android.text.Html;
 import android.util.Log;
-import com.ean.mobile.Constants;
-import com.ean.mobile.HotelImageTuple;
-import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 
@@ -28,15 +30,7 @@ import com.ean.mobile.exception.UrlRedirectionException;
  * Uses getHotelInformation to get the rest of the hotel's information, including images
  * and the hotel's full description.
  */
-public final class InformationRequest extends Request {
-    private static final String URL_SUBDIR = "info";
-
-    /**
-     * Private no-op constructor to prevent instantiation.
-     */
-    private InformationRequest() {
-        //see javadoc.
-    }
+public final class InformationRequest extends Request<HotelInfoExtended> {
 
     /**
      * Gets the rest of the information about a hotel not included in previous calls.
@@ -48,45 +42,57 @@ public final class InformationRequest extends Request {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @return Returns the extended hotel information that was requested.
      */
-    public static HotelInfoExtended getHotelInformation(final long hotelId, final String customerSessionId,
-            final String locale) throws IOException, EanWsError, UrlRedirectionException {
+    public InformationRequest(final long hotelId, final String customerSessionId, final String locale)
+            throws IOException, EanWsError, UrlRedirectionException {
+
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+                new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         //urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(getBasicUrlParameters(locale, null));
-        try {
-            final JSONObject json = performApiRequest(URL_SUBDIR, urlParameters);
 
-            if (json == null) {
-                return null;
-            }
+        setUrlParameters(urlParameters);
+    }
 
-            final JSONObject infoResp = json.getJSONObject("HotelInformationResponse");
-            final JSONObject details = infoResp.getJSONObject("HotelDetails");
-            final JSONArray images = infoResp.getJSONObject("HotelImages")
-                .getJSONArray("HotelImage");
+    public HotelInfoExtended consume(JSONObject jsonObject) throws JSONException, EanWsError {
+        if (jsonObject == null) {
+            return null;
+        }
 
-            final String longDescription = Html.fromHtml(details.optString("propertyDescription")).toString();
+        final JSONObject infoResp = jsonObject.getJSONObject("HotelInformationResponse");
+        final JSONObject details = infoResp.getJSONObject("HotelDetails");
+        final JSONArray images = infoResp.getJSONObject("HotelImages").getJSONArray("HotelImage");
 
-            final List<HotelImageTuple> imageTuples = new ArrayList<HotelImageTuple>();
+        final String longDescription = Html.fromHtml(details.optString("propertyDescription")).toString();
 
-            JSONObject image;
-            for (int i = 0; i < images.length(); i++) {
-                image = images.getJSONObject(i);
+        final List<HotelImageTuple> imageTuples = new ArrayList<HotelImageTuple>();
+
+        JSONObject image;
+        for (int i = 0; i < images.length(); i++) {
+            image = images.getJSONObject(i);
+            try {
                 imageTuples.add(
                     new HotelImageTuple(new URL(image.optString("thumbnailUrl")),
                         new URL(image.optString("url")), image.optString("caption")));
+            } catch (MalformedURLException me) {
+                // TODO: handle bad URLs!
             }
-            Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
-            return new HotelInfoExtended(hotelId, longDescription, imageTuples);
-        } catch (JSONException jse) {
-            return null;
         }
+        Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
+        return new HotelInfoExtended(
+            infoResp.getJSONObject("HotelSummary").getLong("hotelId"), longDescription, imageTuples);
+    }
+
+    public String getPath() {
+        return "info";
+    }
+
+    public boolean isSecure() {
+        return false;
     }
 }

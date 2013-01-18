@@ -5,10 +5,13 @@
 package com.ean.mobile.request;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import com.ean.mobile.HotelInfo;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -17,7 +20,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
@@ -26,17 +28,9 @@ import com.ean.mobile.exception.UrlRedirectionException;
 /**
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
  */
-public final class ListRequest extends Request {
+public final class ListRequest extends Request<HotelInfoList> {
 
     private static final String NUMBER_OF_RESULTS = "10";
-    private static final String URL_SUBDIR = "list";
-
-    /**
-     * Private no-op constructor to prevent instantiation.
-     */
-    private ListRequest() {
-        //see javadoc.
-    }
 
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
@@ -56,13 +50,13 @@ public final class ListRequest extends Request {
      * @throws EanWsError If the API encountered an error and was unable to return results.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public static HotelInfoList searchForHotels(final String destination,
-            final RoomOccupancy occupancy, final LocalDate arrivalDate, final LocalDate departureDate,
+    public ListRequest(final String destination, final RoomOccupancy occupancy,
+            final LocalDate arrivalDate, final LocalDate departureDate,
             final String customerSessionId, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
 
-        return searchForHotels(destination, Collections.singletonList(occupancy), arrivalDate, departureDate,
-            customerSessionId, locale, currencyCode);
+        this(destination, Collections.singletonList(occupancy), arrivalDate, departureDate,
+                customerSessionId, locale, currencyCode);
     }
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
@@ -83,13 +77,14 @@ public final class ListRequest extends Request {
      * @throws EanWsError If the API encountered an error and was unable to return results.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public static HotelInfoList searchForHotels(final String destination,
-            final List<RoomOccupancy> occupancies, final LocalDate arrivalDate, final LocalDate departureDate,
+    public ListRequest(final String destination, final List<RoomOccupancy> occupancies,
+            final LocalDate arrivalDate, final LocalDate departureDate,
             final String customerSessionId, final String locale, final String currencyCode)
             throws IOException, EanWsError, UrlRedirectionException {
+
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("destinationString", destination),
-            new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
+                new BasicNameValuePair("destinationString", destination),
+                new BasicNameValuePair("numberOfResults", NUMBER_OF_RESULTS)
         );
 
         final List<NameValuePair> roomParameters = new ArrayList<NameValuePair>(occupancies.size());
@@ -108,35 +103,41 @@ public final class ListRequest extends Request {
         }
         urlParameters.addAll(roomParameters);
 
-        // TODO: Possibly cache the HotelInfoLists (factory?) such that if the request is performed again
-        // within a certain threshold (maybe a day?) the search appears to be instantaneous.
-        // This has the potential to be a memory hog given that the HotelImageTuples store the actual
-        // bytes of the images they represent, once loaded.
-        // TODO: Support pagination via cachekey and so forth
-        try {
-            final JSONObject listResponse
-                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
+        setUrlParameters(urlParameters);
+    }
 
-            if (listResponse.has("EanWsError")) {
-                throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
-            }
+    public HotelInfoList consume(JSONObject jsonObject) throws JSONException, EanWsError {
+        JSONObject response = jsonObject.getJSONObject("HotelListResponse");
 
-            final String cacheKey = listResponse.optString("cacheKey");
-            final String cacheLocation = listResponse.optString("cacheLocation");
-            final String outgoingCustomerSessionId = listResponse.optString("customerSessionId");
-            final int totalNumberOfResults = listResponse.optJSONObject("HotelList").optInt("@activePropertyCount");
-            final JSONArray hotelList = listResponse
-                .getJSONObject("HotelList")
-                .getJSONArray("HotelSummary");
-            final List<HotelInfo> hotels = new ArrayList<HotelInfo>(hotelList.length());
-            for (int i = 0; i < hotelList.length(); i++) {
-                hotels.add(new HotelInfo(hotelList.getJSONObject(i)));
-            }
-
-            return new HotelInfoList(hotels, cacheKey, cacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
-        } catch (JSONException jse) {
-            return HotelInfoList.emptyList();
+        if (response.has("EanWsError")) {
+            throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
+
+        final String newCacheKey = response.optString("cacheKey");
+        final String newCacheLocation = response.optString("cacheLocation");
+        final String outgoingCustomerSessionId = response.optString("customerSessionId");
+        final int totalNumberOfResults = response.optJSONObject("HotelList").optInt("@activePropertyCount");
+
+        final JSONArray newHotelJson = response.getJSONObject("HotelList").getJSONArray("HotelSummary");
+        final List<HotelInfo> newHotels = new ArrayList<HotelInfo>(newHotelJson.length());
+        for (int i = 0; i < newHotelJson.length(); i++) {
+            try {
+                newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i)));
+            } catch (MalformedURLException me) {
+                // TODO: handle bad URLs!
+            }
+        }
+
+        return new HotelInfoList(newHotels,
+            newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
+    }
+
+    public String getPath() {
+        return "list";
+    }
+
+    public boolean isSecure() {
+        return false;
     }
 
     /**
@@ -152,7 +153,7 @@ public final class ListRequest extends Request {
      * @throws EanWsError If there is an error with the API request.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public static HotelInfoList loadMoreResults(final String locale, final String currencyCode,
+    public void loadMoreResults(final String locale, final String currencyCode,
             final String cacheKey, final String cacheLocation,
             final String customerSessionId) throws IOException, EanWsError, UrlRedirectionException {
 
@@ -165,32 +166,7 @@ public final class ListRequest extends Request {
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
         urlParameters.addAll(requestParameters);
-        try {
-            final JSONObject listResponse
-                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelListResponse");
 
-            if (listResponse.has("EanWsError")) {
-                throw EanWsError.fromJson(listResponse.getJSONObject("EanWsError"));
-            }
-
-            final String newCacheKey = listResponse.optString("cacheKey");
-            final String newCacheLocation = listResponse.optString("cacheLocation");
-            final String outgoingCustomerSessionId = listResponse.optString("customerSessionId");
-            final int totalNumberOfResults = listResponse.optJSONObject("HotelList").optInt("@activePropertyCount");
-
-            final JSONArray newHotelJson = listResponse
-                .getJSONObject("HotelList")
-                .getJSONArray("HotelSummary");
-            final List<HotelInfo> newHotels = new ArrayList<HotelInfo>(newHotelJson.length());
-            for (int i = 0; i < newHotelJson.length(); i++) {
-                newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i)));
-            }
-
-            return new HotelInfoList(newHotels,
-                newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
-        } catch (JSONException jse) {
-            // we'll do nothing.
-            return HotelInfoList.emptyList();
-        }
+        setUrlParameters(urlParameters);
     }
 }
