@@ -129,6 +129,10 @@ public final class BookingRequest extends Request<Reservation> {
     }
 
     public Reservation consume(JSONObject jsonObject) throws JSONException, EanWsError{
+        if (jsonObject == null) {
+            return null;
+        }
+
         JSONObject response = jsonObject.getJSONObject("HotelListResponse");
 
         if (response.has("EanWsError")) {

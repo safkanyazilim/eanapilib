@@ -107,6 +107,10 @@ public final class ListRequest extends Request<HotelInfoList> {
     }
 
     public HotelInfoList consume(JSONObject jsonObject) throws JSONException, EanWsError {
+        if (jsonObject == null) {
+            return null;
+        }
+
         JSONObject response = jsonObject.getJSONObject("HotelListResponse");
 
         if (response.has("EanWsError")) {
