@@ -37,7 +37,6 @@ public final class ImageTupleLoaderTask extends AsyncTask<HotelImageTuple, Integ
 
     @Override
     protected void onPostExecute(Drawable drawable) {
-        super.onPostExecute(drawable);
         view.setImageDrawable(drawable);
     }
 
