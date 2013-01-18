@@ -4,15 +4,23 @@
 
 package com.ean.mobile;
 
-import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 
-import android.graphics.drawable.Drawable;
 /**
  * This holds information about each of the images to be displayed in the hotel full information. This includes
  * inner views, exterior views and so forth.
  */
 public final class HotelImageTuple {
+    /**
+     * The protocol with which to fetch images.
+     */
+    private static final String IMAGE_PROTOCOL = "http";
+
+    /**
+     * The host from which to fetch images.
+     */
+    private static final String IMAGE_HOST = "images.travelnow.com";
 
     /**
      * The URL from whence to retrieve the thumbnail.
@@ -29,17 +37,6 @@ public final class HotelImageTuple {
      */
     public final String caption;
 
-    //TODO: have this not store the drawables directly, but instead cache them in the image fetcher.
-    /**
-     * The thumbnail resource for this image.
-     */
-    private Drawable thumbnail;
-
-    /**
-     * The main drawable resource for the main image .
-     */
-    private Drawable main;
-
     /**
      * Constructs the object with final values.
      * @param thumbnailUrl The URL of the thumbnail image.
@@ -53,70 +50,31 @@ public final class HotelImageTuple {
     }
 
     /**
-     * Shows without loading the image whether or not the thumbnail image has been loaded from the remote url.
-     * @return Whether or not the thumbnail has been loaded.
+     * Constructs the object with final values.
+     * @param partialThumbnailUrl The partial URL of the thumbnail image.
+     *                            Will be converted to use the default image host and protocol for the actual urls.
+     * @param partialMainUrl The partial URL of the main image.
+     *                       Will be converted to use the default image host and protocol for the actual urls.
+     * @param caption The caption for the image.
+     * @throws MalformedURLException If either partial url cannot be turned into a full url. Not affected by
+     * nulls. In the case of nulls, the particular URL will be null.
      */
-    public boolean isThumbnailLoaded() {
-        return thumbnail != null;
-    }
-
-    /**
-     * Gets the thumbnail image as a drawable. If the image hasn't been loaded, will return null.
-     * To load the image, use {@link com.ean.mobile.HotelImageTuple#loadThumbnailImage()}.
-     * @return The thumbnail image as a (possibly null) Drawable object.
-     */
-    public Drawable getThumbnailImage() {
-        return thumbnail;
-    }
-
-    /**
-     * Loads the thumbnail image from the thumbnail URL. If already loaded, will simply return that which
-     * has been loaded.
-     *
-     * Unless {@link com.ean.mobile.HotelImageTuple#isThumbnailLoaded()} returns true,
-     * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
-     * @return An image that can be drawn to the screen using the android SDK
-     * @throws IOException If there is an exception when loading the image.
-     */
-    public Drawable loadThumbnailImage() throws IOException {
-        if (thumbnail == null && thumbnailUrl != null) {
-            thumbnail = Drawable.createFromStream(ImageFetcher.fetch(thumbnailUrl), "src");
-        }
-        return thumbnail;
-    }
-
-    /**
-     * Shows without loading the image whether or not the main image has been loaded from the remote url.
-     * @return Whether or not the main has been loaded.
-     */
-    public boolean isMainImageLoaded() {
-        return main != null;
-    }
-
-    /**
-     * Gets the main image as a drawable. If the image hasn't been loaded, will return null.
-     * To load the image, use {@link com.ean.mobile.HotelImageTuple#loadMainImage()}.
-     * @return The main image as a (possibly null) Drawable object.
-     */
-    public Drawable getMainImage() {
-        return main;
+    public HotelImageTuple(final String partialThumbnailUrl, final String partialMainUrl, final String caption)
+            throws MalformedURLException {
+        this.thumbnailUrl = getFullImageUrl(partialThumbnailUrl);
+        this.mainUrl = getFullImageUrl(partialMainUrl);
+        this.caption = caption;
     }
 
 
     /**
-     * Loads the main image from the main URL. If already loaded, will simply return that which
-     * has been loaded.
-     *
-     * Unless {@link HotelImageTuple#isMainImageLoaded()} returns true,
-     * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
-     * @return An image that can be drawn to the screen using the android SDK
-     * @throws IOException If there is an exception when loading the image.
+     * Gets the full image url, based simply on the partial url which does not include the protocol or host.
+     * @param partial The partial url, excluding the host and previous
+     * @return The full url to the image.
+     * @throws java.net.MalformedURLException If the default IMAGE_PROTOCOL and IMAGE_HOST, combined with partial do not
+     *  create a valid URL.
      */
-    public Drawable loadMainImage() throws IOException {
-        if (main == null && mainUrl != null) {
-            main = Drawable.createFromStream(ImageFetcher.fetch(mainUrl), "src");
-        }
-        return main;
+    private static URL getFullImageUrl(final String partial) throws MalformedURLException {
+        return partial == null ? null : new URL(IMAGE_PROTOCOL, IMAGE_HOST, partial);
     }
-
 }

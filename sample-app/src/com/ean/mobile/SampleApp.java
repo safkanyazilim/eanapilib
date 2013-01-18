@@ -2,9 +2,12 @@ package com.ean.mobile;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
+import android.text.StaticLayout;
 import android.widget.Toast;
 import org.joda.time.LocalDate;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -48,6 +51,9 @@ public class SampleApp extends Application {
     public static final Map<Long, List<HotelRoom>> HOTEL_ROOMS
             = Collections.synchronizedMap(new HashMap<Long, List<HotelRoom>>());
 
+    public static final Map<HotelImageTuple, HotelImageDrawable> IMAGE_DRAWABLES
+            = Collections.synchronizedMap(new HotelImageDrawableMap());
+
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
     }
@@ -56,21 +62,24 @@ public class SampleApp extends Application {
         Toast.makeText(context, R.string.redirected, Toast.LENGTH_LONG).show();
     }
 
+    public static void resetDates() {
+        LocalDate today = LocalDate.now();
+        arrivalDate = today;
+        departureDate = today.plusDays(1);
+    }
+
     public static void clearSearch() {
-        SampleApp.searchQuery = null;
-        SampleApp.numberOfAdults = 0;
-        SampleApp.numberOfChildren = 0;
-        SampleApp.arrivalDate = null;
-        SampleApp.departureDate = null;
-        SampleApp.foundHotels = null;
-
-        SampleApp.selectedHotel = null;
-
-        SampleApp.selectedRoom = null;
-
-        SampleApp.EXTENDED_INFOS.clear();
-
-        SampleApp.HOTEL_ROOMS.clear();
+        searchQuery = null;
+        numberOfAdults = 0;
+        numberOfChildren = 0;
+        arrivalDate = null;
+        departureDate = null;
+        foundHotels = null;
+        selectedHotel = null;
+        selectedRoom = null;
+        EXTENDED_INFOS.clear();
+        HOTEL_ROOMS.clear();
+        IMAGE_DRAWABLES.clear();
     }
 
     public static void updateFoundHotels(HotelInfoList hotelInfoList) {

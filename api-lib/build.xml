@@ -90,6 +90,7 @@
                 <include name="TEST-*.xml" />
             </fileset>
         </junitreport>
+        <fail if="junit.failure" message="Junit tests failed. Please fix and rebuild" />
     </target>
 
     <target name="clean">

@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -25,22 +26,20 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import com.ean.mobile.Destination;
-import com.ean.mobile.HotelInfo;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
-import com.ean.mobile.request.DestLookup;
 import com.ean.mobile.request.ListRequest;
 import com.ean.mobile.task.SuggestionFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class StartupSearch extends Activity {
 
@@ -52,17 +51,9 @@ public class StartupSearch extends Activity {
 
         setContentView(R.layout.startupsearch);
 
-        // get the current date
-        LocalDate today = LocalDate.now();
-        SampleApp.arrivalDate = today;
-        SampleApp.departureDate = today.plusDays(1);
-
-
-        Button arrivalDate = (Button) findViewById(R.id.arrival_date_picker);
-        Button departureDate = (Button) findViewById(R.id.departure_date_picker);
-        // set the date on the button
-        arrivalDate.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
-        departureDate.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
+        SampleApp.resetDates();
+        setUpDateButton(R.id.arrival_date_picker, SampleApp.arrivalDate);
+        setUpDateButton(R.id.departure_date_picker, SampleApp.departureDate);
 
         setUpPeopleSpinner(R.id.adults_spinner);
         setUpPeopleSpinner(R.id.children_spinner);
@@ -77,6 +68,29 @@ public class StartupSearch extends Activity {
         final ListView suggestions = (ListView) findViewById(R.id.suggestionsView);
         suggestions.setAdapter(suggestionAdapter);
         suggestions.setOnItemClickListener(new SuggestionListAdapterClickListener(searchBox, watcher));
+
+        setupHttpConnectionStuff();
+    }
+
+    private void setupHttpConnectionStuff() {
+        // HTTP connection reuse which was buggy pre-froyo
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+            System.setProperty("http.keepAlive", "false");
+        }
+        try {
+            long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            File httpCacheDir = new File(getCacheDir(), "http");
+            Class.forName("android.net.http.HttpResponseCache")
+                    .getMethod("install", File.class, long.class)
+                    .invoke(null, httpCacheDir, httpCacheSize);
+        } catch (Exception httpResponseCacheNotAvailable) {
+            //do nothing, just swallow it.
+        }
+    }
+
+    private void setUpDateButton(int resourceId, LocalDate date) {
+        final Button dateButton = (Button) findViewById(resourceId);
+        dateButton.setText(DATE_TIME_FORMATTER.print(date));
     }
 
     private void setUpPeopleSpinner(int resourceId) {

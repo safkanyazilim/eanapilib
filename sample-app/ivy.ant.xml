@@ -43,7 +43,10 @@
     <target name="resolve.dependencies"
             description="Retrieve dependencies with Ivy"
             depends="ivy.install, ivy.resolve">
-        <echo message="${ivy.jar.file}" />
+        <!-- Clear out the local jars so we don't get conflicts with the api-lib at dex time. -->
+        <delete>
+            <fileset dir="${jar.libs.absolute.dir}" includes="*.jar" />
+        </delete>
         <ivy:retrieve conf="build" pattern="${jar.libs.absolute.dir}/[artifact]-[revision].[ext]" symlink="true"/>
         <delete dir="${ivy.report.dir}" failonerror="false"/>
         <mkdir dir="${ivy.report.dir}"/>

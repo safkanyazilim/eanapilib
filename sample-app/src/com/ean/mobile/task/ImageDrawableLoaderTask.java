@@ -5,25 +5,26 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 import com.ean.mobile.Constants;
+import com.ean.mobile.HotelImageDrawable;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.SampleConstants;
 
 import java.io.IOException;
 
-public final class ImageTupleLoaderTask extends AsyncTask<HotelImageTuple, Integer, Drawable> {
+public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable, Integer, Drawable> {
 
     private final ImageView view;
 
     private final boolean loadMain;
 
-    public ImageTupleLoaderTask(final ImageView thumb, final boolean loadMain) {
+    public ImageDrawableLoaderTask(final ImageView thumb, final boolean loadMain) {
         super();
         this.view = thumb;
         this.loadMain = loadMain;
     }
 
     @Override
-    protected Drawable doInBackground(HotelImageTuple... hotelImageTuples) {
+    protected Drawable doInBackground(HotelImageDrawable... hotelImageTuples) {
         try {
             if (loadMain) {
                 return hotelImageTuples[0].loadMainImage();
@@ -37,7 +38,6 @@ public final class ImageTupleLoaderTask extends AsyncTask<HotelImageTuple, Integ
 
     @Override
     protected void onPostExecute(Drawable drawable) {
-        super.onPostExecute(drawable);
         view.setImageDrawable(drawable);
     }
 
