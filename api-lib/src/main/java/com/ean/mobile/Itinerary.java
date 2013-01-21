@@ -138,9 +138,9 @@ public final class Itinerary {
 
     /**
      * Contains information on the room and hotel booked as well as the current status of the itinerary.
-     * @see <a
-     * href="http://developer.ean.com/docs/read/hotels/version_3/request_itinerary/Response_Format#HotelConfirmation">
-     * EAN Hotel Confirmation</a> documentation.
+     * @see
+     * <a href="http://developer.ean.com/docs/read/hotels/version_3/request_itinerary/Response_Format">
+     * EAN Hotel Confirmation documentation.</a>
      */
     public final class HotelConfirmation {
 
@@ -202,13 +202,13 @@ public final class Itinerary {
 
         /**
          * The room type code for the room booked.
-         * @see {@link HotelRoom#roomTypeCode}
+         * {@link HotelRoom#roomTypeCode}
          */
         public final String roomTypeCode;
 
         /**
          * The rate code for the room booked.
-         * @see {@link HotelRoom#rateCode}
+         * {@link HotelRoom#rateCode}
          */
         public final String rateCode;
 
@@ -327,7 +327,7 @@ public final class Itinerary {
 
             /**
              * The hotel's star rating.
-             * @see {@link HotelInfo#starRating}.
+             * {@link HotelInfo#starRating}.
              */
             public final BigDecimal starRating;
 

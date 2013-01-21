@@ -37,14 +37,12 @@ public class HotelList extends Activity {
 
     private Toast loadingMoreHotelsToast;
 
-    private ListView hotelListView;
-
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hotellist);
-        hotelListView = (ListView) findViewById(R.id.HotelList);
+        ListView hotelListView = (ListView) findViewById(R.id.HotelList);
         hotelListView.setOnItemClickListener(new HotelListAdapterListener());
 
         loadingMoreHotelsToast = Toast.makeText(getApplicationContext(),
@@ -55,7 +53,8 @@ public class HotelList extends Activity {
     public void onStart() {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
-        hotelListView.setAdapter(new HotelInfoAdapter(this, R.layout.hotelinfolistlayout));
+        ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
+        hotelListView.setAdapter(new HotelInfoAdapter(getApplicationContext(), R.layout.hotelinfolistlayout));
         hotelListView.setOnScrollListener(new HotelScrollListener());
     }
 
