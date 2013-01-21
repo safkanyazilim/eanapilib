@@ -13,11 +13,11 @@ import com.ean.mobile.Destination;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
-public class DestLookupIntTest {
+public class DestinationLookupIntTest {
 
     @Test
     public void testGetDestinationInfos() throws Exception {
-        DestLookup destinationLookup = new DestLookup("sea");
+        DestinationLookup destinationLookup = new DestinationLookup("sea");
         List<Destination> results = RequestProcessor.run(destinationLookup);
         assertThat(results.size(), greaterThan(0));
     }
