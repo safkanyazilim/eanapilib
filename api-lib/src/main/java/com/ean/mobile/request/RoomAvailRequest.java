@@ -4,7 +4,8 @@
 
 package com.ean.mobile.request;
 
-import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -21,7 +22,6 @@ import org.json.JSONObject;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The class to use to get specific availability of rooms for a particular hotel, occupancy, and occupancy dates.
@@ -42,13 +42,10 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      *                          Can be null.
      * @param locale The locale to retrieve the availability with.
      * @param currencyCode The currency code to use in the request.
-     * @throws IOException If there is a communication issue while getting the response.
-     * @throws EanWsError If there is an error in the API that was returned.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     public RoomAvailRequest(final long hotelId, final RoomOccupancy room,
             final LocalDate arrivalDate, final LocalDate departureDate, final String customerSessionId,
-            final String locale, final String currencyCode) throws IOException, EanWsError, UrlRedirectionException {
+            final String locale, final String currencyCode) {
 
         this(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId,
                 locale, currencyCode);
@@ -68,14 +65,11 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      *                          {@link com.ean.mobile.HotelInfoList#customerSessionId}.
      * @param locale The locale to retrieve the availability with.
      * @param currencyCode The currency code to use in the request.
-     * @throws IOException If there is a communication issue while getting the response.
-     * @throws EanWsError If there is an error in the API that was returned.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
 
     public RoomAvailRequest(final long hotelId, final List<RoomOccupancy> rooms,
             final LocalDate arrivalDate, final LocalDate departureDate, final String customerSessionId,
-            final String locale, final String currencyCode) throws IOException, EanWsError, UrlRedirectionException {
+            final String locale, final String currencyCode) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -139,8 +133,8 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      * {@inheritDoc}
      */
     @Override
-    public String getPath() {
-        return "avail";
+    public URI getUri() throws URISyntaxException {
+        return new URI("http", "api.ean.com", "/ean-services/rs/hotel/v3/avail", getQueryString(), null);
     }
 
     /**

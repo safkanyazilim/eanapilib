@@ -19,9 +19,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-
-import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 
 /**
@@ -30,16 +27,6 @@ import com.ean.mobile.exception.EanWsError;
  * @param <T> a response object used to store converted JSON data
  */
 public abstract class Request<T> {
-
-    /**
-     * The standard endpoint for a non-secure request.
-     */
-    public static final URI STANDARD_ENDPOINT;
-
-    /**
-     * The endpoint for a secure request.
-     */
-    public static final URI SECURE_ENDPOINT;
 
     /**
      * A formatter to use for all date/string conversions.
@@ -51,28 +38,7 @@ public abstract class Request<T> {
     private List<NameValuePair> urlParameters;
 
     static {
-        final String standardUriScheme = "http";
-        final String standardUriHost = "api.ean.com";
-        final String secureUriScheme = "https";
-        final String secureUriHost = "book.api.ean.com";
-        final String uriBasePath = "/ean-services/rs/hotel/v3/";
-
         DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
-
-        URI standardUri = null;
-        URI secureUri = null;
-        try {
-            standardUri = new URI(standardUriScheme, standardUriHost, uriBasePath, null, null);
-            secureUri = new URI(secureUriScheme, secureUriHost, uriBasePath, null, null);
-        } catch (URISyntaxException use) {
-            // This exception can only be thrown if the static variables listed above are incorrectly
-            // formatted, or the usage of new URI(...) is incorrect, both of which should be found out
-            // long before the code is used in production, since the requests (particularly the int tests)
-            // would fail.
-            Log.wtf(Constants.DEBUG_TAG, "Base uri is malformed");
-        }
-        STANDARD_ENDPOINT = standardUri;
-        SECURE_ENDPOINT = secureUri;
 
         //TODO: load CID, APIKey, and customerUserAgent from the classpath
         final String cid = "55505";
@@ -98,10 +64,11 @@ public abstract class Request<T> {
     public abstract T consume(final JSONObject jsonObject) throws JSONException, EanWsError;
 
     /**
-     * Returns the path name of the implemented request.
-     * @return a path representing the request (info, res, avail, etc)
+     * Builds and returns a valid URI used to contact the EAN API.
+     * @return a valid URI
+     * @throws URISyntaxException thrown if the URI cannot be built
      */
-    public abstract String getPath();
+    public abstract URI getUri() throws URISyntaxException;
 
     /**
      * Return true if the implemented request should use a secure connection.
@@ -135,6 +102,37 @@ public abstract class Request<T> {
             params.add(new BasicNameValuePair("departureDate", DATE_TIME_FORMATTER.print(departureDate)));
         }
         return params;
+    }
+
+    /**
+     * Creates the query portion of a URI based on a list of NameValuePairs.
+     * @return The requested string.
+     */
+    protected String getQueryString() {
+        final List<NameValuePair> params = getUrlParameters();
+        String queryString = null;
+        if (params != null && !params.isEmpty()) {
+            final StringBuilder sb = new StringBuilder(params.size() * 10);
+            for (NameValuePair param : params) {
+                if (param == null) {
+                    continue;
+                }
+                sb.append(param.getName());
+                sb.append("=");
+                sb.append(param.getValue() == null ? "" : param.getValue());
+                sb.append("&");
+            }
+            String potentialQueryString = sb.toString();
+            if (potentialQueryString.length() == 0) {
+                potentialQueryString = null;
+            } else if (potentialQueryString.endsWith("&")) {
+                potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
+            }
+            // URLEncoder.encode cannot be used since it encodes things in a way the api does not expect, particularly
+            // dates.
+            queryString = potentialQueryString;
+        }
+        return queryString;
     }
 
     /**

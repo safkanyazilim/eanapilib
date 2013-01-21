@@ -7,12 +7,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
-import java.util.List;
 
-import org.apache.http.NameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,7 +17,6 @@ import android.util.Log;
 
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UriCreationException;
 import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
@@ -47,12 +43,15 @@ public final class RequestProcessor {
             final JSONObject jsonResponse = performApiRequest(request);
             return request.consume(jsonResponse);
         } catch (JSONException jsone) {
-            return null;
+            Log.e("Unable to process JSON", jsone.getMessage());
         } catch (UrlRedirectionException ure) {
-            return null;
+            Log.e("URL redirection problem", ure.getMessage());
         } catch (IOException ioe) {
-            return null;
+            Log.e("Could not read response from API", ioe.getMessage());
+        } catch (URISyntaxException use) {
+            Log.e("Improper URI syntax", use.getMessage());
         }
+        return null;
     }
 
     /**
@@ -61,19 +60,14 @@ public final class RequestProcessor {
      * @return The String representation of the JSON returned from the request.
      * @throws IOException If there is a network error or some other connection issue.
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
+     * @throws URISyntaxException thrown if the URI cannot be built
      */
     private static String performApiRequestForString(final Request request)
-            throws IOException, UrlRedirectionException {
+            throws IOException, UrlRedirectionException, URISyntaxException {
         //Build the url
         final URLConnection connection;
         final long startTime = System.currentTimeMillis();
-        final URI endpoint;
-        if (request.isSecure()) {
-            endpoint = request.SECURE_ENDPOINT;
-        } else {
-            endpoint = request.STANDARD_ENDPOINT;
-        }
-        connection = getUri(request).toURL().openConnection();
+        connection = request.getUri().toURL().openConnection();
         if (request.isSecure()) {
             // cause booking requests to use post.
             connection.setDoOutput(true);
@@ -88,7 +82,7 @@ public final class RequestProcessor {
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             //before we go further, we must check to see if we were redirected.
-            if (!endpoint.getHost().equals(connection.getURL().getHost())) {
+            if (!request.getUri().getHost().equals(connection.getURL().getHost())) {
                 // then we were redirected!!
                 throw new UrlRedirectionException();
             }
@@ -115,64 +109,15 @@ public final class RequestProcessor {
      * @throws JSONException If the response does not contain valid JSON
      * @throws EanWsError If the response contains an EanWsError element
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
+     * @throws URISyntaxException thrown if the URI cannot be built
      */
     private static JSONObject performApiRequest(final Request request)
-            throws IOException, JSONException, EanWsError, UrlRedirectionException {
+            throws IOException, JSONException, EanWsError, UrlRedirectionException, URISyntaxException {
         final JSONObject response = new JSONObject(performApiRequestForString(request));
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
         return response;
-    }
-
-    /**
-     * Creates the query portion of a URI based on a list of NameValuePairs.
-     * @param params The parameters to turn into a query string.
-     * @return The requested string.
-     */
-    private static String createQueryString(final List<NameValuePair> params) {
-        // TODO: consider moving to Request
-        String queryString = null;
-        if (params != null && !params.isEmpty()) {
-            final StringBuilder sb = new StringBuilder(params.size() * 10);
-            for (NameValuePair param : params) {
-                if (param == null) {
-                    continue;
-                }
-                sb.append(param.getName());
-                sb.append("=");
-                sb.append(param.getValue() == null ? "" : param.getValue());
-                sb.append("&");
-            }
-            String potentialQueryString = sb.toString();
-            if (potentialQueryString.length() == 0) {
-                potentialQueryString = null;
-            } else if (potentialQueryString.endsWith("&")) {
-                potentialQueryString = potentialQueryString.substring(0, potentialQueryString.length() - 1);
-            }
-            // URLEncoder.encode cannot be used since it encodes things in a way the api does not expect, particularly
-            // dates.
-            queryString = potentialQueryString;
-        }
-        return queryString;
-    }
-
-    /**
-     * Builds and returns a valid URI used to contact the EAN API.
-     * @param request contains all necessary data to execute a request and parse a response
-     * @return a valid URI
-     */
-    private static URI getUri(final Request request) {
-        final URI relativeUri = request.isSecure() ? request.SECURE_ENDPOINT : request.STANDARD_ENDPOINT;
-        //URLEncodedUtils cannot be used because the api cannot handle %2F instead of / for the date strings.
-        final String queryString = createQueryString(request.getUrlParameters());
-
-        try {
-            return new URI(relativeUri.getScheme(), relativeUri.getHost(),
-                    relativeUri.getPath().concat(request.getPath()), queryString, null);
-        } catch (URISyntaxException use) {
-            throw new UriCreationException("Full URI could not be created for the request.", use);
-        }
     }
 
 }

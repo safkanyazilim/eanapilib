@@ -4,8 +4,9 @@
 
 package com.ean.mobile.request;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,7 +25,6 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.HotelInfoExtended;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * Uses getHotelInformation to get the rest of the hotel's information, including images
@@ -37,12 +37,8 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      * @param hotelId The hotelId for which to gather more information.
      * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
      * @param locale The locale for which to get the information about a hotel.
-     * @throws IOException If there is an error communicating on the network.
-     * @throws EanWsError If there was an error returned by the api, often caused by bad request data.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
-    public InformationRequest(final long hotelId, final String customerSessionId, final String locale)
-            throws IOException, EanWsError, UrlRedirectionException {
+    public InformationRequest(final long hotelId, final String customerSessionId, final String locale) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -51,7 +47,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        //urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters(locale, null));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(getBasicUrlParameters(locale, null));
 
@@ -94,8 +90,8 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      * {@inheritDoc}
      */
     @Override
-    public String getPath() {
-        return "info";
+    public URI getUri() throws URISyntaxException {
+        return new URI("http", "api.ean.com", "/ean-services/rs/hotel/v3/info", getQueryString(), null);
     }
 
     /**

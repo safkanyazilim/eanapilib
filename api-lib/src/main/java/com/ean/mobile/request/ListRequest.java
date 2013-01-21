@@ -6,6 +6,8 @@ package com.ean.mobile.request;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,8 +38,6 @@ public final class ListRequest extends Request<HotelInfoList> {
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
      *
-     * THIS SHOULD NOT BE RUN ON THE MAIN THREAD. It is a long-running network process and so might cause
-     * force close dialogs.
      * @param destination The destination to search for hotel availability.
      * @param occupancy The stated occupancy to search for.
      * @param arrivalDate The arrival date of the request.
@@ -46,14 +46,10 @@ public final class ListRequest extends Request<HotelInfoList> {
      *     The same customerSessionId as returned in other API requests
      * @param locale The locale in which to perform the request.
      * @param currencyCode The currency which is desired in the response.
-     * @throws IOException If there was a network-level error.
-     * @throws EanWsError If the API encountered an error and was unable to return results.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     public ListRequest(final String destination, final RoomOccupancy occupancy,
             final LocalDate arrivalDate, final LocalDate departureDate,
-            final String customerSessionId, final String locale, final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
+            final String customerSessionId, final String locale, final String currencyCode) {
 
         this(destination, Collections.singletonList(occupancy), arrivalDate, departureDate,
                 customerSessionId, locale, currencyCode);
@@ -61,8 +57,6 @@ public final class ListRequest extends Request<HotelInfoList> {
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
      *
-     * THIS SHOULD NOT BE RUN ON THE MAIN THREAD. It is a long-running network process and so might cause
-     * force close dialogs.
      * @param destination The destination to search for hotel availability.
      * @param occupancies The stated occupancy of each room to search for.
      * @param arrivalDate The arrival date of the request.
@@ -72,14 +66,10 @@ public final class ListRequest extends Request<HotelInfoList> {
      * @param locale The locale to search for the hotels in.
      * @param currencyCode The currency code to search for.
      *                     Can be any valid currency, but can only book chargeable currencies.
-     * @throws IOException If there was a network-level error.
-     * @throws EanWsError If the API encountered an error and was unable to return results.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      */
     public ListRequest(final String destination, final List<RoomOccupancy> occupancies,
             final LocalDate arrivalDate, final LocalDate departureDate,
-            final String customerSessionId, final String locale, final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
+            final String customerSessionId, final String locale, final String currencyCode) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("destinationString", destination),
@@ -143,8 +133,8 @@ public final class ListRequest extends Request<HotelInfoList> {
      * {@inheritDoc}
      */
     @Override
-    public String getPath() {
-        return "list";
+    public URI getUri() throws URISyntaxException {
+        return new URI("http", "api.ean.com", "/ean-services/rs/hotel/v3/list", getQueryString(), null);
     }
 
     /**
