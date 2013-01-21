@@ -52,7 +52,7 @@ public class HotelList extends Activity {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
         ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
-        hotelListView.setAdapter(new HotelInfoAdapter(this, R.layout.hotelinfolistlayout));
+        hotelListView.setAdapter(new HotelInfoAdapter(getApplicationContext(), R.layout.hotelinfolistlayout));
         hotelListView.setOnScrollListener(new HotelScrollListener());
     }
 

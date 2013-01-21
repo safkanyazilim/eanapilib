@@ -67,7 +67,7 @@ public class StartupSearch extends Activity {
         setUpPeopleSpinner(R.id.adults_spinner);
         setUpPeopleSpinner(R.id.children_spinner);
 
-        final ArrayAdapter<Destination> suggestionAdapter = new DestinationSuggestionAdapter(this, R.id.suggestionsView);
+        final ArrayAdapter<Destination> suggestionAdapter = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
         final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
 
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
@@ -80,7 +80,7 @@ public class StartupSearch extends Activity {
     }
 
     private void setUpPeopleSpinner(int resourceId) {
-        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.number_of_people_array, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.number_of_people_array, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         final Spinner spinner = (Spinner) findViewById(resourceId);
