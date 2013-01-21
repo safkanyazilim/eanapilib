@@ -16,9 +16,9 @@ import static org.junit.Assert.assertThat;
 public class DestLookupIntTest {
 
     @Test
-    public void testGetDestInfos() throws Exception {
-        final String destination = "sea";
-        List<Destination> results = DestLookup.getDestInfos(destination);
+    public void testGetDestinationInfos() throws Exception {
+        DestLookup destinationLookup = new DestLookup("sea");
+        List<Destination> results = RequestProcessor.run(destinationLookup);
         assertThat(results.size(), greaterThan(0));
     }
 }
