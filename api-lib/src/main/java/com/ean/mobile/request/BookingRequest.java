@@ -4,8 +4,8 @@
 
 package com.ean.mobile.request;
 
-import java.io.IOException;
-
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -26,28 +26,11 @@ import com.ean.mobile.Individual;
 import com.ean.mobile.Reservation;
 import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The class that performs booking requests.
  */
-public final class BookingRequest extends Request {
-
-    /**
-     * This is the subdir that is used to make booking requests.
-     */
-    private static final String URL_SUBDIR = "res";
-
-    /**
-     * Private no-op constructor to prevent instantiation.
-     */
-    private BookingRequest() {
-        // see javadoc.
-    }
-
-    //TODO: Overload performBooking so that it takes a HotelRoom object rather than Room and infers the rest
-    // of the information from the other fields, similar to the BookingRequestIntTest.
-
+public final class BookingRequest extends Request<Reservation> {
 
     /**
      * This method actually performs the booking request with the passed room and occupancy information.
@@ -61,17 +44,12 @@ public final class BookingRequest extends Request {
      * @param customerSessionId The sessionID associated with this search session.
      * @param locale The locale in which to book the hotel.
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
-     * @throws IOException If there is some sort of network error while making the booking.
-     * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId,
-            final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
-            final ReservationRoom room, final ReservationInfo reservationInfo, final Address address,
-            final String customerSessionId, final String locale, final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
-        return performBooking(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
+    public BookingRequest(final Long hotelId,
+                          final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
+                          final ReservationRoom room, final ReservationInfo reservationInfo, final Address address,
+                          final String customerSessionId, final String locale, final String currencyCode) {
+        this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
                 reservationInfo, address, customerSessionId, locale, currencyCode);
     }
 
@@ -88,17 +66,12 @@ public final class BookingRequest extends Request {
      *  the booking flow.
      * @param locale The locale in which to book the hotel.
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
-     * @throws IOException If there is some sort of network error while making the booking.
-     * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId,
-            final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
-            final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo, final Address address,
-            final String customerSessionId, final String locale, final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
-        return performBooking(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInfo, address,
+    public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
+            final String supplierType, final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo,
+            final Address address, final String customerSessionId, final String locale, final String currencyCode) {
+
+        this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInfo, address,
                 customerSessionId, null, locale, currencyCode);
     }
 
@@ -115,21 +88,16 @@ public final class BookingRequest extends Request {
      * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
      * @param locale The locale in which to book the hotel.
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
-     * @throws IOException If there is some sort of network error while making the booking.
-     * @throws EanWsError If there is an error on the EAN API side with the booking. Often caused by incorrect input.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     * @return Returns the deserialized form of a HotelRoomReservationResponse.
      */
-    public static Reservation performBooking(final Long hotelId, final LocalDate arrivalDate,
-        final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
-        final ReservationInfo reservationInfo, final Address address, final String customerSessionId,
-        final List<NameValuePair> extraBookingData, final String locale, final String currencyCode)
-            throws IOException, EanWsError, UrlRedirectionException {
+    public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
+            final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
+            final ReservationInfo reservationInfo, final Address address, final String customerSessionId,
+            final List<NameValuePair> extraBookingData, final String locale, final String currencyCode) {
 
         final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("customerSessionId", customerSessionId),
-            new BasicNameValuePair("hotelId", hotelId.toString()),
-            new BasicNameValuePair("supplierType", supplierType)
+                new BasicNameValuePair("customerSessionId", customerSessionId),
+                new BasicNameValuePair("hotelId", hotelId.toString()),
+                new BasicNameValuePair("supplierType", supplierType)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
@@ -140,20 +108,43 @@ public final class BookingRequest extends Request {
         urlParameters.addAll(address.asBookingRequestPairs());
         urlParameters.addAll(extraBookingData == null ? Collections.<NameValuePair>emptyList() : extraBookingData);
 
-        try {
-            final JSONObject json
-                = performApiRequest(URL_SUBDIR, urlParameters).optJSONObject("HotelRoomReservationResponse");
-            if (json.has("EanWsError")) {
-                System.out.println(json.toString());
-                //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
-                throw EanWsError.fromJson(json.getJSONObject("EanWsError"));
-            }
-            //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
-            return new Reservation(json);
-        } catch (JSONException jse) {
-            //TODO: THIS SHOULD BE HANDLED BETTER.
+        setUrlParameters(urlParameters);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Reservation consume(final JSONObject jsonObject) throws JSONException, EanWsError {
+        if (jsonObject == null) {
             return null;
         }
+
+        final JSONObject response = jsonObject.getJSONObject("HotelListResponse");
+
+        if (response.has("EanWsError")) {
+            System.out.println(response.toString());
+            //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
+            throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
+        }
+        //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
+        return new Reservation(response);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URI getUri() throws URISyntaxException {
+        return new URI("https", "book.api.ean.com", "/ean-services/rs/hotel/v3/res", getQueryString(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSecure() {
+        return true;
     }
 
     /**

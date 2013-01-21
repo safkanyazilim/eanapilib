@@ -27,7 +27,7 @@ import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.ListRequest;
-import com.ean.mobile.task.ImageDrawableLoaderTask;
+import com.ean.mobile.request.RequestProcessor;
 
 import java.io.IOException;
 import java.text.NumberFormat;
@@ -177,10 +177,22 @@ public class HotelList extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                SampleApp.updateFoundHotels(ListRequest.loadMoreResults(
-                        SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode(),
-                        SampleApp.cacheKey, SampleApp.cacheLocation,
-                        SampleApp.customerSessionId));
+                ListRequest request = new ListRequest(
+                    SampleApp.searchQuery,
+                    SampleApp.occupancy(),
+                    SampleApp.arrivalDate,
+                    SampleApp.departureDate,
+                    SampleApp.customerSessionId,
+                    SampleApp.locale.toString(),
+                    SampleApp.currency.toString());
+                request.loadMoreResults(
+                    SampleApp.locale.toString(),
+                    SampleApp.currency.getCurrencyCode(),
+                    SampleApp.cacheKey,
+                    SampleApp.cacheLocation,
+                    SampleApp.customerSessionId);
+
+                SampleApp.updateFoundHotels(RequestProcessor.run(request));
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {

@@ -4,73 +4,57 @@
 
 package com.ean.mobile.request;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Collections;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.util.Log;
-import com.ean.mobile.Constants;
 import com.ean.mobile.Destination;
+import com.ean.mobile.exception.EanWsError;
 
 /**
- * Looks up possible destinations based on the destinationString passed to getDestInfos.
+ * Looks up possible destinations based on the destinationString passed to the constructor.
  */
-public final class DestLookup {
-    private static final String ENDPOINT_FORMAT
-            = "http://www.travelnow.com/templates/349176/destination?propertyName=%s";
+public final class DestLookup extends Request<List<Destination>> {
 
     /**
-     * Private no-op constructor to prevent instantiation.
+     * Uses the EAN API to search for hotels in the given destination using http requests.
+     *
+     * @param destinationString The destination to search for hotels.
      */
-    private DestLookup() {
-        //see javadoc.
+    public DestLookup(final String destinationString) {
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.add(new BasicNameValuePair("propertyName", destinationString));
+        setUrlParameters(urlParameters);
     }
 
     /**
-     * Looks up possible destinations using the destinationString. Will return an array of suggestions.
-     * @param destinationString The string passed in by the user.
-     * @return The array of possible destinations meant by the destinationString
-     * @throws IOException If there is a problem communicating on the network.
+     * {@inheritDoc}
      */
-    public static List<Destination> getDestInfos(final String destinationString) throws IOException {
-        if ("".equals(destinationString) || destinationString == null) {
-            return Collections.emptyList();
-        }
-        final String baseUrl = String.format(ENDPOINT_FORMAT, destinationString);
-        Log.d(Constants.DEBUG_TAG, baseUrl);
-        Log.d(Constants.DEBUG_TAG, "getting response");
-        final JSONObject json;
-        final HttpResponse response
-            = new DefaultHttpClient().execute(new HttpGet(baseUrl));
-        Log.d(Constants.DEBUG_TAG, "got response");
-        final StatusLine statusLine = response.getStatusLine();
-        try {
-            if (statusLine.getStatusCode() == HttpStatus.SC_OK) {
-                final ByteArrayOutputStream out = new ByteArrayOutputStream();
-                response.getEntity().writeTo(out);
-                out.close();
-                final String jsonstr = out.toString();
-                Log.d(Constants.DEBUG_TAG, jsonstr);
-                json = new JSONObject(jsonstr);
-            } else {
-                // If we didn't get a good http status, then the connection failed.
-                // Close the connection and throw an error.
-                Log.d(Constants.DEBUG_TAG, "Connection Status not ok: " + statusLine.getStatusCode());
-                response.getEntity().getContent().close();
-                throw new IOException(statusLine.getReasonPhrase());
-            }
-            return Destination.getDestinations(json.getJSONArray("items"));
-        } catch (JSONException jse) {
-            return null;
-        }
+    @Override
+    public List<Destination> consume(final JSONObject jsonObject) throws JSONException, EanWsError {
+        return Destination.getDestinations(jsonObject.getJSONArray("items"));
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URI getUri() throws URISyntaxException {
+        return new URI("http", "www.travelnow.com", "/templates/349176/destination", getQueryString(), null);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSecure() {
+        return false;
+    }
+
 }

@@ -26,13 +26,12 @@ import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
+import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 import org.joda.time.LocalDate;
 
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.List;
@@ -122,14 +121,12 @@ public class HotelFullInfo extends Activity {
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
-                return RoomAvailRequest.getRoomAvail(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
-                    customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
-            } catch (IOException ioe) {
-                Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
+                RoomAvailRequest request
+                    = new RoomAvailRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
+                        customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
+                return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
@@ -153,21 +150,17 @@ public class HotelFullInfo extends Activity {
         @Override
         protected HotelInfoExtended doInBackground(Void... voids) {
             try {
-                return InformationRequest.getHotelInformation(hotelId, SampleApp.customerSessionId,
-                    SampleApp.locale.toString());
-            } catch (IOException ioe) {
-                Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
+                InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
+                        SampleApp.locale.toString());
+                return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
 
         @Override
         protected void onPostExecute(HotelInfoExtended extended) {
-            super.onPostExecute(extended);
             SampleApp.EXTENDED_INFOS.put(hotelId, extended);
             setExtendedInfoFields();
         }

@@ -32,6 +32,7 @@ import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.ListRequest;
+import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -134,11 +135,16 @@ public class StartupSearch extends Activity {
         @Override
         protected Void doInBackground(Void... voids) {
             try {
-                SampleApp.updateFoundHotels(
-                    ListRequest.searchForHotels(
-                        SampleApp.searchQuery, SampleApp.occupancy(), SampleApp.arrivalDate, SampleApp.departureDate,
-                        null, SampleApp.locale.toString(), SampleApp.currency.toString()),
-                    true);
+                ListRequest request = new ListRequest(
+                    SampleApp.searchQuery,
+                    SampleApp.occupancy(),
+                    SampleApp.arrivalDate,
+                    SampleApp.departureDate,
+                    null,
+                    SampleApp.locale.toString(),
+                    SampleApp.currency.toString());
+
+                SampleApp.updateFoundHotels(RequestProcessor.run(request),true);
             } catch (IOException e) {
                 Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
