@@ -24,14 +24,12 @@ import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.request.RoomAvailRequest;
 import com.ean.mobile.task.ImageTupleLoaderTask;
 import org.joda.time.LocalDate;
 
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.List;
@@ -130,12 +128,8 @@ public class HotelFullInfo extends Activity {
                     = new RoomAvailRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
                         customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
                 return RequestProcessor.run(request);
-            } catch (IOException ioe) {
-                Log.d(SampleConstants.DEBUG, "An error occurred when performing request.", ioe);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
@@ -162,12 +156,8 @@ public class HotelFullInfo extends Activity {
                 InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
                         SampleApp.locale.toString());
                 return RequestProcessor.run(request);
-            } catch (IOException ioe) {
-                Log.d(SampleConstants.DEBUG, "An IOException occurred when performing information request", ioe);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
