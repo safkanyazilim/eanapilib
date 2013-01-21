@@ -6,9 +6,10 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 import com.ean.mobile.Destination;
 import com.ean.mobile.SampleConstants;
+import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.request.DestLookup;
+import com.ean.mobile.request.RequestProcessor;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,9 +47,10 @@ public final class SuggestionFactory {
         @Override
         protected List<Destination> doInBackground(String... strings) {
             try {
-                return DestLookup.getDestInfos(strings[0]);
-            } catch (IOException e) {
-                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
+                DestLookup destinationLookup = new DestLookup(strings[0]);
+                return RequestProcessor.run(destinationLookup);
+            } catch (EanWsError ewe) {
+                Log.d(SampleConstants.DEBUG, "The API call returned an error", ewe);
             }
             return null;
         }

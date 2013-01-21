@@ -145,13 +145,9 @@ public class StartupSearch extends Activity {
                     SampleApp.currency.toString());
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request),true);
-            } catch (IOException e) {
-                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
          }
