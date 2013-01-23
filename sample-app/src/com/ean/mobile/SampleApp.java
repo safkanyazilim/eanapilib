@@ -22,7 +22,7 @@ import java.util.TreeSet;
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
  */
-public class SampleApp extends Application {
+public final class SampleApp extends Application {
 
     private static final Locale DEFAULT_LOCALE = Locale.US;
     public static Locale locale = DEFAULT_LOCALE;

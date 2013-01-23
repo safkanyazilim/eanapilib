@@ -2,7 +2,11 @@ package com.ean.mobile;
 
 import java.util.HashMap;
 
-public class HotelImageDrawableMap extends HashMap<HotelImageTuple, HotelImageDrawable> {
+/**
+ * Extends map in such a way that if the HotelImageDrawable that has been requested by the HotelImageTuple
+ * does not exist in the map, it will create a new drawable based on that tuple.
+ */
+public final class HotelImageDrawableMap extends HashMap<HotelImageTuple, HotelImageDrawable> {
     @Override
     public HotelImageDrawable get(Object key) {
         if (!(key instanceof HotelImageTuple)) {

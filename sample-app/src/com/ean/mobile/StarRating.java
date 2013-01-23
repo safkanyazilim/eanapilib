@@ -5,7 +5,7 @@ import android.widget.LinearLayout;
 
 import java.math.BigDecimal;
 
-public class StarRating {
+public final class StarRating {
 
     public static void populate(final LinearLayout parent, final BigDecimal starRating) {
         final ImageView[] stars = {
