@@ -141,7 +141,7 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isSecure() {
+    public boolean requiresSecure() {
         return false;
     }
 }

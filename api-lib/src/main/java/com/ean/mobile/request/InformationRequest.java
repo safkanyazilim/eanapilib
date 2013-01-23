@@ -79,10 +79,10 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
                     new HotelImageTuple(new URL(image.optString("thumbnailUrl")),
                         new URL(image.optString("url")), image.optString("caption")));
             } catch (MalformedURLException me) {
-                Log.e(Constants.DEBUG_TAG, "Unable to process JSON", me);
+                Log.e(Constants.LOG_TAG, "Unable to process JSON", me);
             }
         }
-        Log.d(Constants.DEBUG_TAG, "Found " + imageTuples.size() + " images");
+        Log.d(Constants.LOG_TAG, "Found " + imageTuples.size() + " images");
         return new HotelInfoExtended(infoResp.optLong("@hotelId"), longDescription, imageTuples);
     }
 
@@ -98,7 +98,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isSecure() {
+    public boolean requiresSecure() {
         return false;
     }
 }

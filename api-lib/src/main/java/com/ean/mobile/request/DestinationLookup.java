@@ -55,7 +55,7 @@ public final class DestinationLookup extends Request<List<Destination>> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isSecure() {
+    public boolean requiresSecure() {
         return false;
     }
 

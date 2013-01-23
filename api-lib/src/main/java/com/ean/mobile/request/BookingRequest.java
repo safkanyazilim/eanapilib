@@ -123,7 +123,6 @@ public final class BookingRequest extends Request<Reservation> {
         final JSONObject response = jsonObject.getJSONObject("HotelListResponse");
 
         if (response.has("EanWsError")) {
-            System.out.println(response.toString());
             //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
@@ -143,7 +142,7 @@ public final class BookingRequest extends Request<Reservation> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isSecure() {
+    public boolean requiresSecure() {
         return true;
     }
 

@@ -11,7 +11,7 @@ public final class Constants {
     /**
      * The tag to be used when using android's logging mechanism.
      */
-    public static final String DEBUG_TAG = "EANDebug";
+    public static final String LOG_TAG = "EANDebug";
 
     /**
      * Private, no-op constructor to prevent instantiation.
