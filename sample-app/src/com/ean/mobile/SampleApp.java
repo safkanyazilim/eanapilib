@@ -1,3 +1,7 @@
+/*
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile;
 
 import android.app.Application;
@@ -19,9 +23,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-/**
- * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
- */
 public final class SampleApp extends Application {
 
     private static final Locale DEFAULT_LOCALE = Locale.US;

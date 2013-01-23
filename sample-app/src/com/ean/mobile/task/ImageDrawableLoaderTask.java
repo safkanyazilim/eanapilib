@@ -1,3 +1,7 @@
+/*
+ * Copyright 2013 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile.task;
 
 import android.graphics.drawable.Drawable;
