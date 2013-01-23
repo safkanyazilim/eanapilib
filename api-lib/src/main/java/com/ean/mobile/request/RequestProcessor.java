@@ -37,6 +37,7 @@ public final class RequestProcessor {
      * @param <T> the response data
      * @return a response object populated by the JSON data retrieved from the API
      * @throws EanWsError thrown if any error messages are returned via the API call
+     * @throws UrlRedirectionException thrown if the request is redirected (possibly due to a network issue)
      */
     public static <T> T run(final Request<T> request) throws EanWsError, UrlRedirectionException {
         try {

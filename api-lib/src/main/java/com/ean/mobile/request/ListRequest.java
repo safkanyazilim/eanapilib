@@ -4,7 +4,6 @@
 
 package com.ean.mobile.request;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +25,6 @@ import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
