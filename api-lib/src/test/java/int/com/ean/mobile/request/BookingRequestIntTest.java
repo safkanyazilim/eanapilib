@@ -16,10 +16,13 @@ import com.ean.mobile.BasicAddress;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.Name;
+import com.ean.mobile.Reservation;
 import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.RoomOccupancy;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.Matchers.hasItems;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
 
 public class BookingRequestIntTest {
 
@@ -50,9 +53,9 @@ public class BookingRequestIntTest {
             hotelList.hotelInfos.get(0).supplierType, room, resInfo, ADDRESS,
             hotelList.customerSessionId, "en_US", "USD");
 
-        RequestProcessor.run(bookingRequest);
+        Reservation reservation = RequestProcessor.run(bookingRequest);
         // TODO: some assertions here on hotel/date/occupancy, etc.
-        assertTrue(true);
+        assertEquals((Long) 1234L, reservation.confirmationNumbers.get(0));
     }
 
     @Test
@@ -84,9 +87,10 @@ public class BookingRequestIntTest {
             hotelList.hotelInfos.get(0).hotelId, dateTimes[0], dateTimes[1],
             hotelList.hotelInfos.get(0).supplierType, bookingRooms, resInfo, ADDRESS,
             hotelList.customerSessionId, "en_US", "USD");
-        RequestProcessor.run(bookingRequest);
+        Reservation reservation = RequestProcessor.run(bookingRequest);
 
         // TODO: some assertions here on hotel/date/occupancy, etc.
-        assertTrue(true);
+        assertEquals(occupancies.size(), reservation.confirmationNumbers.size());
+        assertThat(reservation.confirmationNumbers, hasItems(1234L, 1234L));
     }
 }

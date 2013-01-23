@@ -91,7 +91,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      */
     @Override
     public URI getUri() throws URISyntaxException {
-        return new URI("http", "api.ean.com", "/ean-services/rs/hotel/v3/info", getQueryString(), null);
+        return new URI("https", "xml.travelnow.com", "/ean-services/rs/hotel/v3/info", getQueryString(), null);
     }
 
     /**
