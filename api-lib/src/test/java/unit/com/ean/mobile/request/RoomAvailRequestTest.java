@@ -30,10 +30,9 @@ public class RoomAvailRequestTest {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(2, 1);
-
     private static final LocalDate[] DATES = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-    RoomAvailRequest roomAvailRequest;
+    private RoomAvailRequest roomAvailRequest;
 
     @Before
     public void setUp() {
