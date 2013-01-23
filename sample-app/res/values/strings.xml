@@ -58,4 +58,5 @@
     <string name="choose_contact">Choose from contacts</string>
     <string name="searching">Searching</string>
     <string name="loading_more_hotels">Loading more hotels&#8230;</string>
+    <string name="complete_booking">Complete Booking</string>
 </resources>

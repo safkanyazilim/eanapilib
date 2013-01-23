@@ -30,7 +30,6 @@ import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
@@ -39,7 +38,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class StartupSearch extends Activity {
@@ -74,6 +72,7 @@ public class StartupSearch extends Activity {
     }
 
     private void setupHttpConnectionStuff() {
+        // exists due to advice found at http://android-developers.blogspot.com/2011/09/androids-http-clients.html.
         // HTTP connection reuse which was buggy pre-froyo
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepAlive", "false");

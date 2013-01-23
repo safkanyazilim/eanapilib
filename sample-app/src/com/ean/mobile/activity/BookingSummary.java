@@ -6,26 +6,43 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import com.ean.mobile.Address;
+import com.ean.mobile.BasicAddress;
 import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelRoom;
+import com.ean.mobile.Individual;
 import com.ean.mobile.NightlyRate;
 import com.ean.mobile.R;
+import com.ean.mobile.Reservation;
+import com.ean.mobile.ReservationRoom;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.SampleApp;
+import com.ean.mobile.SampleConstants;
+import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.request.BookingRequest;
+import com.ean.mobile.request.Request;
+import com.ean.mobile.request.RequestProcessor;
 import org.joda.time.LocalDate;
+import org.joda.time.YearMonth;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Currency;
+import java.util.LinkedList;
+import java.util.List;
 
 public class BookingSummary extends Activity {
 
@@ -115,6 +132,73 @@ public class BookingSummary extends Activity {
         startActivityForResult(intent, PICK_CONTACT);
     }
 
+    public void onCompleteBookingButtonClick(View view) {
+        final String firstName = ((EditText) findViewById(R.id.guestFirstName)).getText().toString();
+        final String lastName = ((EditText) findViewById(R.id.guestLastName)).getText().toString();
+        final String phone = ((EditText) findViewById(R.id.guestPhoneNumber)).getText().toString();
+        final String email = ((EditText) findViewById(R.id.guestEmail)).getText().toString();
+
+        final String addressLine1 = ((EditText) findViewById(R.id.billingInformationAddress1)).getText().toString();
+        final String addressLine2 = ((EditText) findViewById(R.id.billingInformationAddress2)).getText().toString();
+        final String city = ((EditText) findViewById(R.id.billingInformationCity)).getText().toString();
+        final String state = ((EditText) findViewById(R.id.billingInformationState)).getText().toString();
+        final String country = ((EditText) findViewById(R.id.billingInformationCountry)).getText().toString();
+        final String zip = ((EditText) findViewById(R.id.billingInformationZip)).getText().toString();
+
+        final String cCType = ""; //((EditText) findViewById(R.id.billinginformationCC)).getText().toString();
+        final String cCNum = ((EditText) findViewById(R.id.billingInformationCCNum)).getText().toString();
+        final String cCExpMo = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
+        final String cCExpYr = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
+        final String cCSec = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
+
+        //TODO: handle bad user input here.
+        final YearMonth expirationDate = new YearMonth(Integer.parseInt(cCExpMo), Integer.parseInt(cCExpYr));
+
+
+        final BookingRequest.ReservationInfo reservationInfo = new BookingRequest.ReservationInfo(email, firstName, lastName, phone, null, cCType, cCNum, cCSec, expirationDate);
+        final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id ,SampleApp.occupancy());
+        final Address reservationAddress = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
+
+        final BookingRequest request = new BookingRequest(
+            SampleApp.selectedHotel.hotelId,
+            SampleApp.arrivalDate,
+            SampleApp.departureDate,
+            SampleApp.selectedHotel.supplierType,
+            Collections.singletonList(reservationRoom),
+            reservationInfo,
+            reservationAddress,
+            SampleApp.customerSessionId,
+            null,
+            SampleApp.locale.toString(),
+            SampleApp.currency.toString());
+
+
+            new BookingRequestTask().execute(request);
+    }
+
+    public static class BookingRequestTask extends AsyncTask<BookingRequest, Void, List<Reservation>> {
+        @Override
+        protected List<Reservation> doInBackground(BookingRequest... bookingRequests) {
+            List<Reservation> reservations = new LinkedList<Reservation>();
+            for (BookingRequest request : bookingRequests) {
+                try {
+                    reservations.add(RequestProcessor.run(request));
+                } catch (EanWsError ewe) {
+                    Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                }
+            }
+            return reservations;
+        }
+
+        @Override
+        protected void onPostExecute(List<Reservation> reservations) {
+            super.onPostExecute(reservations);
+            //for (Reservation reservation : reservations) {
+            //    SampleApp.addReservationToCache(reservation);
+            //}
+            //TODO: display the newly created reservations and download the itineraries for them.
+        }
+    }
 
     @Override
     public void onActivityResult(int reqCode, int resultCode, Intent data){
