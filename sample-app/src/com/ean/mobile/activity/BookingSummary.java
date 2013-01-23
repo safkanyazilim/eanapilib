@@ -193,9 +193,9 @@ public class BookingSummary extends Activity {
         @Override
         protected void onPostExecute(List<Reservation> reservations) {
             super.onPostExecute(reservations);
-            //for (Reservation reservation : reservations) {
-            //    SampleApp.addReservationToCache(reservation);
-            //}
+            for (Reservation reservation : reservations) {
+                SampleApp.addReservationToCache(reservation);
+            }
             //TODO: display the newly created reservations and download the itineraries for them.
         }
     }

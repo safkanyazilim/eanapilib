@@ -12,9 +12,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
@@ -54,6 +57,7 @@ public class SampleApp extends Application {
     public static final Map<HotelImageTuple, HotelImageDrawable> IMAGE_DRAWABLES
             = Collections.synchronizedMap(new HotelImageDrawableMap());
 
+    private static final Set<Reservation> RESERVATIONS = new TreeSet<Reservation>();
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
     }
@@ -96,5 +100,9 @@ public class SampleApp extends Application {
         SampleApp.customerSessionId = hotelInfoList.customerSessionId;
         SampleApp.cacheKey = hotelInfoList.cacheKey;
         SampleApp.cacheLocation = hotelInfoList.cacheLocation;
+    }
+
+    public static void addReservationToCache(final Reservation reservation) {
+        RESERVATIONS.add(reservation);
     }
 }
