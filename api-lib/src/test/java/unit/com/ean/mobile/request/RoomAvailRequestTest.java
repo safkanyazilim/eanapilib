@@ -50,7 +50,7 @@ public class RoomAvailRequestTest {
         roomAvailRequest.consume(new JSONObject());
     }
 
-    @Test(expected =  JSONException.class)
+    @Test(expected = JSONException.class)
     public void testConsumeInvalidJson() throws Exception {
         roomAvailRequest.consume(new JSONObject("{ invalid! }"));
     }
