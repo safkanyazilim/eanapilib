@@ -5,6 +5,7 @@
     <info organisation="ean-android" module="sample-app"/>
     <configurations defaultconfmapping="*->default">
         <conf name="build" description="Dependencies that go in the root of the lib directory" transitive="false" visibility="private"/>
+        <conf name="checkstyle" description="Dependencies that go in the root of the lib directory" visibility="private"/>
     </configurations>
     <publications>
         <!-- If this container is not present, it is assumed that the module has one artifact, with the same name as
@@ -17,5 +18,6 @@
             <artifact name="ean-api-lib" type="jar" />
         </dependency>
         <dependency conf="build" org="joda-time" name="joda-time" rev="2.1"/>
+        <dependency conf="checkstyle" org="com.puppycrawl.tools" name="checkstyle" rev="5.6"/>
     </dependencies>
 </ivy-module>

@@ -60,7 +60,7 @@
     -->
     <!-- Since the build depends on the libraries being downloaded, it's a good idea to have them there before the build. -->
     <!-- Overriding a target not specified above due to the problems outlined here http://stackoverflow.com/questions/12977077/why-does-resolving-dependencies-using-ivy-not-work-in-androids-pre-build-ant -->
-    <target name="-build-setup" depends="ivy.resolve.dependencies,android_rules.-build-setup"/>
+    <target name="-build-setup" depends="ivy.resolve.dependencies,checkstyle.check,android_rules.-build-setup"/>
     <target name="-pre-clean" depends="ivy.clean.cache"/>
     <!-- Import the actual build file.
 
@@ -85,6 +85,7 @@
     
     <!-- The ivy import has to happen after the sdk's build.xml because it relies on properties set there. -->
     <import file="ivy.ant.xml" />
+    <import file="checkstyle.ant.xml" />
 
     <target name="debug" depends="android_rules.debug" />
 </project>
