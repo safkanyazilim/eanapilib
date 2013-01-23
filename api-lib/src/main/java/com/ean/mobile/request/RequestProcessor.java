@@ -43,13 +43,13 @@ public final class RequestProcessor {
             final JSONObject jsonResponse = performApiRequest(request);
             return request.consume(jsonResponse);
         } catch (JSONException jsone) {
-            Log.e("Unable to process JSON", jsone.getMessage());
+            Log.e(Constants.DEBUG_TAG, "Unable to process JSON", jsone);
         } catch (UrlRedirectionException ure) {
-            Log.e("URL redirection problem", ure.getMessage());
+            Log.e(Constants.DEBUG_TAG, "URL redirection problem", ure);
         } catch (IOException ioe) {
-            Log.e("Could not read response from API", ioe.getMessage());
+            Log.e(Constants.DEBUG_TAG, "Could not read response from API", ioe);
         } catch (URISyntaxException use) {
-            Log.e("Improper URI syntax", use.getMessage());
+            Log.e(Constants.DEBUG_TAG, "Improper URI syntax", use);
         }
         return null;
     }
