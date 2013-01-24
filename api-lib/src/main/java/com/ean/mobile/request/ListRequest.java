@@ -134,7 +134,7 @@ public final class ListRequest extends Request<HotelInfoList> {
      */
     @Override
     public URI getUri() throws URISyntaxException {
-        return new URI("https", "xml.travelnow.com", "/ean-services/rs/hotel/v3/list", getQueryString(), null);
+        return new URI("http", "api.ean.com", "/ean-services/rs/hotel/v3/list", getQueryString(), null);
     }
 
     /**
