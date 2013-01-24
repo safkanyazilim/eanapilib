@@ -148,6 +148,8 @@ public class StartupSearch extends Activity {
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
          }

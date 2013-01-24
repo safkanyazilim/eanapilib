@@ -7,6 +7,7 @@ import android.widget.ArrayAdapter;
 import com.ean.mobile.Destination;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
+import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.DestinationLookup;
 import com.ean.mobile.request.RequestProcessor;
 
@@ -51,6 +52,8 @@ public final class SuggestionFactory {
                 return RequestProcessor.run(destinationLookup);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "The API call returned an error", ewe);
+            } catch (UrlRedirectionException ure) {
+                Log.d(SampleConstants.DEBUG, "The API call has been unexpectedly redirected!", ure);
             }
             return null;
         }
