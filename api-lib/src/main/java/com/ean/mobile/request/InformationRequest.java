@@ -49,8 +49,6 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.addAll(getBasicUrlParameters(locale, null));
         urlParameters.addAll(requestParameters);
-        urlParameters.addAll(getBasicUrlParameters(locale, null));
-
         setUrlParameters(urlParameters);
     }
 
@@ -91,7 +89,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      */
     @Override
     public URI getUri() throws URISyntaxException {
-        return new URI("https", "xml.travelnow.com", "/ean-services/rs/hotel/v3/info", getQueryString(), null);
+        return new URI("http", "api.ean.com", "/ean-services/rs/hotel/v3/info", getQueryString(), null);
     }
 
     /**

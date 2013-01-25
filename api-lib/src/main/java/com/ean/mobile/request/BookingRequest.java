@@ -136,7 +136,7 @@ public final class BookingRequest extends Request<Reservation> {
      */
     @Override
     public URI getUri() throws URISyntaxException {
-        return new URI("https", "xml.travelnow.com", "/ean-services/rs/hotel/v3/res", getQueryString(), null);
+        return new URI("https", "book.api.ean.com", "/ean-services/rs/hotel/v3/res", getQueryString(), null);
     }
 
     /**
