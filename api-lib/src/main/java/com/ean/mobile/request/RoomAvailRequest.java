@@ -120,8 +120,6 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
                 final JSONObject hotelRoomResponse = response.optJSONObject("HotelRoomResponse");
                 hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse, arrivalDate);
             }
-        } else if (jsonObject.has("EanWsError")) {
-            throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         } else {
             hotelRooms = Collections.emptyList();
         }
