@@ -112,7 +112,7 @@ public class RoomAvailRequestTest {
 
     @Test
     public void testIsSecure() {
-        assertFalse(roomAvailRequest.isSecure());
+        assertFalse(roomAvailRequest.requiresSecure());
     }
 
     private static void doUriAssertions(final URI uri, final String suffix) {
