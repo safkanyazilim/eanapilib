@@ -48,7 +48,7 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
             final String locale, final String currencyCode) {
 
         this(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId,
-                locale, currencyCode);
+            locale, currencyCode);
     }
     /**
      * Gets the room availability for the specified information.
@@ -141,7 +141,7 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isSecure() {
+    public boolean requiresSecure() {
         return false;
     }
 }

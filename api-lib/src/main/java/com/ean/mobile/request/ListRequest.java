@@ -4,7 +4,6 @@
 
 package com.ean.mobile.request;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -26,7 +25,6 @@ import com.ean.mobile.HotelInfo;
 import com.ean.mobile.HotelInfoList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.exception.UrlRedirectionException;
 
 /**
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
@@ -96,6 +94,32 @@ public final class ListRequest extends Request<HotelInfoList> {
     }
 
     /**
+     * Loads more results into a HotelInfoList so pagination can be supported.
+     * @param locale Locale
+     * @param currencyCode Currency Code
+     * @param cacheKey Cache key from previous request
+     * @param cacheLocation Cache location from previous request
+     * @param customerSessionId Customer Session Id obtained from previous requests, pass
+     *      in to track as the user moves around requests and booking flow.
+     */
+    public ListRequest(final String locale, final String currencyCode,
+                       final String cacheKey, final String cacheLocation,
+                       final String customerSessionId) {
+
+        final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
+                new BasicNameValuePair("cacheKey", cacheKey),
+                new BasicNameValuePair("cacheLocation", cacheLocation),
+                new BasicNameValuePair("customerSessionId", customerSessionId)
+        );
+
+        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
+        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(requestParameters);
+
+        setUrlParameters(urlParameters);
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -141,36 +165,8 @@ public final class ListRequest extends Request<HotelInfoList> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isSecure() {
+    public boolean requiresSecure() {
         return false;
     }
 
-    /**
-     * Loads more results into a HotelInfoList so pagination can be supported.
-     * @param locale Locale
-     * @param currencyCode Currency Code
-     * @param cacheKey Cache key from previous request
-     * @param cacheLocation Cache location from previous request
-     * @param customerSessionId Customer Session Id obtained from previous requests, pass
-     *      in to track as the user moves around requests and booking flow.
-     * @throws IOException If there is a network connection issue.
-     * @throws EanWsError If there is an error with the API request.
-     * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
-     */
-    public void loadMoreResults(final String locale, final String currencyCode,
-            final String cacheKey, final String cacheLocation,
-            final String customerSessionId) throws IOException, EanWsError, UrlRedirectionException {
-
-        final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("cacheKey", cacheKey),
-            new BasicNameValuePair("cacheLocation", cacheLocation),
-            new BasicNameValuePair("customerSessionId", customerSessionId)
-        );
-
-        final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
-        urlParameters.addAll(requestParameters);
-
-        setUrlParameters(urlParameters);
-    }
 }

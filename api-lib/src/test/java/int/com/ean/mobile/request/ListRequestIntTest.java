@@ -85,17 +85,17 @@ public class ListRequestIntTest {
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
         // Paginate a few times and make sure they are ordered correctly.
-        listRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+        listRequest = new ListRequest(LOCALE, CURRENCY_CODE,
             results.cacheKey, results.cacheLocation, results.customerSessionId);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        listRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+        listRequest = new ListRequest(LOCALE, CURRENCY_CODE,
             results.cacheKey, results.cacheLocation, results.customerSessionId);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        listRequest.loadMoreResults(LOCALE, CURRENCY_CODE,
+        listRequest = new ListRequest(LOCALE, CURRENCY_CODE,
             results.cacheKey, results.cacheLocation, results.customerSessionId);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);

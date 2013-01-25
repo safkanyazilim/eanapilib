@@ -74,7 +74,7 @@ public abstract class Request<T> {
      * Return true if the implemented request should use a secure connection.
      * @return true if secure, false if not
      */
-    public abstract boolean isSecure();
+    public abstract boolean requiresSecure();
 
     /**
      * Gets the url parameters that will need to be present for every request.

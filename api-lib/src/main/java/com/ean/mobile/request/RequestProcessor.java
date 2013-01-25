@@ -37,19 +37,18 @@ public final class RequestProcessor {
      * @param <T> the response data
      * @return a response object populated by the JSON data retrieved from the API
      * @throws EanWsError thrown if any error messages are returned via the API call
+     * @throws UrlRedirectionException thrown if the request is redirected (possibly due to a network issue)
      */
-    public static <T> T run(final Request<T> request) throws EanWsError {
+    public static <T> T run(final Request<T> request) throws EanWsError, UrlRedirectionException {
         try {
             final JSONObject jsonResponse = performApiRequest(request);
             return request.consume(jsonResponse);
         } catch (JSONException jsone) {
-            Log.e(Constants.DEBUG_TAG, "Unable to process JSON", jsone);
-        } catch (UrlRedirectionException ure) {
-            Log.e(Constants.DEBUG_TAG, "URL redirection problem", ure);
+            Log.e(Constants.LOG_TAG, "Unable to process JSON", jsone);
         } catch (IOException ioe) {
-            Log.e(Constants.DEBUG_TAG, "Could not read response from API", ioe);
+            Log.e(Constants.LOG_TAG, "Could not read response from API", ioe);
         } catch (URISyntaxException use) {
-            Log.e(Constants.DEBUG_TAG, "Improper URI syntax", use);
+            Log.e(Constants.LOG_TAG, "Improper URI syntax", use);
         }
         return null;
     }
@@ -68,7 +67,7 @@ public final class RequestProcessor {
         final URLConnection connection;
         final long startTime = System.currentTimeMillis();
         connection = request.getUri().toURL().openConnection();
-        if (request.isSecure()) {
+        if (request.requiresSecure()) {
             // cause booking requests to use post.
             connection.setDoOutput(true);
             ((HttpURLConnection) connection).setRequestMethod("POST");
@@ -77,7 +76,7 @@ public final class RequestProcessor {
         // force application/json
         connection.setRequestProperty("Accept", "application/json, */*");
 
-        Log.d(Constants.DEBUG_TAG, "request endpoint: " + connection.getURL().getHost());
+        Log.d(Constants.LOG_TAG, "request endpoint: " + connection.getURL().getHost());
         final String jsonString;
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -97,7 +96,7 @@ public final class RequestProcessor {
             ((HttpURLConnection) connection).disconnect();
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
-        Log.d(Constants.DEBUG_TAG, "Took " + timeTaken + " milliseconds.");
+        Log.d(Constants.LOG_TAG, "Took " + timeTaken + " milliseconds.");
         return jsonString;
     }
 

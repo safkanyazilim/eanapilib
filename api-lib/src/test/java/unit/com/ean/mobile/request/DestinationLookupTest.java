@@ -69,7 +69,7 @@ public class DestinationLookupTest {
 
     @Test
     public void testIsSecure() {
-        assertFalse(new DestinationLookup(null).isSecure());
+        assertFalse(new DestinationLookup(null).requiresSecure());
     }
     
     private static void doUriAssertions(final URI uri) {

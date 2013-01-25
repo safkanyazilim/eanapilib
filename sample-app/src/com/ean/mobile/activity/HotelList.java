@@ -177,14 +177,6 @@ public class HotelList extends Activity {
         protected Void doInBackground(Void... voids) {
             try {
                 ListRequest request = new ListRequest(
-                    SampleApp.searchQuery,
-                    SampleApp.occupancy(),
-                    SampleApp.arrivalDate,
-                    SampleApp.departureDate,
-                    SampleApp.customerSessionId,
-                    SampleApp.locale.toString(),
-                    SampleApp.currency.toString());
-                request.loadMoreResults(
                     SampleApp.locale.toString(),
                     SampleApp.currency.getCurrencyCode(),
                     SampleApp.cacheKey,
@@ -192,8 +184,6 @@ public class HotelList extends Activity {
                     SampleApp.customerSessionId);
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request));
-            } catch (IOException e) {
-                Log.d(SampleConstants.DEBUG, "An IOException occurred while searching for hotels.", e);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
