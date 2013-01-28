@@ -50,15 +50,14 @@ public final class Rate {
 
         final List<Room> localRooms;
         final JSONObject roomGroupJson = rateInfoJson.optJSONObject("RoomGroup");
-        if (roomGroupJson.optJSONArray("Room") != null) {
+        if (roomGroupJson != null && roomGroupJson.optJSONArray("Room") != null) {
             final JSONArray roomJson = roomGroupJson.optJSONArray("Room");
             localRooms = new ArrayList<Room>(roomJson.length());
             for (int i = 0; i < roomJson.length(); i++) {
                 localRooms.add(new Room(roomJson.optJSONObject(i)));
             }
-        } else if (roomGroupJson.optJSONObject("Room") != null) {
-            localRooms
-                = Collections.singletonList(new Room(roomGroupJson.optJSONObject("Room")));
+        } else if (roomGroupJson != null && roomGroupJson.optJSONObject("Room") != null) {
+            localRooms = Collections.singletonList(new Room(roomGroupJson.optJSONObject("Room")));
         } else {
             localRooms = Collections.emptyList();
         }

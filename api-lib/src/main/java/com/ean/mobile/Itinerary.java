@@ -129,9 +129,13 @@ public final class Itinerary {
          */
         public Customer(final JSONObject object) {
             super(object);
-            this.extension = object.optString("extension");
-            this.faxPhone = object.optString("faxPhone");
-            this.address = new CustomerAddress(object.optJSONObject("CustomerAddress"));
+            this.extension = object.has("extension") ? object.optString("extension") : null;
+            this.faxPhone = object.has("faxPhone") ? object.optString("faxPhone") : null;
+            final JSONObject customerAddressObject
+                = object.has("CustomerAddress")
+                ? object.optJSONObject("CustomerAddress")
+                : object.optJSONObject("CustomerAddresses");
+            this.address = new CustomerAddress(customerAddressObject);
         }
 
     }
@@ -268,8 +272,8 @@ public final class Itinerary {
             this.cancellationPolicy = object.optString("cancellationPolicy");
             this.affiliateConfirmationId = object.optString("affiliateConfirmationId");
             this.smokingPreference = object.optString("smokingPreference");
-            this.roomTypeCode = object.optString("roomType");
-            this.rateCode = object.optString("rateType");
+            this.roomTypeCode = object.optString("roomTypeCode");
+            this.rateCode = object.optString("rateCode");
             this.rateDescription = object.optString("rateDescription");
             this.roomDescription = object.optString("roomDescription");
             this.status = ConfirmationStatus.fromString(object.optString("status"));

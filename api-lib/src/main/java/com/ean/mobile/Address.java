@@ -67,7 +67,7 @@ public abstract class Address {
     public Address(final JSONObject object) {
         final List<String> localLines = new LinkedList<String>();
         String line;
-        for (int i = 1; localLines.size() == i - 1; i++) {
+        for (int i = 1; object.has("address" + i); i++) {
             line = object.optString("address" + i);
             if (line != null && !"".equals(line)) {
                 localLines.add(line);
