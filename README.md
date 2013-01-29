@@ -6,7 +6,7 @@ This project contains two components:
 - sample-app: A sample Android app that uses the api-lib to make all of it's calls.
 
 ##Building both the Library and the App
-It is possible to build the library and the app in a single step using the build.xml at the root of the project. This will build the library, publish it to a local artifactory repository, then resolve the dependencies of the android project and fix up the local android files and build the debug configuration of sample-app. 
+It is possible to build the library and the app in a single step using the build.xml at the root of the project. This will build the library, publish it to a local artifactory repository, then resolve the dependencies of the Android project and fix up the local Android files and build the debug configuration of sample-app. 
 
 ###Requirements
 
@@ -15,16 +15,15 @@ It is possible to build the library and the app in a single step using the build
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
 ###Steps
-Command line versions of each step are in parenthesis.
 
-1. Download the source code from git (`git clone git://ExpediaInc/ean-android/ean-android.git`)
+1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`.
             
-2. Open a command line in the cloned directory (`cd ean-android`).
+2. Open a command line in the cloned directory: `cd ean-android`.
 
-3. Now run the ant target to build the api-lib and sample-app (`ant`)
+3. Now run the ant target to build the api-lib and sample-app: `ant`.
     - The library has now been built, published to a local artifactory repository, the app has had its dependencies resolved and has been built in the debug configuration.
     
-4. The output apk can be found at `ean-android/sample-app/bin/sample-app-debug.apk` and can be installed using the command line function `adb install ean-android/sample-app/bin/sample-app-debug.apk`
+4. The output apk can be found at `ean-android/sample-app/bin/sample-app-debug.apk` and can be installed using the command line function `adb install ean-android/sample-app/bin/sample-app-debug.apk`.
 
 ##Building The Only Library
 
@@ -36,11 +35,11 @@ Command line versions of each step are in parenthesis.
 ###Steps
 Command line versions of each step are in parenthesis.
 
-1. Download the source code from git (`git clone git://ExpediaInc/ean-android/ean-android.git`)
+1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`.
 
-2. Open a command line in the cloned directory (`cd ean-android/api-lib`).
+2. Open a command line in the cloned directory: `cd ean-android/api-lib`.
 
-3. Run the ant command publish (`ant publish`)
+3. Run the ant command publish: `ant publish`.
 
 3. You should now have built the api-lib and published it to the local artifactory repository.
 
@@ -57,7 +56,7 @@ The build (assuming it worked properly) will have resolved dependencies (creatin
                     
 ean-api-lib.jar contains the minimal set of classes to use the library, whereas ean-api-lib-full.jar contains not only the classes, but their sources and the generated javadoc as well.
 
-To build without publishing, just run the default ant target (`ant`)
+To build without publishing, just run the default ant target `ant`.
 
 ##Building  Just The Sample App
 
@@ -68,12 +67,12 @@ To build without publishing, just run the default ant target (`ant`)
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
 ###Steps
-1. Download the source code from git (`git clone git://ExpediaInc/ean-android/ean-android.git`)
+1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`.
     - Ensure the library has already been published as described above.
 
-2. Open a command line in the cloned directory (`cd ean-android/sample-app`).
+2. Open a command line in the cloned directory: `cd ean-android/sample-app`.
 
-4. Next you will need to use the android command line tool to setup your environment for the project (`android update project -p ./`). This will set up the environment-specific files for the project.
+4. Next you will need to use the android command line tool to setup your environment for the project: `android update project -p ./`. This will set up the environment-specific files for the project.
 
 5. Now sample-app can be built using `ant debug` the built project will be output to `ean-android/sample-app/bin/sample-app-debug.apk` and can then be pushed to an Android device or vm with `adb install ean-android/sample-app/bin/sample-app-debug.apk`
 
