@@ -67,10 +67,10 @@ public class HotelItineraryRequestIntTest {
         HotelItineraryRequest hotelItineraryRequest
             = new HotelItineraryRequest(testReservation.itineraryId, EMAIL, locale, currencyCode);
         Itinerary itinerary = RequestProcessor.run(hotelItineraryRequest);
-
         assertNotNull(itinerary);
         assertNotNull(itinerary.hotelConfirmations);
         assertThat(itinerary.hotelConfirmations.size(), greaterThan(0));
+
         Itinerary.HotelConfirmation hotelConfirmation = itinerary.hotelConfirmations.get(0);
         assertNotNull(hotelConfirmation);
         assertEquals(ConfirmationStatus.CONFIRMED, hotelConfirmation.status);

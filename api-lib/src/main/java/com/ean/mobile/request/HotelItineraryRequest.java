@@ -45,7 +45,7 @@ public class HotelItineraryRequest extends Request<Itinerary> {
 
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
-     * Uses default locale and currency code.
+     * Uses default locale (en_US) and currency code (USD).
      *
      * @param itineraryId the ID of the itinerary to retrieve.
      * @param emailAddress the e-mail address associated with the itinerary.

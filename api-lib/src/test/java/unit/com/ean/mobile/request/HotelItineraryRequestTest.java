@@ -22,12 +22,11 @@ import com.ean.mobile.exception.EanWsError;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
+import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class HotelItineraryRequestTest {
 
@@ -61,9 +60,7 @@ public class HotelItineraryRequestTest {
     @Test
     public void testConsume() throws Exception {
         Itinerary itinerary = hotelItineraryRequest.consume(JSONFileUtil.loadJsonFromFile("valid-itinerary.json"));
-
         assertNotNull(itinerary);
-
         assertEquals(107730857L, itinerary.id);
         assertEquals(55505L, itinerary.affiliateId);
         assertEquals(DateModifier.getDateFromString("01/28/2013"), itinerary.creationDate);
@@ -81,7 +78,6 @@ public class HotelItineraryRequestTest {
         queryString.append("&itineraryId=1234&email=test@expedia.com");
 
         final URI uri = hotelItineraryRequest.getUri();
-
         assertEquals("http", uri.getScheme());
         assertEquals("api.ean.com", uri.getHost());
         assertEquals("/ean-services/rs/hotel/v3/itin", uri.getPath());
@@ -90,7 +86,7 @@ public class HotelItineraryRequestTest {
 
     @Test
     public void testIsSecure() {
-        assertFalse(hotelItineraryRequest.requiresSecure());
+        assertThat(hotelItineraryRequest.requiresSecure(), is(false));
     }
 
     private void doCustomerAssertions(final Itinerary.Customer customer) {
@@ -108,7 +104,7 @@ public class HotelItineraryRequestTest {
         assertEquals("WA", customerAddress.stateProvinceCode);
         assertEquals("98004", customerAddress.postalCode);
         assertEquals(1, customerAddress.type.typeId);
-        assertTrue(customerAddress.isPrimary);
+        assertThat(customerAddress.isPrimary, is(true));
     }
 
     private void doHotelConfirmationAssertions(final List<Itinerary.HotelConfirmation> hotelConfirmations) {
@@ -140,7 +136,7 @@ public class HotelItineraryRequestTest {
 
     private void doRateAssertions(final Rate rate) {
         assertNotNull(rate);
-        assertFalse(rate.promo);
+        assertThat(rate.promo, is(false));
 
         Rate.RateInfo chargeableRateInfo = rate.chargeable;
         assertNotNull(chargeableRateInfo);
@@ -157,19 +153,19 @@ public class HotelItineraryRequestTest {
         assertNotNull(nightlyRate);
         assertEquals(new BigDecimal("169.0"), nightlyRate.baseRate);
         assertEquals(new BigDecimal("169.0"), nightlyRate.rate);
-        assertFalse(nightlyRate.promo);
+        assertThat(nightlyRate.promo, is(false));
 
         nightlyRate = chargeableRateInfo.nightlyRates.get(1);
         assertNotNull(nightlyRate);
         assertEquals(new BigDecimal("126.75"), nightlyRate.baseRate);
         assertEquals(new BigDecimal("126.75"), nightlyRate.rate);
-        assertFalse(nightlyRate.promo);
+        assertThat(nightlyRate.promo, is(false));
 
         nightlyRate = chargeableRateInfo.nightlyRates.get(2);
         assertNotNull(nightlyRate);
         assertEquals(new BigDecimal("134.25"), nightlyRate.baseRate);
         assertEquals(new BigDecimal("134.25"), nightlyRate.rate);
-        assertFalse(nightlyRate.promo);
+        assertThat(nightlyRate.promo, is(false));
     }
 
 }

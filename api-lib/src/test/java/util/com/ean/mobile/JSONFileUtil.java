@@ -11,6 +11,11 @@ import java.io.InputStreamReader;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.util.Log;
+
+/**
+ * Utility class containing methods for extracting JSON data from external files.
+ */
 public final class JSONFileUtil {
 
     /**
@@ -28,7 +33,8 @@ public final class JSONFileUtil {
     public static JSONObject loadJsonFromFile(final String fileName) {
         try {
             return new JSONObject(loadJsonStringFromFile(fileName));
-        } catch (JSONException jse) {
+        } catch (JSONException jsone) {
+            Log.e(Constants.LOG_TAG, String.format("Unable to parse JSON from %s.", fileName), jsone);
             return null;
         }
     }
@@ -48,6 +54,7 @@ public final class JSONFileUtil {
                 jsonBuilder.append(line);
             }
         } catch (IOException ioe) {
+            Log.e(Constants.LOG_TAG, String.format("Unable to load data from %s.", fileName), ioe);
             jsonBuilder.append("error");
         }
         return jsonBuilder.toString();
