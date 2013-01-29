@@ -16,11 +16,11 @@ It is possible to build the library and the app in a single step using the build
 
 ###Steps
 
-1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`.
+1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`
             
-2. Open a command line in the cloned directory: `cd ean-android`.
+2. Open a command line in the cloned directory: `cd ean-android`
 
-3. Now run the ant target to build the api-lib and sample-app: `ant`.
+3. Now run the ant target to build the api-lib and sample-app: `ant`
     - The library has now been built, published to a local artifactory repository, the app has had its dependencies resolved and has been built in the debug configuration.
     
 4. The output apk can be found at `ean-android/sample-app/bin/sample-app-debug.apk` and can be installed using the command line function `adb install ean-android/sample-app/bin/sample-app-debug.apk`.
@@ -35,11 +35,11 @@ It is possible to build the library and the app in a single step using the build
 ###Steps
 Command line versions of each step are in parenthesis.
 
-1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`.
+1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`
 
-2. Open a command line in the cloned directory: `cd ean-android/api-lib`.
+2. Open a command line in the cloned directory: `cd ean-android/api-lib`
 
-3. Run the ant command publish: `ant publish`.
+3. Run the ant command publish: `ant publish`
 
 3. You should now have built the api-lib and published it to the local artifactory repository.
 
@@ -67,10 +67,10 @@ To build without publishing, just run the default ant target `ant`.
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
 ###Steps
-1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`.
+1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`
     - Ensure the library has already been published as described above.
 
-2. Open a command line in the cloned directory: `cd ean-android/sample-app`.
+2. Open a command line in the cloned directory: `cd ean-android/sample-app`
 
 4. Next you will need to use the android command line tool to setup your environment for the project: `android update project -p ./`. This will set up the environment-specific files for the project.
 
