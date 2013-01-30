@@ -2,7 +2,7 @@
 
 This project contains two components:
 
-- api-lib: An Android optimized java library to handle making calls to Expedia Affiliate Network API.
+- api-lib: An Android optimized java library to handle making calls to [Expedia Affiliate Network API] [EAN].
 - sample-app: A sample Android app that uses the api-lib to make all of it's calls.
 
 ##Building both the Library and the App
@@ -88,7 +88,14 @@ To build without publishing, just run the default ant target `ant`.
 - run ant resolve.dependencies before setting up the project in your ide, as it will include all dependencies necessary.
 - there is no need to include the libs/ivy folder, or the libs/check folder in the ide. These are only used by the build to manage dependencies and perform checkstyle checks, respectively.
 
+## More Help
+
+More assistance can be found on our [wiki for this project] [git-project-wiki] and our [developer hub] [dev-hub].
+
+[EAN]: http://www.expediaaffiliate.com/ "Expedia Affiliate Network"
+[dev-hub]: http://developer.ean.com "EAN Developer Hub"
 [git-project]: http://ExpediaInc/ean-android/ean-android.git "ean-android project"
+[git-project-wiki]: https://github.com/ExpediaInc/ean-android/wiki "ean-android project wiki"
 [java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html "Java"
 [apache-ant]: http://ant.apache.org/bindownload.cgi "Apache Ant"
 [android-sdk]: http://developer.android.com/sdk/index.html "Android SDK"
