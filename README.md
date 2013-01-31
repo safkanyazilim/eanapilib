@@ -3,14 +3,14 @@
 This project contains two components:
 
 - api-lib: An Android optimized java library to handle making calls to [Expedia Affiliate Network API] [EAN].
-- sample-app: A sample Android app that uses the api-lib to make all of it's calls.
+- sample-app: A sample Android app that uses the api-lib to make all of its calls.
 
 ##Building both the Library and the App
 It is possible to build the library and the app in a single step using the build.xml at the root of the project. This will build the library, publish it to a local artifactory repository, then resolve the dependencies of the Android project and fix up the local Android files and build the debug configuration of sample-app. 
 
 ###Requirements
 
-- [Java JDK (1.6+)] [java]
+- [Java JDK (1.7+)] [java]
 - [Apache Ant (1.7+)] [apache-ant]
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
@@ -25,15 +25,14 @@ It is possible to build the library and the app in a single step using the build
     
 4. The output apk can be found at `ean-android/sample-app/bin/sample-app-debug.apk` and can be installed using the command line function `adb install ean-android/sample-app/bin/sample-app-debug.apk`.
 
-##Building The Only Library
+##Building Only The Library
 
 ###Requirements
 
-- [Java JDK (1.6+)] [java]
+- [Java JDK (1.7+)] [java]
 - [Apache Ant (1.7+)] [apache-ant]
 
 ###Steps
-Command line versions of each step are in parenthesis.
 
 1. Download the source code from git: `git clone git://ExpediaInc/ean-android/ean-android.git`
 
@@ -58,11 +57,11 @@ ean-api-lib.jar contains the minimal set of classes to use the library, whereas 
 
 To build without publishing, just run the default ant target `ant`.
 
-##Building  Just The Sample App
+##Building Only The Sample App
 
 ###Requirements
 
-- [Java JDK (1.6+)] [java]
+- [Java JDK (1.7+)] [java]
 - [Apache Ant (1.7+)] [apache-ant]
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
