@@ -26,7 +26,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class HotelItineraryRequestIntTest {
+public class ItineraryRequestIntTest {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
     private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
@@ -34,22 +34,22 @@ public class HotelItineraryRequestIntTest {
 
     @Test(expected = EanWsError.class)
     public void testItineraryLookupInvalidItineraryIdAndEmail() throws Exception {
-        HotelItineraryRequest hotelItineraryRequest = new HotelItineraryRequest(-1L, null);
-        RequestProcessor.run(hotelItineraryRequest);
+        ItineraryRequest itineraryRequest = new ItineraryRequest(-1L, null);
+        RequestProcessor.run(itineraryRequest);
     }
 
     @Test(expected = EanWsError.class)
     public void testItineraryLookupInvalidItineraryId() throws Exception {
-        HotelItineraryRequest hotelItineraryRequest = new HotelItineraryRequest(1234L, EMAIL);
-        RequestProcessor.run(hotelItineraryRequest);
+        ItineraryRequest itineraryRequest = new ItineraryRequest(1234L, EMAIL);
+        RequestProcessor.run(itineraryRequest);
     }
 
     @Test(expected = EanWsError.class)
     public void testItineraryLookupInvalidEmail() throws Exception {
         Reservation testReservation = getTestReservation(Locale.US.toString(), "USD");
-        HotelItineraryRequest hotelItineraryRequest
-            = new HotelItineraryRequest(testReservation.itineraryId, "invalid@expedia.com");
-        RequestProcessor.run(hotelItineraryRequest);
+        ItineraryRequest itineraryRequest
+            = new ItineraryRequest(testReservation.itineraryId, "invalid@expedia.com");
+        RequestProcessor.run(itineraryRequest);
     }
 
     @Test
@@ -64,9 +64,9 @@ public class HotelItineraryRequestIntTest {
 
     private void doItineraryLookupValid(final String locale, final String currencyCode) throws Exception {
         Reservation testReservation = getTestReservation(locale, currencyCode);
-        HotelItineraryRequest hotelItineraryRequest
-            = new HotelItineraryRequest(testReservation.itineraryId, EMAIL, locale, currencyCode);
-        Itinerary itinerary = RequestProcessor.run(hotelItineraryRequest);
+        ItineraryRequest itineraryRequest
+            = new ItineraryRequest(testReservation.itineraryId, EMAIL, locale, currencyCode);
+        Itinerary itinerary = RequestProcessor.run(itineraryRequest);
         assertNotNull(itinerary);
         assertNotNull(itinerary.hotelConfirmations);
         assertThat(itinerary.hotelConfirmations.size(), greaterThan(0));

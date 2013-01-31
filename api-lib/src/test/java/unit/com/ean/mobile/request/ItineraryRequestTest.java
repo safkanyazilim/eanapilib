@@ -28,38 +28,38 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class HotelItineraryRequestTest {
+public class ItineraryRequestTest {
 
-    private HotelItineraryRequest hotelItineraryRequest;
+    private ItineraryRequest itineraryRequest;
 
     @Before
     public void setUp() {
-        hotelItineraryRequest = new HotelItineraryRequest(1234L, "test@expedia.com");
+        itineraryRequest = new ItineraryRequest(1234L, "test@expedia.com");
     }
 
     @Test
     public void testConsumeNullJson() throws Exception {
-        assertNull(hotelItineraryRequest.consume(null));
+        assertNull(itineraryRequest.consume(null));
     }
 
     @Test(expected = JSONException.class)
     public void testConsumeEmptyJson() throws Exception {
-        hotelItineraryRequest.consume(new JSONObject());
+        itineraryRequest.consume(new JSONObject());
     }
 
     @Test(expected = JSONException.class)
     public void testConsumeInvalidJson() throws Exception {
-        hotelItineraryRequest.consume(JSONFileUtil.loadJsonFromFile("invalid-itinerary.json"));
+        itineraryRequest.consume(JSONFileUtil.loadJsonFromFile("invalid-itinerary.json"));
     }
 
     @Test(expected = EanWsError.class)
     public void testConsumeEanWsError() throws Exception {
-        hotelItineraryRequest.consume(JSONFileUtil.loadJsonFromFile("error-itinerary.json"));
+        itineraryRequest.consume(JSONFileUtil.loadJsonFromFile("error-itinerary.json"));
     }
 
     @Test
     public void testConsume() throws Exception {
-        Itinerary itinerary = hotelItineraryRequest.consume(JSONFileUtil.loadJsonFromFile("valid-itinerary.json"));
+        Itinerary itinerary = itineraryRequest.consume(JSONFileUtil.loadJsonFromFile("valid-itinerary.json"));
         assertNotNull(itinerary);
         assertEquals(107730857L, itinerary.id);
         assertEquals(55505L, itinerary.affiliateId);
@@ -77,7 +77,7 @@ public class HotelItineraryRequestTest {
         queryString.append("cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&minorRev=20&customerUserAgent=Android");
         queryString.append("&itineraryId=1234&email=test@expedia.com");
 
-        final URI uri = hotelItineraryRequest.getUri();
+        final URI uri = itineraryRequest.getUri();
         assertEquals("http", uri.getScheme());
         assertEquals("api.ean.com", uri.getHost());
         assertEquals("/ean-services/rs/hotel/v3/itin", uri.getPath());
@@ -86,7 +86,7 @@ public class HotelItineraryRequestTest {
 
     @Test
     public void testIsSecure() {
-        assertThat(hotelItineraryRequest.requiresSecure(), is(false));
+        assertThat(itineraryRequest.requiresSecure(), is(false));
     }
 
     private void doCustomerAssertions(final Itinerary.Customer customer) {

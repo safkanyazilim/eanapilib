@@ -20,7 +20,7 @@ import com.ean.mobile.exception.EanWsError;
 /**
  * Used to retrieve and parse itinerary information from the EAN API.
  */
-public class HotelItineraryRequest extends Request<Itinerary> {
+public class ItineraryRequest extends Request<Itinerary> {
 
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
@@ -30,7 +30,7 @@ public class HotelItineraryRequest extends Request<Itinerary> {
      * @param locale the locale to specify in the API call.
      * @param currencyCode the currency code to specify in the API call.
      */
-    public HotelItineraryRequest(
+    public ItineraryRequest(
             final long itineraryId, final String emailAddress, final String locale, final String currencyCode) {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("itineraryId", String.valueOf(itineraryId)),
@@ -50,7 +50,7 @@ public class HotelItineraryRequest extends Request<Itinerary> {
      * @param itineraryId the ID of the itinerary to retrieve.
      * @param emailAddress the e-mail address associated with the itinerary.
      */
-    public HotelItineraryRequest(final long itineraryId, final String emailAddress) {
+    public ItineraryRequest(final long itineraryId, final String emailAddress) {
         this(itineraryId, emailAddress, null, null);
     }
 
