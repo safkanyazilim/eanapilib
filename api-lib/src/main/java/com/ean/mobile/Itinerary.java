@@ -129,8 +129,8 @@ public final class Itinerary {
          */
         public Customer(final JSONObject object) {
             super(object);
-            this.extension = object.optString("extension");
-            this.faxPhone = object.optString("faxPhone");
+            this.extension = object.has("extension") ? object.optString("extension") : null;
+            this.faxPhone = object.has("faxPhone") ? object.optString("faxPhone") : null;
             final JSONObject customerAddressObject
                 = object.has("CustomerAddress")
                 ? object.optJSONObject("CustomerAddress")
