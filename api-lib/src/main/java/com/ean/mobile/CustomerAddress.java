@@ -75,7 +75,7 @@ public final class CustomerAddress extends Address {
      * The JSON-based constructor for this address. In addition to the normal address fields,
      * the json object must also have fields "isPrimary" and "type" as boolean and integer,
      * respectively.
-     * @param object The JSONObject holding the appropriate fields.s
+     * @param object The JSONObject holding the appropriate fields.
      */
     public CustomerAddress(final JSONObject object) {
         super(object);
