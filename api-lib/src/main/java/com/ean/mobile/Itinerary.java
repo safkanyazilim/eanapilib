@@ -280,7 +280,7 @@ public final class Itinerary {
             this.nonRefunable = object.optBoolean("nonRefundable");
             this.locale = object.optString("locale");
             this.nights = object.optInt("nights");
-            this.rate = Rate.parseFromRateInfos(object).get(0);
+            this.rate = Rate.parseFromRateInformations(object).get(0);
             this.guestName = new Name(object.optJSONObject("ReservationGuest"));
 
         }
@@ -331,7 +331,7 @@ public final class Itinerary {
 
             /**
              * The hotel's star rating.
-             * {@link HotelInfo#starRating}.
+             * {@link com.ean.mobile.Hotel#starRating}.
              */
             public final BigDecimal starRating;
 
@@ -371,7 +371,7 @@ public final class Itinerary {
                 this.lowRate = new BigDecimal(object.optString("lowRate"));
                 this.highRate = new BigDecimal(object.optString("highRate"));
                 this.confidence = object.optDouble("confidence");
-                this.starRating = HotelInfo.parseStarRating(object.optString("hotelRating"));
+                this.starRating = com.ean.mobile.Hotel.parseStarRating(object.optString("hotelRating"));
                 this.market = object.optString("market");
                 this.region = object.optString("region");
                 this.superRegion = object.optString("superRegion");

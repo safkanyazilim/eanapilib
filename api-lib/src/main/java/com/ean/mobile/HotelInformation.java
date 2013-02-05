@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * The rest of the information about a hotel, that is loaded using the InformationRequest.
  */
-public final class HotelInfoExtended {
+public final class HotelInformation {
 
     /**
      * The id of the hotel this extended information is associated with.
@@ -33,7 +33,7 @@ public final class HotelInfoExtended {
      * @param longDescription The long description of this hotel. Often contains embedded html.
      * @param images The list of images for this hotel.
      */
-    public HotelInfoExtended(final long hotelId, final String longDescription, final List<HotelImageTuple> images) {
+    public HotelInformation(final long hotelId, final String longDescription, final List<HotelImageTuple> images) {
         this.hotelId = hotelId;
         this.longDescription = longDescription;
         this.images = Collections.unmodifiableList(images);

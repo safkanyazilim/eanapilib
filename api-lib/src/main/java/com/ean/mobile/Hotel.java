@@ -16,7 +16,7 @@ import android.text.Html;
 /**
  * The holder for information about a particular hotel.
  */
-public final class HotelInfo {
+public final class Hotel {
 
     /**
      * The name of this hotel.
@@ -79,7 +79,7 @@ public final class HotelInfo {
      * @throws JSONException If there is a problem with the JSON objects
      * @throws MalformedURLException If the thumbnail url is not correctly formatted.
      */
-    public HotelInfo(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
+    public Hotel(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
         this.name = Html.fromHtml(hotelSummary.optString("name")).toString();
         this.hotelId = hotelSummary.optLong("hotelId");
         this.address = new LatLongAddress(hotelSummary);

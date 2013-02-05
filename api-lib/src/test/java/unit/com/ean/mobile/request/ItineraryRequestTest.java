@@ -138,30 +138,30 @@ public class ItineraryRequestTest {
         assertNotNull(rate);
         assertThat(rate.promo, is(false));
 
-        Rate.RateInfo chargeableRateInfo = rate.chargeable;
-        assertNotNull(chargeableRateInfo);
-        assertEquals(new BigDecimal("79.96"), chargeableRateInfo.getSurchargeTotal());
-        assertEquals(new BigDecimal("509.96"), chargeableRateInfo.getTotal());
-        assertEquals(new BigDecimal("143.33"), chargeableRateInfo.getAverageBaseRate());
-        assertEquals(new BigDecimal("143.33"), chargeableRateInfo.getAverageRate());
-        assertEquals("USD", chargeableRateInfo.currencyCode);
+        Rate.RateInformation chargeableRateInformation = rate.chargeable;
+        assertNotNull(chargeableRateInformation);
+        assertEquals(new BigDecimal("79.96"), chargeableRateInformation.getSurchargeTotal());
+        assertEquals(new BigDecimal("509.96"), chargeableRateInformation.getTotal());
+        assertEquals(new BigDecimal("143.33"), chargeableRateInformation.getAverageBaseRate());
+        assertEquals(new BigDecimal("143.33"), chargeableRateInformation.getAverageRate());
+        assertEquals("USD", chargeableRateInformation.currencyCode);
 
-        assertNotNull(chargeableRateInfo.nightlyRates);
-        assertThat(chargeableRateInfo.nightlyRates.size(), equalTo(3));
+        assertNotNull(chargeableRateInformation.nightlyRates);
+        assertThat(chargeableRateInformation.nightlyRates.size(), equalTo(3));
 
-        NightlyRate nightlyRate = chargeableRateInfo.nightlyRates.get(0);
+        NightlyRate nightlyRate = chargeableRateInformation.nightlyRates.get(0);
         assertNotNull(nightlyRate);
         assertEquals(new BigDecimal("169.0"), nightlyRate.baseRate);
         assertEquals(new BigDecimal("169.0"), nightlyRate.rate);
         assertThat(nightlyRate.promo, is(false));
 
-        nightlyRate = chargeableRateInfo.nightlyRates.get(1);
+        nightlyRate = chargeableRateInformation.nightlyRates.get(1);
         assertNotNull(nightlyRate);
         assertEquals(new BigDecimal("126.75"), nightlyRate.baseRate);
         assertEquals(new BigDecimal("126.75"), nightlyRate.rate);
         assertThat(nightlyRate.promo, is(false));
 
-        nightlyRate = chargeableRateInfo.nightlyRates.get(2);
+        nightlyRate = chargeableRateInformation.nightlyRates.get(2);
         assertNotNull(nightlyRate);
         assertEquals(new BigDecimal("134.25"), nightlyRate.baseRate);
         assertEquals(new BigDecimal("134.25"), nightlyRate.rate);

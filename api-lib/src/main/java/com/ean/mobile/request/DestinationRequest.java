@@ -20,14 +20,14 @@ import com.ean.mobile.exception.EanWsError;
 /**
  * Looks up possible destinations based on the destinationString passed to the constructor.
  */
-public final class DestinationLookup extends Request<List<Destination>> {
+public final class DestinationRequest extends Request<List<Destination>> {
 
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
      *
      * @param destinationString The destination to search for hotels.
      */
-    public DestinationLookup(final String destinationString) {
+    public DestinationRequest(final String destinationString) {
         if (destinationString != null) {
             final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
             urlParameters.add(new BasicNameValuePair("propertyName", destinationString));

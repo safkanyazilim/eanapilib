@@ -21,15 +21,15 @@ import org.json.JSONObject;
 
 import android.util.Log;
 
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelInfoList;
+import com.ean.mobile.Hotel;
+import com.ean.mobile.HotelList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.EanWsError;
 
 /**
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
  */
-public final class ListRequest extends Request<HotelInfoList> {
+public final class ListRequest extends Request<HotelList> {
 
     private static final String NUMBER_OF_RESULTS = "10";
 
@@ -94,7 +94,7 @@ public final class ListRequest extends Request<HotelInfoList> {
     }
 
     /**
-     * Loads more results into a HotelInfoList so pagination can be supported.
+     * Loads more results into a HotelList so pagination can be supported.
      * @param locale Locale
      * @param currencyCode Currency Code
      * @param cacheKey Cache key from previous request
@@ -123,7 +123,7 @@ public final class ListRequest extends Request<HotelInfoList> {
      * {@inheritDoc}
      */
     @Override
-    public HotelInfoList consume(final JSONObject jsonObject) throws JSONException, EanWsError {
+    public HotelList consume(final JSONObject jsonObject) throws JSONException, EanWsError {
         if (jsonObject == null) {
             return null;
         }
@@ -140,16 +140,16 @@ public final class ListRequest extends Request<HotelInfoList> {
         final int totalNumberOfResults = response.optJSONObject("HotelList").optInt("@activePropertyCount");
 
         final JSONArray newHotelJson = response.getJSONObject("HotelList").getJSONArray("HotelSummary");
-        final List<HotelInfo> newHotels = new ArrayList<HotelInfo>(newHotelJson.length());
+        final List<Hotel> newHotels = new ArrayList<Hotel>(newHotelJson.length());
         for (int i = 0; i < newHotelJson.length(); i++) {
             try {
-                newHotels.add(new HotelInfo(newHotelJson.getJSONObject(i)));
+                newHotels.add(new Hotel(newHotelJson.getJSONObject(i)));
             } catch (MalformedURLException me) {
                 Log.e("Unable to process JSON", me.getMessage());
             }
         }
 
-        return new HotelInfoList(newHotels,
+        return new HotelList(newHotels,
             newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);
     }
 

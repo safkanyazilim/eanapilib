@@ -24,18 +24,18 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 
-public class DestinationLookupTest {
+public class DestinationRequestTest {
 
-    DestinationLookup destinationLookup;
+    DestinationRequest destinationRequest;
 
     @Before
     public void setUp() {
-        destinationLookup = new DestinationLookup("sea");
+        destinationRequest = new DestinationRequest("sea");
     }
 
     @Test(expected = JSONException.class)
     public void testConsumeEmptyJson() throws Exception {
-        destinationLookup.consume(new JSONObject());
+        destinationRequest.consume(new JSONObject());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DestinationLookupTest {
         jsonString.append("Orlando, FL, United States)','category':'cities',");
         jsonString.append("'name':'Sea World (Orlando, FL, United States)'}]}");
 
-        List<Destination> destinations = destinationLookup.consume(new JSONObject(jsonString.toString()));
+        List<Destination> destinations = destinationRequest.consume(new JSONObject(jsonString.toString()));
 
         assertNotNull(destinations);
         assertThat(destinations, is(not(empty())));
@@ -54,22 +54,22 @@ public class DestinationLookupTest {
 
     @Test
     public void testGetUriWithQueryString() throws Exception {
-        final URI uri = destinationLookup.getUri();
+        final URI uri = destinationRequest.getUri();
         doUriAssertions(uri);
         assertEquals("propertyName=sea", uri.getQuery());
     }
 
     @Test
     public void testGetUriNoQueryString() throws Exception {
-        destinationLookup = new DestinationLookup(null);
-        final URI uri = destinationLookup.getUri();
+        destinationRequest = new DestinationRequest(null);
+        final URI uri = destinationRequest.getUri();
         doUriAssertions(uri);
         assertNull(uri.getQuery());
     }
 
     @Test
     public void testIsSecure() {
-        assertFalse(new DestinationLookup(null).requiresSecure());
+        assertFalse(new DestinationRequest(null).requiresSecure());
     }
     
     private static void doUriAssertions(final URI uri) {

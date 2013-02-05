@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.ean.mobile.HotelInfo;
+import com.ean.mobile.Hotel;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.NightlyRate;
 import com.ean.mobile.R;
@@ -52,11 +52,11 @@ public class BookingSummary extends Activity {
         TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
         LinearLayout priceBreakdownList = (LinearLayout) findViewById(R.id.priceDetailsBreakdown);
         ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
-        final HotelInfo hotelInfo = SampleApp.selectedHotel;
+        final Hotel hotel = SampleApp.selectedHotel;
         HotelRoom hotelRoom = SampleApp.selectedRoom;
         RoomOccupancy occupancy = hotelRoom.rate.roomGroup.get(0).occupancy;
 
-        hotelName.setText(hotelInfo.name);
+        hotelName.setText(hotel.name);
         checkIn.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
         checkOut.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
         numGuests.setText(String.format(getString(R.string.adults_comma_children), occupancy.numberOfAdults, occupancy.childAges.size()));
@@ -65,7 +65,7 @@ public class BookingSummary extends Activity {
         drrPromoText.setText(hotelRoom.promoDescription);
 
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-        currencyFormat.setCurrency(Currency.getInstance(hotelInfo.currencyCode));
+        currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
 
         taxesAndFees.setText(currencyFormat.format(hotelRoom.getTaxesAndFees()));
 
@@ -80,7 +80,7 @@ public class BookingSummary extends Activity {
             totalHighPrice.setVisibility(TextView.VISIBLE);
             drrIcon.setVisibility(ImageView.VISIBLE);
             drrPromoText.setVisibility(ImageView.VISIBLE);
-            totalHighPrice.setText(currencyFormat.format(hotelInfo.highPrice));
+            totalHighPrice.setText(currencyFormat.format(hotel.highPrice));
             totalHighPrice.setPaintFlags(totalHighPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
@@ -97,7 +97,7 @@ public class BookingSummary extends Activity {
             currentDate = currentDate.plusDays(1);
             date.setText(NIGHTLY_RATE_FORMATTER.print(currentDate));
 
-            currencyFormat.setCurrency(Currency.getInstance(hotelInfo.currencyCode));
+            currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(rate.rate));
             if(rate.rate.equals(rate.baseRate)){
                 highPrice.setVisibility(TextView.GONE);

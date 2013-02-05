@@ -26,38 +26,38 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class RoomAvailRequestTest {
+public class RoomAvailabilityRequestTest {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(2, 1);
     private static final LocalDate[] DATES = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-    private RoomAvailRequest roomAvailRequest;
+    private RoomAvailabilityRequest roomAvailabilityRequest;
 
     @Before
     public void setUp() {
-        roomAvailRequest = new RoomAvailRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
+        roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
             DATES[0], DATES[1], "", "en_US", "USD");
     }
 
     @Test
     public void testConsumeNullJson() throws Exception {
-        assertNull(roomAvailRequest.consume(null));
+        assertNull(roomAvailabilityRequest.consume(null));
     }
 
     @Test(expected = JSONException.class)
     public void testConsumeEmptyJson() throws Exception {
-        roomAvailRequest.consume(new JSONObject());
+        roomAvailabilityRequest.consume(new JSONObject());
     }
 
     @Test(expected = JSONException.class)
     public void testConsumeInvalidJson() throws Exception {
-        roomAvailRequest.consume(new JSONObject("{ invalid! }"));
+        roomAvailabilityRequest.consume(new JSONObject("{ invalid! }"));
     }
 
     @Test(expected = EanWsError.class)
     public void testConsumeEanWsError() throws Exception {
-        roomAvailRequest.consume(
+        roomAvailabilityRequest.consume(
             new JSONObject("{ HotelRoomAvailabilityResponse: { EanWsError: { category: 'test' } } }"));
     }
 
@@ -71,7 +71,7 @@ public class RoomAvailRequestTest {
         jsonString.append("Surcharges: { Surcharge: { @amount: '3.00' } } }");
         jsonString.append("} } } } } }");
 
-        List<HotelRoom> hotelRooms = roomAvailRequest.consume(new JSONObject(jsonString.toString()));
+        List<HotelRoom> hotelRooms = roomAvailabilityRequest.consume(new JSONObject(jsonString.toString()));
 
         assertNotNull(hotelRooms);
         assertThat(hotelRooms.size(), greaterThan(0));
@@ -90,7 +90,7 @@ public class RoomAvailRequestTest {
         jsonString.append("Surcharges: { Surcharge: { @amount: '6.00' } } }");
         jsonString.append("} } } }] } }");
 
-        List<HotelRoom> hotelRooms = roomAvailRequest.consume(new JSONObject(jsonString.toString()));
+        List<HotelRoom> hotelRooms = roomAvailabilityRequest.consume(new JSONObject(jsonString.toString()));
 
         assertNotNull(hotelRooms);
         assertThat(hotelRooms.size(), greaterThan(0));
@@ -98,21 +98,21 @@ public class RoomAvailRequestTest {
 
     @Test
     public void testGetUriSingleRoom() throws Exception {
-        doUriAssertions(roomAvailRequest.getUri(), null);
+        doUriAssertions(roomAvailabilityRequest.getUri(), null);
     }
 
     @Test
     public void testGetUriMultipleRooms() throws Exception {
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(2, 1));
-        roomAvailRequest
-            = new RoomAvailRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1], "", "en_US", "USD");
+        roomAvailabilityRequest
+            = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1], "", "en_US", "USD");
 
-        doUriAssertions(roomAvailRequest.getUri(), "&room2=2,0");
+        doUriAssertions(roomAvailabilityRequest.getUri(), "&room2=2,0");
     }
 
     @Test
     public void testIsSecure() {
-        assertFalse(roomAvailRequest.requiresSecure());
+        assertFalse(roomAvailabilityRequest.requiresSecure());
     }
 
     private static void doUriAssertions(final URI uri, final String suffix) {

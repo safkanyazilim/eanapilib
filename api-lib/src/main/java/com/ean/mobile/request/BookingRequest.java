@@ -39,18 +39,18 @@ public final class BookingRequest extends Request<Reservation> {
      * @param departureDate The day that the booking will end (checkout).
      * @param supplierType The supplierType (found in the list call, usually "E").
      * @param room The room and its occupancy that will be booked.
-     * @param reservationInfo The information about the entity making the reservation. "Billing" information.
-     * @param address The address associated with the reservationInfo.
+     * @param reservationInformation The information about the entity making the reservation. "Billing" information.
+     * @param address The address associated with the reservationInformation.
      * @param customerSessionId The sessionID associated with this search session.
      * @param locale The locale in which to book the hotel.
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
-    public BookingRequest(final Long hotelId,
-                          final LocalDate arrivalDate, final LocalDate departureDate, final String supplierType,
-                          final ReservationRoom room, final ReservationInfo reservationInfo, final Address address,
-                          final String customerSessionId, final String locale, final String currencyCode) {
+    public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
+              final String supplierType, final ReservationRoom room,
+              final ReservationInformation reservationInformation, final Address address,
+              final String customerSessionId, final String locale, final String currencyCode) {
         this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
-                reservationInfo, address, customerSessionId, locale, currencyCode);
+                reservationInformation, address, customerSessionId, locale, currencyCode);
     }
 
     /**
@@ -60,18 +60,19 @@ public final class BookingRequest extends Request<Reservation> {
      * @param departureDate The day that the booking will end (checkout).
      * @param supplierType The supplierType (found in the list call, usually "E").
      * @param roomGroup The Rooms and their occupancies that will be booked.
-     * @param reservationInfo The information about the entity making the reservation. "Billing" information.
-     * @param address The address associated with the reservationInfo.
+     * @param reservationInformation The information about the entity making the reservation. "Billing" information.
+     * @param address The address associated with the reservationInformation.
      * @param customerSessionId Customer session id, passed to track user as they move through
      *  the booking flow.
      * @param locale The locale in which to book the hotel.
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
-            final String supplierType, final List<ReservationRoom> roomGroup, final ReservationInfo reservationInfo,
-            final Address address, final String customerSessionId, final String locale, final String currencyCode) {
+            final String supplierType, final List<ReservationRoom> roomGroup,
+            final ReservationInformation reservationInformation, final Address address,
+            final String customerSessionId, final String locale, final String currencyCode) {
 
-        this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInfo, address,
+        this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInformation, address,
                 customerSessionId, null, locale, currencyCode);
     }
 
@@ -82,8 +83,8 @@ public final class BookingRequest extends Request<Reservation> {
      * @param departureDate The day that the booking will end (checkout).
      * @param supplierType The supplierType (found in the list call, usually "E").
      * @param roomGroup The Rooms and their occupancies that will be booked.
-     * @param reservationInfo The information about the entity making the reservation. "Billing" information.
-     * @param address The address associated with the reservationInfo.
+     * @param reservationInformation The information about the entity making the reservation. "Billing" information.
+     * @param address The address associated with the reservationInformation.
      * @param customerSessionId The session ID carried over from the original search.
      * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
      * @param locale The locale in which to book the hotel.
@@ -91,10 +92,10 @@ public final class BookingRequest extends Request<Reservation> {
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
             final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
-            final ReservationInfo reservationInfo, final Address address, final String customerSessionId,
+            final ReservationInformation reservationInformation, final Address address, final String customerSessionId,
             final List<NameValuePair> extraBookingData, final String locale, final String currencyCode) {
 
-        final List<NameValuePair> rateInfoParameters = Arrays.<NameValuePair>asList(
+        final List<NameValuePair> rateInformationParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", hotelId.toString()),
                 new BasicNameValuePair("supplierType", supplierType)
@@ -102,9 +103,9 @@ public final class BookingRequest extends Request<Reservation> {
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
         urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
-        urlParameters.addAll(rateInfoParameters);
+        urlParameters.addAll(rateInformationParameters);
         urlParameters.addAll(ReservationRoom.asNameValuePairs(roomGroup));
-        urlParameters.addAll(reservationInfo.asNameValuePairs());
+        urlParameters.addAll(reservationInformation.asNameValuePairs());
         urlParameters.addAll(address.asBookingRequestPairs());
         urlParameters.addAll(extraBookingData == null ? Collections.<NameValuePair>emptyList() : extraBookingData);
 
@@ -149,7 +150,7 @@ public final class BookingRequest extends Request<Reservation> {
     /**
      * This is a holder for all of the information required as "billing" information in the booking process.
      */
-    public static final class ReservationInfo {
+    public static final class ReservationInformation {
 
         /**
          * The individual for which this reservation will be made.
@@ -159,7 +160,7 @@ public final class BookingRequest extends Request<Reservation> {
         /**
          * The credit card information to be used by the individual.
          */
-        public final CreditCardInfo creditCardInfo;
+        public final CreditCardInformation creditCardInformation;
 
         /**
          * The main constructor for a reservation information object.
@@ -173,12 +174,12 @@ public final class BookingRequest extends Request<Reservation> {
          * @param creditCardIdentifier The credit card identifier (CCID, CID, etc.)
          * @param creditCardExpirationDate The expiration date of the credit card.
          */
-        public ReservationInfo(final String email, final String firstName, final String lastName,
+        public ReservationInformation(final String email, final String firstName, final String lastName,
                 final String homePhone, final String workPhone, final String creditCardType,
                 final String creditCardNumber, final String creditCardIdentifier,
                 final YearMonth creditCardExpirationDate) {
             this.individual = new BookingIndividual(email, firstName, lastName, homePhone, workPhone);
-            this.creditCardInfo = new CreditCardInfo(
+            this.creditCardInformation = new CreditCardInformation(
                 creditCardType, creditCardNumber, creditCardIdentifier, creditCardExpirationDate);
         }
 
@@ -190,7 +191,7 @@ public final class BookingRequest extends Request<Reservation> {
 
             final List<NameValuePair> out = new ArrayList<NameValuePair>();
             out.addAll(individual.asNameValuePairs());
-            out.addAll(creditCardInfo.asNameValuePairs());
+            out.addAll(creditCardInformation.asNameValuePairs());
 
             return Collections.unmodifiableList(out);
         }
@@ -219,7 +220,7 @@ public final class BookingRequest extends Request<Reservation> {
      * A holder for particular information about a credit card used for booking.
      * DO NOT SERIALIZE OR SAVE ANYWHERE.
      */
-    public static final class CreditCardInfo {
+    public static final class CreditCardInformation {
 
         /**
          * The formatter for the month field passed to the request.
@@ -253,12 +254,12 @@ public final class BookingRequest extends Request<Reservation> {
 
         /**
          * The sole constructor for the holder for credit card information.
-         * @param type The credit card's type, see {@link CreditCardInfo#type}.
+         * @param type The credit card's type, see {@link CreditCardInformation#type}.
          * @param number The credit card's number.
          * @param identifier The credit card's identifier.
          * @param expirationDate The credit card's expiration date.
          */
-        public CreditCardInfo(
+        public CreditCardInformation(
                 final String type, final String number, final String identifier, final YearMonth expirationDate) {
             this.type = type;
             this.number = number;

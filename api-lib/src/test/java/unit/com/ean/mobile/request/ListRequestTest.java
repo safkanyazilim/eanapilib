@@ -7,7 +7,7 @@ package com.ean.mobile.request;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
-import com.ean.mobile.HotelInfoList;
+import com.ean.mobile.HotelList;
 import com.ean.mobile.RoomOccupancy;
 
 import static org.junit.Assert.assertNull;
@@ -22,8 +22,8 @@ public class ListRequestTest {
         ListRequest listRequest
             = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null, "en_US", "USD");
 
-        HotelInfoList hotelInfoList = listRequest.consume(null);
+        HotelList hotelList = listRequest.consume(null);
 
-        assertNull(hotelInfoList);
+        assertNull(hotelList);
     }
 }

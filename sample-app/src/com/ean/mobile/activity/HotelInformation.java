@@ -16,9 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import com.ean.mobile.HotelImageDrawable;
-import com.ean.mobile.HotelImageTuple;
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelInfoExtended;
+import com.ean.mobile.Hotel;
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
 import com.ean.mobile.HotelRoom;
@@ -29,7 +27,7 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.InformationRequest;
 import com.ean.mobile.request.RequestProcessor;
-import com.ean.mobile.request.RoomAvailRequest;
+import com.ean.mobile.request.RoomAvailabilityRequest;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 import org.joda.time.LocalDate;
 
@@ -37,59 +35,59 @@ import java.text.NumberFormat;
 import java.util.Currency;
 import java.util.List;
 
-public class HotelFullInfo extends Activity {
+public class HotelInformation extends Activity {
     public void onResume() {
         super.onResume();
-        setContentView(R.layout.hotelfullinfo);
-        Log.d(SampleConstants.DEBUG, "starting HotelFullInfo");
-        final HotelInfo hotelInfo = SampleApp.selectedHotel;
+        setContentView(R.layout.hotelinformation);
+        Log.d(SampleConstants.DEBUG, "starting HotelInformation");
+        final Hotel hotel = SampleApp.selectedHotel;
 
-        if(hotelInfo == null) {
+        if(hotel == null) {
             Log.d(SampleConstants.DEBUG, "hotel info was null");
             return;
         }
 
-        TextView name = (TextView) this.findViewById(R.id.hotelFullInfoName);
-        name.setText(hotelInfo.name);
+        TextView name = (TextView) this.findViewById(R.id.hotelInformationName);
+        name.setText(hotel.name);
 
-        StarRating.populate((LinearLayout) this.findViewById(R.id.hotelFullInfoStars), hotelInfo.starRating);
+        StarRating.populate((LinearLayout) this.findViewById(R.id.hotelInformationStars), hotel.starRating);
 
-        if(SampleApp.HOTEL_ROOMS.containsKey(hotelInfo.hotelId)) {
+        if(SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
             populateRateList();
         } else {
             new AvailabilityInformationLoaderTask(
-                hotelInfo.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
+                hotel.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
                 SampleApp.arrivalDate, SampleApp.departureDate, SampleApp.customerSessionId).execute((Void) null);
         }
 
         ImageFetcher.loadThumbnailIntoImageView(
-            (ImageView) findViewById(R.id.hotelFullInfoThumb),
-            hotelInfo.mainHotelImageTuple);
+            (ImageView) findViewById(R.id.hotelInformationThumb),
+            hotel.mainHotelImageTuple);
 
-        if(SampleApp.EXTENDED_INFOS.containsKey(hotelInfo.hotelId)){
+        if(SampleApp.EXTENDED_INFOS.containsKey(hotel.hotelId)){
             setExtendedInfoFields();
         } else {
-            new ExtendedInformationLoaderTask(hotelInfo.hotelId).execute((Void) null);
+            new ExtendedInformationLoaderTask(hotel.hotelId).execute((Void) null);
         }
     }
 
     private void setExtendedInfoFields() {
-        final WebView description = (WebView) this.findViewById(R.id.hotelFullInfoDescription);
-        final TextView address = (TextView) this.findViewById(R.id.hotelFullInfoAddress);
+        final WebView description = (WebView) this.findViewById(R.id.hotelInformationDescription);
+        final TextView address = (TextView) this.findViewById(R.id.hotelInformationAddress);
         final ImageView[] smallThumbs = {
-            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb00),
-            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb01),
-            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb02),
-            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb10),
-            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb11),
-            (ImageView) this.findViewById(R.id.hotelFullInfoSmallThumb12)
+            (ImageView) this.findViewById(R.id.hotelInformationSmallThumb00),
+            (ImageView) this.findViewById(R.id.hotelInformationSmallThumb01),
+            (ImageView) this.findViewById(R.id.hotelInformationSmallThumb02),
+            (ImageView) this.findViewById(R.id.hotelInformationSmallThumb10),
+            (ImageView) this.findViewById(R.id.hotelInformationSmallThumb11),
+            (ImageView) this.findViewById(R.id.hotelInformationSmallThumb12)
         };
 
         address.setText(SampleApp.selectedHotel.address.toString());
-        HotelInfoExtended extended = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
-        description.loadData(extended.longDescription, "text/html", null);
-        for(int i = 0; i < smallThumbs.length && i < extended.images.size(); i++){
-            HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(extended.images.get(i));
+        com.ean.mobile.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
+        description.loadData(hotelInformation.longDescription, "text/html", null);
+        for(int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++){
+            HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));
             if (thisDrawable.isThumbnailLoaded()) {
                 smallThumbs[i].setImageDrawable(thisDrawable.getThumbnailImage());
             } else {
@@ -122,8 +120,8 @@ public class HotelFullInfo extends Activity {
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
-                RoomAvailRequest request
-                    = new RoomAvailRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
+                RoomAvailabilityRequest request
+                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
                         customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
@@ -142,7 +140,7 @@ public class HotelFullInfo extends Activity {
         }
     }
 
-    private class ExtendedInformationLoaderTask extends AsyncTask<Void, Integer, HotelInfoExtended> {
+    private class ExtendedInformationLoaderTask extends AsyncTask<Void, Integer, com.ean.mobile.HotelInformation> {
 
         private final long hotelId;
 
@@ -151,7 +149,7 @@ public class HotelFullInfo extends Activity {
         }
 
         @Override
-        protected HotelInfoExtended doInBackground(Void... voids) {
+        protected com.ean.mobile.HotelInformation doInBackground(Void... voids) {
             try {
                 InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
                         SampleApp.locale.toString());
@@ -165,17 +163,17 @@ public class HotelFullInfo extends Activity {
         }
 
         @Override
-        protected void onPostExecute(HotelInfoExtended extended) {
-            SampleApp.EXTENDED_INFOS.put(hotelId, extended);
+        protected void onPostExecute(com.ean.mobile.HotelInformation hotelInformation) {
+            SampleApp.EXTENDED_INFOS.put(hotelId, hotelInformation);
             setExtendedInfoFields();
         }
     }
 
     private void populateRateList(){
-        final HotelInfo hotelInfo = SampleApp.selectedHotel;
+        final Hotel hotel = SampleApp.selectedHotel;
         TextView loadingView = (TextView) this.findViewById(R.id.loadingRoomsView);
         loadingView.setVisibility(TextView.GONE);
-        if (!SampleApp.HOTEL_ROOMS.containsKey(hotelInfo.hotelId)) {
+        if (!SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
             TextView noAvail = (TextView) this.findViewById(R.id.noRoomsAvailableView);
             noAvail.setVisibility(TextView.VISIBLE);
             return;
@@ -183,7 +181,7 @@ public class HotelFullInfo extends Activity {
         TableLayout rateList = (TableLayout) findViewById(R.id.roomRateList);
         View view;
         final LayoutInflater inflater = getLayoutInflater();
-        for (HotelRoom room : SampleApp.HOTEL_ROOMS.get(hotelInfo.hotelId)) {
+        for (HotelRoom room : SampleApp.HOTEL_ROOMS.get(hotel.hotelId)) {
             view = inflater.inflate(R.layout.roomtypelistlayout, null);
 
             TextView roomDesc = (TextView) view.findViewById(R.id.roomRateDescritpiton);
@@ -215,7 +213,7 @@ public class HotelFullInfo extends Activity {
                 @Override
                 public void onClick(View view) {
                 SampleApp.selectedRoom = (HotelRoom) view.getTag();
-                Intent intent = new Intent(HotelFullInfo.this, BookingSummary.class);
+                Intent intent = new Intent(HotelInformation.this, BookingSummary.class);
                 startActivity(intent);
                 }
             });

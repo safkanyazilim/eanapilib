@@ -35,18 +35,18 @@ public class SampleApp extends Application {
 
     // When a new search is performed, foundHotels, selectedHotel,
     // EXTENDED_INFOS, and HOTEL_ROOMS should be cleared or nullified, as appropriate.
-    public static List<HotelInfo> foundHotels;
+    public static List<Hotel> foundHotels;
     public static String cacheKey;
     public static String cacheLocation;
 
     public static String customerSessionId;
 
-    public static HotelInfo selectedHotel;
+    public static Hotel selectedHotel;
 
     public static HotelRoom selectedRoom;
 
-    public static final Map<Long, HotelInfoExtended> EXTENDED_INFOS
-            = Collections.synchronizedMap(new HashMap<Long, HotelInfoExtended>());
+    public static final Map<Long, HotelInformation> EXTENDED_INFOS
+            = Collections.synchronizedMap(new HashMap<Long, HotelInformation>());
 
     public static final Map<Long, List<HotelRoom>> HOTEL_ROOMS
             = Collections.synchronizedMap(new HashMap<Long, List<HotelRoom>>());
@@ -82,19 +82,19 @@ public class SampleApp extends Application {
         IMAGE_DRAWABLES.clear();
     }
 
-    public static void updateFoundHotels(HotelInfoList hotelInfoList) {
-        updateFoundHotels(hotelInfoList, false);
+    public static void updateFoundHotels(HotelList hotelList) {
+        updateFoundHotels(hotelList, false);
     }
 
-    public static synchronized void updateFoundHotels(HotelInfoList hotelInfoList, boolean clearOnUpdate) {
+    public static synchronized void updateFoundHotels(HotelList hotelList, boolean clearOnUpdate) {
         if (SampleApp.foundHotels == null) {
-            SampleApp.foundHotels = new ArrayList<HotelInfo>();
+            SampleApp.foundHotels = new ArrayList<Hotel>();
         } else if (clearOnUpdate) {
             SampleApp.foundHotels.clear();
         }
-        SampleApp.foundHotels.addAll(hotelInfoList.hotelInfos);
-        SampleApp.customerSessionId = hotelInfoList.customerSessionId;
-        SampleApp.cacheKey = hotelInfoList.cacheKey;
-        SampleApp.cacheLocation = hotelInfoList.cacheLocation;
+        SampleApp.foundHotels.addAll(hotelList.hotels);
+        SampleApp.customerSessionId = hotelList.customerSessionId;
+        SampleApp.cacheKey = hotelList.cacheKey;
+        SampleApp.cacheLocation = hotelList.cacheLocation;
     }
 }

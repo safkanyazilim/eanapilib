@@ -12,8 +12,8 @@ import java.util.Set;
 import org.joda.time.LocalDate;
 import org.junit.Test;
 
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelInfoList;
+import com.ean.mobile.Hotel;
+import com.ean.mobile.HotelList;
 import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.exception.DataValidationException;
 
@@ -35,9 +35,9 @@ public class ListRequestIntTest {
         ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
 
-        HotelInfoList results = RequestProcessor.run(listRequest);
+        HotelList results = RequestProcessor.run(listRequest);
 
-        assertEquals(10, results.hotelInfos.size());
+        assertEquals(10, results.hotels.size());
     }
 
     @Test(expected = DataValidationException.class)
@@ -69,9 +69,9 @@ public class ListRequestIntTest {
         ListRequest listRequest = new ListRequest("rome, it", occupancies, dateTimes[0], dateTimes[1],
             null, LOCALE, CURRENCY_CODE);
 
-        HotelInfoList results = RequestProcessor.run(listRequest);
+        HotelList results = RequestProcessor.run(listRequest);
 
-        assertEquals(10, results.hotelInfos.size());
+        assertEquals(10, results.hotels.size());
     }
 
     @Test
@@ -81,7 +81,7 @@ public class ListRequestIntTest {
 
         ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, LOCALE, CURRENCY_CODE);
-        HotelInfoList results = RequestProcessor.run(listRequest);
+        HotelList results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
         // Paginate a few times and make sure they are ordered correctly.
@@ -101,10 +101,10 @@ public class ListRequestIntTest {
         checkForDuplicateHotelId(hotelIdsReturned, results);
     }
 
-    private void checkForDuplicateHotelId(final Set<Long> hotelIdsReturned, final HotelInfoList results) {
-        for (HotelInfo hotelInfo : results.hotelInfos) {
-            assertFalse(hotelIdsReturned.contains(hotelInfo.hotelId));
-            hotelIdsReturned.add(hotelInfo.hotelId);
+    private void checkForDuplicateHotelId(final Set<Long> hotelIdsReturned, final HotelList results) {
+        for (Hotel hotel : results.hotels) {
+            assertFalse(hotelIdsReturned.contains(hotel.hotelId));
+            hotelIdsReturned.add(hotel.hotelId);
         }
     }
 

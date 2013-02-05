@@ -24,15 +24,16 @@ public final class CancellationPolicy {
      * The text of this particular cancellation policy. Provides a human-readable description of the cancellation
      * policy for the reservation.
      *
-     * This text is the final word on the cancellation policy. In any conflict with the returned CancellationPolicyInfo
-     * objects associated with this policy, the text always supercedes the discrete CancellationPolicyInfo objects.
+     * This text is the final word on the cancellation policy. In any conflict with the returned
+     * CancellationPolicyInformation objects associated with this policy, the text always supercedes
+     * the discrete CancellationPolicyInformation objects.
      */
     public final String text;
 
     /**
      * The more machine-friendly cancellation policy information. Describes exactly when a reservation can be cancelled.
      */
-    public final List<CancellationPolicyInfo> policies;
+    public final List<CancellationPolicyInformation> policies;
 
     /**
      * The standard constructor for cancellation policies, created from the json and the arrival date of the
@@ -43,18 +44,18 @@ public final class CancellationPolicy {
     public CancellationPolicy(final JSONObject object, final LocalDate arrivalDate) {
         this.text = object.optString("cancellationPolicy");
 
-        final List<CancellationPolicyInfo> localPolicies;
+        final List<CancellationPolicyInformation> localPolicies;
         if (object.has("CancelPolicyInfoList")) {
             final JSONObject listJson = object.optJSONObject("CancelPolicyInfoList");
             if (listJson.optJSONArray("CancelPolicyInfo") != null) {
-                localPolicies = new LinkedList<CancellationPolicyInfo>();
+                localPolicies = new LinkedList<CancellationPolicyInformation>();
                 final JSONArray infoListJson = listJson.optJSONArray("CancelPolicyInfo");
                 for (int i = 0; i < infoListJson.length(); i++) {
-                    localPolicies.add(new CancellationPolicyInfo(infoListJson.optJSONObject(i), arrivalDate));
+                    localPolicies.add(new CancellationPolicyInformation(infoListJson.optJSONObject(i), arrivalDate));
                 }
             } else {
                 localPolicies = Collections.singletonList(
-                    new CancellationPolicyInfo(listJson.optJSONObject("CancelPolicyInfo"), arrivalDate));
+                    new CancellationPolicyInformation(listJson.optJSONObject("CancelPolicyInfo"), arrivalDate));
             }
         } else {
             localPolicies = Collections.emptyList();
@@ -77,7 +78,7 @@ public final class CancellationPolicy {
      * <a href="http://developer.ean.com/general_info/CancelPolicyInfo_Array">Cancel Policy Info Array</a>
      * documentation.
      */
-    public final class CancellationPolicyInfo {
+    public final class CancellationPolicyInformation {
         /**
          * Version ID value returned by the api.
          */
@@ -116,7 +117,7 @@ public final class CancellationPolicy {
          * @param object The object to construct from.
          * @param arrivalDate The arrival date of the reservation.
          */
-        public CancellationPolicyInfo(final JSONObject object, final LocalDate arrivalDate) {
+        public CancellationPolicyInformation(final JSONObject object, final LocalDate arrivalDate) {
             this.versionId = object.optInt("versionId");
             this.currencyCode = object.optString("currencyCode");
 

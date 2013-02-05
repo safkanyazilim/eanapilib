@@ -29,12 +29,12 @@ public final class Rate {
     /**
      * The rate information that is actually chargeable.
      */
-    public final RateInfo chargeable;
+    public final RateInformation chargeable;
 
     /**
      * The rate information, converted to the requested currency.
      */
-    public final RateInfo converted;
+    public final RateInformation converted;
 
     /**
      * The list of rooms to which this rate is applied.
@@ -44,12 +44,12 @@ public final class Rate {
 
     /**
      * Constructs a Rate from a JSONObject.
-     * @param rateInfoJson The JSONObject holding the data to construct this object with.
+     * @param rateInformationJson The JSONObject holding the data to construct this object with.
      */
-    public Rate(final JSONObject rateInfoJson) {
+    public Rate(final JSONObject rateInformationJson) {
 
         final List<Room> localRooms;
-        final JSONObject roomGroupJson = rateInfoJson.optJSONObject("RoomGroup");
+        final JSONObject roomGroupJson = rateInformationJson.optJSONObject("RoomGroup");
         if (roomGroupJson != null && roomGroupJson.optJSONArray("Room") != null) {
             final JSONArray roomJson = roomGroupJson.optJSONArray("Room");
             localRooms = new ArrayList<Room>(roomJson.length());
@@ -62,56 +62,56 @@ public final class Rate {
             localRooms = Collections.emptyList();
         }
 
-        final JSONObject chargeableObject = rateInfoJson.optJSONObject("ChargeableRateInfo");
-        final JSONObject convertedObject = rateInfoJson.optJSONObject("ConvertedRateInfo");
+        final JSONObject chargeableObject = rateInformationJson.optJSONObject("ChargeableRateInfo");
+        final JSONObject convertedObject = rateInformationJson.optJSONObject("ConvertedRateInfo");
 
-        chargeable = new RateInfo(chargeableObject);
-        converted = convertedObject == null ? null : new RateInfo(convertedObject);
+        chargeable = new RateInformation(chargeableObject);
+        converted = convertedObject == null ? null : new RateInformation(convertedObject);
 
-        promo = rateInfoJson.optBoolean("@promo");
+        promo = rateInformationJson.optBoolean("@promo");
         roomGroup = Collections.unmodifiableList(localRooms);
     }
 
     /**
      * Parses a list of Rate objects from a JSONArray representing their data.
-     * @param rateInfosJson The json from which to parse
+     * @param rateInformationsJson The json from which to parse
      * @return The Rate objects represented by the JSONArray.
      */
-    public static List<Rate> parseRates(final JSONArray rateInfosJson) {
-        final List<Rate> rateInfos = new ArrayList<Rate>(rateInfosJson.length());
-        for (int j = 0; j < rateInfosJson.length(); j++) {
-            rateInfos.add(new Rate(rateInfosJson.optJSONObject(j)));
+    public static List<Rate> parseRates(final JSONArray rateInformationsJson) {
+        final List<Rate> rateInformations = new ArrayList<Rate>(rateInformationsJson.length());
+        for (int j = 0; j < rateInformationsJson.length(); j++) {
+            rateInformations.add(new Rate(rateInformationsJson.optJSONObject(j)));
         }
-        return rateInfos;
+        return rateInformations;
     }
 
     /**
      * Parses a singleton list of rateinfo from a JSONObject. Needed because when there is only one Rate,
-     * the RateInfos get represented as a single Rate object rather than an array of size one.
-     * @param rateInfosJson The json from which to parse.
+     * the RateInformations get represented as a single Rate object rather than an array of size one.
+     * @param rateInformationsJson The json from which to parse.
      * @return The singletonList of the Rate represented by the JSON
      */
-    public static List<Rate> parseRates(final JSONObject rateInfosJson) {
-        return Collections.singletonList(new Rate(rateInfosJson.optJSONObject("RateInfo")));
+    public static List<Rate> parseRates(final JSONObject rateInformationsJson) {
+        return Collections.singletonList(new Rate(rateInformationsJson.optJSONObject("RateInfo")));
     }
 
     /**
      * Constructs a List of Rate objects from a RateInfos JSONObject.
-     * @param object The JSONObject which holds a RateInfos field which holds an array of RateInfo objects.
+     * @param object The JSONObject which holds a RateInfos field which holds an array of RateInformation objects.
      * @return A fully constructed Rate list.
      */
-    public static List<Rate> parseFromRateInfos(final JSONObject object) {
-        final String rateInfoId = "RateInfos";
-        if (object.optJSONArray(rateInfoId) != null) {
-            final JSONArray rateInfos = object.optJSONArray(rateInfoId);
-            return parseRates(rateInfos);
-        } else if (object.optJSONObject(rateInfoId) != null) {
-            final JSONObject rateInfo = object.optJSONObject(rateInfoId);
-            return parseRates(rateInfo);
+    public static List<Rate> parseFromRateInformations(final JSONObject object) {
+        final String rateInformationId = "RateInfos";
+        if (object.optJSONArray(rateInformationId) != null) {
+            final JSONArray rateInformations = object.optJSONArray(rateInformationId);
+            return parseRates(rateInformations);
+        } else if (object.optJSONObject(rateInformationId) != null) {
+            final JSONObject rateInformation = object.optJSONObject(rateInformationId);
+            return parseRates(rateInformation);
         }
         // if neither of the if/else above, then this was a sabre response that
         // requires ANOTHER call to get the rate information but that is handled
-        // by the RoomAvail request, so we do nothing with the rates.
+        // by the RoomAvailability request, so we do nothing with the rates.
         return Collections.singletonList(null);
 
     }
@@ -134,7 +134,7 @@ public final class Rate {
      * This is a holder class for the various rate information to be held by a rate object. Instances of this class
      * will either be "chargeable" or "converted", as noted by the so named fields in {@link Rate}.
      */
-    public static class RateInfo {
+    public static class RateInformation {
         /**
          * The list of nightly rates for the current rate. Populated with Collections.unmodifiableList();
          */
@@ -155,7 +155,7 @@ public final class Rate {
          * @param rate The JSONObject representing this object.
          * an unexpected api change or a network failure resulting in invalid json.
          */
-        public RateInfo(final JSONObject rate) {
+        public RateInformation(final JSONObject rate) {
 
             final String nightlyRatesPerRoom = "NightlyRatesPerRoom";
             final String nightlyRate = "NightlyRate";

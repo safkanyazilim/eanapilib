@@ -20,19 +20,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class RoomAvailRequestIntTest {
+public class RoomAvailabilityRequestIntTest {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
 
     @Test
-    public void testGetGoodAvail() throws Exception {
+    public void testGetGoodAvailability() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
-            RoomAvailRequest roomAvailRequest = new RoomAvailRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
+            RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
                 dateTimes[0], dateTimes[1], "", "en_US", "USD");
-            List<HotelRoom> rooms = RequestProcessor.run(roomAvailRequest);
+            List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
             assertThat(rooms.size(), greaterThan(0));
         } catch (EanWsError ewe) {
             assertEquals("SOLD_OUT", ewe.category);
@@ -40,12 +40,12 @@ public class RoomAvailRequestIntTest {
     }
 
     @Test
-    public void testMultiRoomAvail() throws Exception {
+    public void testMultiRoomAvailability() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
-            RoomAvailRequest roomAvailRequest = new RoomAvailRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
+            RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
                 dateTimes[0], dateTimes[1], "", "en_US", "USD");
-            List<HotelRoom> rooms = RequestProcessor.run(roomAvailRequest);
+            List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
             assertThat(rooms.size(), greaterThan(0));
         } catch (EanWsError ewe) {
             assertEquals("SOLD_OUT", ewe.category);
@@ -53,30 +53,30 @@ public class RoomAvailRequestIntTest {
     }
 
     @Test(expected = DataValidationException.class)
-    public void testGetAvailWrongDates() throws Exception {
+    public void testGetAvailabilityWrongDates() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
-        RoomAvailRequest roomAvailRequest = new RoomAvailRequest(
+        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
             HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "", "en_US", "USD");
-        RequestProcessor.run(roomAvailRequest);
+        RequestProcessor.run(roomAvailabilityRequest);
     }
 
     @Test(expected = DataValidationException.class)
-    public void testGetAvailBadHotel() throws Exception {
+    public void testGetAvailabilityBadHotel() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
-        RoomAvailRequest roomAvailRequest = new RoomAvailRequest(
+        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
             -1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1], "", "en_US", "USD");
-        RequestProcessor.run(roomAvailRequest);
+        RequestProcessor.run(roomAvailabilityRequest);
     }
 
 
     @Test
-    public void testGetGoodAvailMultiRoom() throws Exception {
+    public void testGetGoodAvailabilityMultiRoom() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
         try {
-            RoomAvailRequest roomAvailRequest = new RoomAvailRequest(HOTEL_IN_SEATTLE, occupancies,
+            RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies,
                 dateTimes[0], dateTimes[1], "", "en_US", "USD");
-            List<HotelRoom> rooms = RequestProcessor.run(roomAvailRequest);
+            List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
             assertNotNull(rooms);
             assertThat(rooms.size(), greaterThan(0));
             assertEquals(2, rooms.get(0).rate.roomGroup.size());

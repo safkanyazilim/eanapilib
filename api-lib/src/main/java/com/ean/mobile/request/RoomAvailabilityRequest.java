@@ -26,7 +26,7 @@ import com.ean.mobile.exception.EanWsError;
 /**
  * The class to use to get specific availability of rooms for a particular hotel, occupancy, and occupancy dates.
  */
-public final class RoomAvailRequest extends Request<List<HotelRoom>> {
+public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
 
     /**
      * Gets the room availability for the specified information.
@@ -43,9 +43,9 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      * @param locale The locale to retrieve the availability with.
      * @param currencyCode The currency code to use in the request.
      */
-    public RoomAvailRequest(final long hotelId, final RoomOccupancy room,
-            final LocalDate arrivalDate, final LocalDate departureDate, final String customerSessionId,
-            final String locale, final String currencyCode) {
+    public RoomAvailabilityRequest(final long hotelId, final RoomOccupancy room,
+                                   final LocalDate arrivalDate, final LocalDate departureDate,
+                                   final String customerSessionId, final String locale, final String currencyCode) {
 
         this(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId,
             locale, currencyCode);
@@ -62,14 +62,14 @@ public final class RoomAvailRequest extends Request<List<HotelRoom>> {
      * @param departureDate The date of departure (from the hotel).
      * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
      *                          The same customerSessionId as returned to
-     *                          {@link com.ean.mobile.HotelInfoList#customerSessionId}.
+     *                          {@link com.ean.mobile.HotelList#customerSessionId}.
      * @param locale The locale to retrieve the availability with.
      * @param currencyCode The currency code to use in the request.
      */
 
-    public RoomAvailRequest(final long hotelId, final List<RoomOccupancy> rooms,
-            final LocalDate arrivalDate, final LocalDate departureDate, final String customerSessionId,
-            final String locale, final String currencyCode) {
+    public RoomAvailabilityRequest(final long hotelId, final List<RoomOccupancy> rooms,
+                                   final LocalDate arrivalDate, final LocalDate departureDate,
+                                   final String customerSessionId, final String locale, final String currencyCode) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("customerSessionId", customerSessionId),

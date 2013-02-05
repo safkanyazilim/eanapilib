@@ -11,13 +11,13 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class HotelInfoTest {
+public class HotelTest {
 
     @Test
     public void testToString() throws JSONException, MalformedURLException {
         JSONObject stubJsonObject = createJsonObject();
-        HotelInfo hotelInfo = new HotelInfo(stubJsonObject);
-        assertEquals("The Benjamin", hotelInfo.toString());
+        Hotel hotel = new Hotel(stubJsonObject);
+        assertEquals("The Benjamin", hotel.toString());
     }
 
     private JSONObject createJsonObject() throws JSONException {

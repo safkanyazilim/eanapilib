@@ -142,7 +142,7 @@ public final class Reservation {
     /**
      * The list of rate informations associated with this reservation.
      */
-    public final List<Rate> rateInfos;
+    public final List<Rate> rateInformations;
 
     /**
      * Constructs a reservation object from an appropriately structured JSONObject.
@@ -182,6 +182,6 @@ public final class Reservation {
         this.nonRefundable = object.optBoolean("nonRefundable");
         this.rateOccupancyPerRoom = object.optInt("rateOccupancyPerRoom");
         this.cancellationPolicy = new CancellationPolicy(object, this.arrivalDate);
-        this.rateInfos = Collections.unmodifiableList(Rate.parseFromRateInfos(object));
+        this.rateInformations = Collections.unmodifiableList(Rate.parseFromRateInformations(object));
     }
 }

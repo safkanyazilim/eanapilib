@@ -23,14 +23,14 @@ import android.util.Log;
 
 import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageTuple;
-import com.ean.mobile.HotelInfoExtended;
+import com.ean.mobile.HotelInformation;
 import com.ean.mobile.exception.EanWsError;
 
 /**
  * Uses getHotelInformation to get the rest of the hotel's information, including images
  * and the hotel's full description.
  */
-public final class InformationRequest extends Request<HotelInfoExtended> {
+public final class InformationRequest extends Request<HotelInformation> {
 
     /**
      * Gets the rest of the information about a hotel not included in previous calls.
@@ -56,7 +56,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
      * {@inheritDoc}
      */
     @Override
-    public HotelInfoExtended consume(final JSONObject jsonObject) throws JSONException, EanWsError {
+    public HotelInformation consume(final JSONObject jsonObject) throws JSONException, EanWsError {
         if (jsonObject == null) {
             return null;
         }
@@ -81,7 +81,7 @@ public final class InformationRequest extends Request<HotelInfoExtended> {
             }
         }
         Log.d(Constants.LOG_TAG, "Found " + imageTuples.size() + " images");
-        return new HotelInfoExtended(infoResp.optLong("@hotelId"), longDescription, imageTuples);
+        return new HotelInformation(infoResp.optLong("@hotelId"), longDescription, imageTuples);
     }
 
     /**

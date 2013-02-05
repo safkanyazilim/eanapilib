@@ -118,7 +118,7 @@ public final class ReservationRoom {
     public ReservationRoom(final JSONObject object) {
         this.bedTypeId = object.optString("bedTypeId");
         this.smokingPreference = object.optString("smokingPreference");
-        this.rate = Rate.parseFromRateInfos(object).get(0);
+        this.rate = Rate.parseFromRateInformations(object).get(0);
         this.checkInName = new Name(object);
         this.occupancy = new RoomOccupancy(object);
         this.roomTypeCode = object.optString("roomTypeCode");

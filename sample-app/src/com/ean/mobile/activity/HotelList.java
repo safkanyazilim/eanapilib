@@ -18,7 +18,7 @@ import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.widget.Toast;
-import com.ean.mobile.HotelInfo;
+import com.ean.mobile.Hotel;
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
@@ -29,7 +29,6 @@ import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Currency;
 
@@ -54,18 +53,18 @@ public class HotelList extends Activity {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
         ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
-        hotelListView.setAdapter(new HotelInfoAdapter(getApplicationContext(), R.layout.hotelinfolistlayout));
+        hotelListView.setAdapter(new HotelInfoAdapter(getApplicationContext(), R.layout.hotellistlayout));
         hotelListView.setOnScrollListener(new HotelScrollListener());
     }
 
     private class HotelListAdapterListener implements AdapterView.OnItemClickListener {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            SampleApp.selectedHotel = (HotelInfo) parent.getItemAtPosition(position);
-            startActivity(new Intent(HotelList.this, HotelFullInfo.class));
+            SampleApp.selectedHotel = (Hotel) parent.getItemAtPosition(position);
+            startActivity(new Intent(HotelList.this, HotelInformation.class));
         }
     }
 
-    private static class HotelInfoAdapter extends ArrayAdapter<HotelInfo> {
+    private static class HotelInfoAdapter extends ArrayAdapter<Hotel> {
 
         private final LayoutInflater layoutInflater;
 
@@ -86,53 +85,53 @@ public class HotelList extends Activity {
         public View getView (int position, View convertView, ViewGroup parent) {
             View view = convertView;
             if (view == null) {
-                view = layoutInflater.inflate(R.layout.hotelinfolistlayout, null);
+                view = layoutInflater.inflate(R.layout.hotellistlayout, null);
             }
 
             //Get the hotel.
-            final HotelInfo hotelInfo = this.getItem(position);
-            Log.d(SampleConstants.DEBUG, "name " + hotelInfo.name);
+            final Hotel hotel = this.getItem(position);
+            Log.d(SampleConstants.DEBUG, "name " + hotel.name);
 
             //Set the name field
-            final TextView name = (TextView) view.findViewById(R.id.hotelInfoName);
-            name.setText(hotelInfo.name);
+            final TextView name = (TextView) view.findViewById(R.id.hotelName);
+            name.setText(hotel.name);
 
             //Set the short location description
-            final TextView locDesc = (TextView) view.findViewById(R.id.hotelInfoLocationDesc);
-            locDesc.setText(hotelInfo.locDescription);
+            final TextView locDesc = (TextView) view.findViewById(R.id.hotelLocationDesc);
+            locDesc.setText(hotel.locDescription);
 
             //Populate the star rating
-            StarRating.populate((LinearLayout) view.findViewById(R.id.hotelInfoStars), hotelInfo.starRating);
+            StarRating.populate((LinearLayout) view.findViewById(R.id.hotelStars), hotel.starRating);
 
             //Get and show the pricing information.
-            fixUpPricesAndDrr(view, hotelInfo);
+            fixUpPricesAndDrr(view, hotel);
 
             //Get and show the thumbnail image
-            final ImageView thumb = (ImageView) view.findViewById(R.id.hotelInfoThumb);
+            final ImageView thumb = (ImageView) view.findViewById(R.id.hotelThumb);
             // reset the thumb to eliminate possible flickering
             thumb.setImageResource(R.drawable.noimg_large);
 
-            ImageFetcher.loadThumbnailIntoImageView(thumb, hotelInfo.mainHotelImageTuple);
+            ImageFetcher.loadThumbnailIntoImageView(thumb, hotel.mainHotelImageTuple);
 
             //TODO: INCLUDE THE DRRPROMO WHEN APPROPRIATE
 
             return view;
         }
 
-        private static void fixUpPricesAndDrr(View view, HotelInfo hotelInfo) {
+        private static void fixUpPricesAndDrr(View view, Hotel hotel) {
             final TextView highPrice = (TextView) view.findViewById(R.id.highPrice);
             final TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
             final ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-            currencyFormat.setCurrency(Currency.getInstance(hotelInfo.currencyCode));
-            lowPrice.setText(currencyFormat.format(hotelInfo.lowPrice));
-            if(hotelInfo.lowPrice.equals(hotelInfo.highPrice)){
+            currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
+            lowPrice.setText(currencyFormat.format(hotel.lowPrice));
+            if(hotel.lowPrice.equals(hotel.highPrice)){
                 highPrice.setVisibility(TextView.GONE);
                 drrIcon.setVisibility(ImageView.GONE);
             } else {
                 highPrice.setVisibility(TextView.VISIBLE);
                 drrIcon.setVisibility(ImageView.VISIBLE);
-                highPrice.setText(currencyFormat.format(hotelInfo.highPrice));
+                highPrice.setText(currencyFormat.format(hotel.highPrice));
                 highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
             }
         }

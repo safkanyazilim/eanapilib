@@ -16,24 +16,24 @@
                           android:layout_height="wrap_content">
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:id="@+id/hotelFullInfoName"
+                          android:id="@+id/hotelInformationName"
                           android:textSize="20dip"
                           android:textColor="@color/text"/>
                 <TextView android:layout_width="wrap_content"
                           android:layout_height="wrap_content"
-                          android:id="@+id/hotelFullInfoAddress"
+                          android:id="@+id/hotelInformationAddress"
                           android:textSize="13dip"
                           android:gravity="left"
                           android:text="@string/loading_address"
                           android:textColor="@color/text"/>
-                <include android:id="@+id/hotelFullInfoStars" layout="@layout/starrating" />
+                <include android:id="@+id/hotelInformationStars" layout="@layout/starrating" />
             </LinearLayout>
         </LinearLayout>
-        <LinearLayout android:id="@+id/hotelFullInfoThumbsAndMap"
+        <LinearLayout android:id="@+id/hotelInformationThumbsAndMap"
                       android:layout_height="120dip"
                       android:layout_width="fill_parent">
             <ImageView android:layout_weight="5"
-                       android:id="@+id/hotelFullInfoThumb"
+                       android:id="@+id/hotelInformationThumb"
                        android:layout_height="fill_parent"
                        android:layout_width="0dip"
                        android:layout_marginRight="4dip"
@@ -46,21 +46,21 @@
                 <LinearLayout android:layout_height="0dip"
                               android:layout_width="fill_parent"
                               android:layout_weight="1">
-                    <ImageView android:id="@+id/hotelFullInfoSmallThumb00"
+                    <ImageView android:id="@+id/hotelInformationSmallThumb00"
                                android:layout_height="fill_parent"
                                android:layout_width="0dip"
                                android:layout_weight="5"
                                android:layout_marginBottom="2dip"
                                android:layout_marginRight="2dip"
                                android:src="@drawable/noimg_small" />
-                    <ImageView android:id="@+id/hotelFullInfoSmallThumb01"
+                    <ImageView android:id="@+id/hotelInformationSmallThumb01"
                                android:layout_height="fill_parent"
                                android:layout_width="0dip"
                                android:layout_weight="5"
                                android:layout_marginBottom="2dip"
                                android:layout_marginRight="2dip"
                                android:src="@drawable/noimg_small" />
-                    <ImageView android:id="@+id/hotelFullInfoSmallThumb02"
+                    <ImageView android:id="@+id/hotelInformationSmallThumb02"
                                android:layout_height="fill_parent"
                                android:layout_width="0dip"
                                android:layout_weight="5"
@@ -71,19 +71,19 @@
                 <LinearLayout android:layout_height="0dip"
                               android:layout_width="fill_parent"
                               android:layout_weight="1">
-                    <ImageView android:id="@+id/hotelFullInfoSmallThumb10"
+                    <ImageView android:id="@+id/hotelInformationSmallThumb10"
                                android:layout_height="fill_parent"
                                android:layout_width="0dip"
                                android:layout_weight="5"
                                android:layout_marginRight="2dip"
                                android:src="@drawable/noimg_small" />
-                    <ImageView android:id="@+id/hotelFullInfoSmallThumb11"
+                    <ImageView android:id="@+id/hotelInformationSmallThumb11"
                                android:layout_height="fill_parent"
                                android:layout_width="0dip"
                                android:layout_weight="5"
                                android:layout_marginRight="2dip"
                                android:src="@drawable/noimg_small" />
-                    <ImageView android:id="@+id/hotelFullInfoSmallThumb12"
+                    <ImageView android:id="@+id/hotelInformationSmallThumb12"
                                android:layout_height="fill_parent"
                                android:layout_width="0dip"
                                android:layout_weight="5"
@@ -92,7 +92,7 @@
                 </LinearLayout>
             </LinearLayout>
             <ImageView android:layout_weight="5"
-                       android:id="@+id/hotelFullInfoMaplink"
+                       android:id="@+id/hotelInformationMaplink"
                        android:layout_height="fill_parent"
                        android:layout_width="0dip"
                        android:layout_marginRight="4dip"
@@ -122,7 +122,7 @@
                       android:orientation="vertical"/>
         <WebView android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:id="@+id/hotelFullInfoDescription"
+                  android:id="@+id/hotelInformationDescription"
                   android:isScrollContainer="false"/>
 
     </LinearLayout>

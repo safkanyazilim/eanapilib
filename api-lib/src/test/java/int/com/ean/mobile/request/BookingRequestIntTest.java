@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import com.ean.mobile.Address;
 import com.ean.mobile.BasicAddress;
-import com.ean.mobile.HotelInfoList;
+import com.ean.mobile.HotelList;
 import com.ean.mobile.HotelRoom;
 import com.ean.mobile.Name;
 import com.ean.mobile.Reservation;
@@ -35,13 +35,14 @@ public class BookingRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
         ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY,
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
-        HotelInfoList hotelList = RequestProcessor.run(hotelListRequest);
+        HotelList hotelList = RequestProcessor.run(hotelListRequest);
 
-        RoomAvailRequest roomAvailRequest = new RoomAvailRequest(hotelList.hotelInfos.get(0).hotelId, OCCUPANCY,
-            dateTimes[0], dateTimes[1], hotelList.customerSessionId, "en_US", "USD");
+        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
+            hotelList.hotels.get(0).hotelId, OCCUPANCY, dateTimes[0], dateTimes[1],
+            hotelList.customerSessionId, "en_US", "USD");
 
-        List<HotelRoom> rooms = RequestProcessor.run(roomAvailRequest);
-        BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo(
+        List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
+        BookingRequest.ReservationInformation resInfo = new BookingRequest.ReservationInformation(
             "test@expedia.com", "test", "tester", "1234567890",
             null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
 
@@ -49,8 +50,8 @@ public class BookingRequestIntTest {
             resInfo.individual.name, rooms.get(0), rooms.get(0).bedTypes.get(0).id, OCCUPANCY);
 
         BookingRequest bookingRequest = new BookingRequest(
-            hotelList.hotelInfos.get(0).hotelId, dateTimes[0], dateTimes[1],
-            hotelList.hotelInfos.get(0).supplierType, room, resInfo, ADDRESS,
+            hotelList.hotels.get(0).hotelId, dateTimes[0], dateTimes[1],
+            hotelList.hotels.get(0).supplierType, room, resInfo, ADDRESS,
             hotelList.customerSessionId, "en_US", "USD");
 
         Reservation reservation = RequestProcessor.run(bookingRequest);
@@ -65,15 +66,16 @@ public class BookingRequestIntTest {
 
         ListRequest listRequest = new ListRequest("Seattle, WA", occupancies,
             dateTimes[0], dateTimes[1], null, "en_US", "USD");
-        HotelInfoList hotelList = RequestProcessor.run(listRequest);
+        HotelList hotelList = RequestProcessor.run(listRequest);
 
-        RoomAvailRequest roomAvailRequest = new RoomAvailRequest(hotelList.hotelInfos.get(0).hotelId,
-            occupancies, dateTimes[0], dateTimes[1], hotelList.customerSessionId, "en_US", "USD");
-        List<HotelRoom> rooms = RequestProcessor.run(roomAvailRequest);
+        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
+            hotelList.hotels.get(0).hotelId, occupancies, dateTimes[0], dateTimes[1],
+            hotelList.customerSessionId, "en_US", "USD");
+        List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
 
         List<Name> checkInNames = Arrays.asList(new Name("test", "tester"), new Name("test", "testerson"));
 
-        BookingRequest.ReservationInfo resInfo = new BookingRequest.ReservationInfo("test@expedia.com",
+        BookingRequest.ReservationInformation resInfo = new BookingRequest.ReservationInformation("test@expedia.com",
             checkInNames.get(0).first, checkInNames.get(0).last, "1234567890",
             null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
 
@@ -84,8 +86,8 @@ public class BookingRequestIntTest {
                 checkInNames.get(1), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(1)));
 
         BookingRequest bookingRequest = new BookingRequest(
-            hotelList.hotelInfos.get(0).hotelId, dateTimes[0], dateTimes[1],
-            hotelList.hotelInfos.get(0).supplierType, bookingRooms, resInfo, ADDRESS,
+            hotelList.hotels.get(0).hotelId, dateTimes[0], dateTimes[1],
+            hotelList.hotels.get(0).supplierType, bookingRooms, resInfo, ADDRESS,
             hotelList.customerSessionId, "en_US", "USD");
         Reservation reservation = RequestProcessor.run(bookingRequest);
 
