@@ -31,7 +31,7 @@ public final class Hotel {
     /**
      * The location description of this hotel.
      */
-    public final String locDescription;
+    public final String locationDescription;
 
     /**
      * The star rating of this hotel.
@@ -84,7 +84,7 @@ public final class Hotel {
         this.hotelId = hotelSummary.optLong("hotelId");
         this.address = new LatLongAddress(hotelSummary);
         this.shortDescription =  Html.fromHtml(hotelSummary.optString("shortDescription")).toString();
-        this.locDescription = Html.fromHtml(hotelSummary.optString("locationDescription")).toString();
+        this.locationDescription = Html.fromHtml(hotelSummary.optString("locationDescription")).toString();
         this.starRating = parseStarRating(hotelSummary.optString("hotelRating"));
         final String thumbnailString = hotelSummary.optString("thumbNailUrl").replace("_t.jpg", "_n.jpg");
         this.mainHotelImageTuple = new HotelImageTuple(thumbnailString, null, null);

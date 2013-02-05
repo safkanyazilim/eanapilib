@@ -98,7 +98,7 @@ public class HotelList extends Activity {
 
             //Set the short location description
             final TextView locDesc = (TextView) view.findViewById(R.id.hotelLocationDesc);
-            locDesc.setText(hotel.locDescription);
+            locDesc.setText(hotel.locationDescription);
 
             //Populate the star rating
             StarRating.populate((LinearLayout) view.findViewById(R.id.hotelStars), hotel.starRating);
