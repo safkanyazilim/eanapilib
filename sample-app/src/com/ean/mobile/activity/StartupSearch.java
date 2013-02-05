@@ -31,7 +31,7 @@ import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
-import com.ean.mobile.request.ListRequest;
+import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
 import org.joda.time.LocalDate;

@@ -2,12 +2,9 @@ package com.ean.mobile;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Build;
-import android.text.StaticLayout;
 import android.widget.Toast;
 import org.joda.time.LocalDate;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -15,6 +12,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import com.ean.mobile.hotel.Hotel;
+import com.ean.mobile.hotel.HotelImageTuple;
+import com.ean.mobile.hotel.HotelInformation;
+import com.ean.mobile.hotel.HotelList;
+import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.RoomOccupancy;
 
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.

@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.ArrayAdapter;
 import android.util.Log;
 import android.widget.Toast;
-import com.ean.mobile.Hotel;
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
@@ -26,7 +25,8 @@ import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
-import com.ean.mobile.request.ListRequest;
+import com.ean.mobile.hotel.Hotel;
+import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 
 import java.text.NumberFormat;

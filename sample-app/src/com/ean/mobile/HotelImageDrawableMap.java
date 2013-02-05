@@ -2,6 +2,8 @@ package com.ean.mobile;
 
 import java.util.HashMap;
 
+import com.ean.mobile.hotel.HotelImageTuple;
+
 public class HotelImageDrawableMap extends HashMap<HotelImageTuple, HotelImageDrawable> {
     @Override
     public HotelImageDrawable get(Object key) {

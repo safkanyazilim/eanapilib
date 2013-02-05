@@ -16,18 +16,18 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import com.ean.mobile.HotelImageDrawable;
-import com.ean.mobile.Hotel;
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
-import com.ean.mobile.HotelRoom;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.StarRating;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
-import com.ean.mobile.request.InformationRequest;
+import com.ean.mobile.hotel.Hotel;
+import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.request.InformationRequest;
+import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
 import com.ean.mobile.request.RequestProcessor;
-import com.ean.mobile.request.RoomAvailabilityRequest;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 import org.joda.time.LocalDate;
 
@@ -84,7 +84,7 @@ public class HotelInformation extends Activity {
         };
 
         address.setText(SampleApp.selectedHotel.address.toString());
-        com.ean.mobile.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
+        com.ean.mobile.hotel.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(hotelInformation.longDescription, "text/html", null);
         for(int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++){
             HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));
@@ -140,7 +140,8 @@ public class HotelInformation extends Activity {
         }
     }
 
-    private class ExtendedInformationLoaderTask extends AsyncTask<Void, Integer, com.ean.mobile.HotelInformation> {
+    private class ExtendedInformationLoaderTask
+            extends AsyncTask<Void, Integer, com.ean.mobile.hotel.HotelInformation> {
 
         private final long hotelId;
 
@@ -149,7 +150,7 @@ public class HotelInformation extends Activity {
         }
 
         @Override
-        protected com.ean.mobile.HotelInformation doInBackground(Void... voids) {
+        protected com.ean.mobile.hotel.HotelInformation doInBackground(Void... voids) {
             try {
                 InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
                         SampleApp.locale.toString());
@@ -163,7 +164,7 @@ public class HotelInformation extends Activity {
         }
 
         @Override
-        protected void onPostExecute(com.ean.mobile.HotelInformation hotelInformation) {
+        protected void onPostExecute(com.ean.mobile.hotel.HotelInformation hotelInformation) {
             SampleApp.EXTENDED_INFOS.put(hotelId, hotelInformation);
             setExtendedInfoFields();
         }
