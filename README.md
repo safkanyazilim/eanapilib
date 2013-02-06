@@ -10,7 +10,7 @@ It is possible to build the library and the app in a single step using the build
 
 ###Requirements
 
-- [Java JDK (1.7+)] [java]
+- [Java JDK (1.6+)] [java]
 - [Apache Ant (1.7+)] [apache-ant]
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
@@ -29,7 +29,7 @@ It is possible to build the library and the app in a single step using the build
 
 ###Requirements
 
-- [Java JDK (1.7+)] [java]
+- [Java JDK (1.6+)] [java]
 - [Apache Ant (1.7+)] [apache-ant]
 
 ###Steps
@@ -61,7 +61,7 @@ To build without publishing, just run the default ant target `ant`.
 
 ###Requirements
 
-- [Java JDK (1.7+)] [java]
+- [Java JDK (1.6+)] [java]
 - [Apache Ant (1.7+)] [apache-ant]
 - [Android SDK] [android-sdk] needs to be installed and both the tools and platform-tools directories are assumed to be on the path. Additionally you'll need to have at least Android version 14 setup (4.0 Ice Cream Sandwich).
 
