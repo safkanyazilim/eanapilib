@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,7 +64,7 @@ public class ItineraryRequestTest {
         assertNotNull(itinerary);
         assertEquals(107730857L, itinerary.id);
         assertEquals(55505L, itinerary.affiliateId);
-        Assert.assertEquals(DateModifier.getDateFromString("01/28/2013"), itinerary.creationDate);
+        assertEquals(DateModifier.getDateFromString("01/28/2013"), itinerary.creationDate);
         assertEquals(DateModifier.getDateFromString("02/07/2013"), itinerary.itineraryStartDate);
         assertEquals(DateModifier.getDateFromString("02/10/2013"), itinerary.itineraryEndDate);
 

@@ -53,7 +53,7 @@ public class HotelList extends Activity {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
         ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
-        hotelListView.setAdapter(new HotelInfoAdapter(getApplicationContext(), R.layout.hotellistlayout));
+        hotelListView.setAdapter(new HotelAdapter(getApplicationContext(), R.layout.hotellistlayout));
         hotelListView.setOnScrollListener(new HotelScrollListener());
     }
 
@@ -64,7 +64,7 @@ public class HotelList extends Activity {
         }
     }
 
-    private static class HotelInfoAdapter extends ArrayAdapter<Hotel> {
+    private static class HotelAdapter extends ArrayAdapter<Hotel> {
 
         private final LayoutInflater layoutInflater;
 
@@ -74,7 +74,7 @@ public class HotelList extends Activity {
          * @param context The context passed in by the calling class.
          * @param resource The resourceId of the resource this is being applied to.
          */
-        private HotelInfoAdapter(Context context, int resource) {
+        private HotelAdapter(Context context, int resource) {
             super(context, resource, SampleApp.foundHotels);
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
