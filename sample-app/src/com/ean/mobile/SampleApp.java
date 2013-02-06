@@ -2,6 +2,9 @@ package com.ean.mobile;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
 import android.os.Build;
 import android.text.StaticLayout;
 import android.widget.Toast;
@@ -96,13 +99,36 @@ public final class SampleApp extends Application {
         } else if (clearOnUpdate) {
             SampleApp.foundHotels.clear();
         }
-        SampleApp.foundHotels.addAll(hotelInfoList.hotelInfos);
-        SampleApp.customerSessionId = hotelInfoList.customerSessionId;
-        SampleApp.cacheKey = hotelInfoList.cacheKey;
-        SampleApp.cacheLocation = hotelInfoList.cacheLocation;
+        if (hotelInfoList != null) {
+            SampleApp.foundHotels.addAll(hotelInfoList.hotelInfos);
+            SampleApp.customerSessionId = hotelInfoList.customerSessionId;
+            SampleApp.cacheKey = hotelInfoList.cacheKey;
+            SampleApp.cacheLocation = hotelInfoList.cacheLocation;
+        }
     }
 
-    public static void addReservationToCache(final Reservation reservation) {
+    public static void addReservationToCache(final Context context, final Reservation reservation) {
         RESERVATIONS.add(reservation);
+//        SQLiteDatabase reservationDatabase = new ReservationOpenHelper(context).getWritableDatabase();
+//
+//        reservationDatabase.beginTransaction();
+//
+//        SQLiteStatement insertReservationStatement = reservationDatabase.compileStatement(context.getString(R.string.add_reservation_sql));
+//        insertReservationStatement.bindLong(1, reservation.itineraryId);
+//        insertReservationStatement.executeInsert();
+//
+//        SQLiteStatement insertConfirmationStatement = reservationDatabase.compileStatement(context.getString(R.string.add_confirmation_sql));
+//        for (Long confirmationNumber : reservation.confirmationNumbers) {
+//            insertConfirmationStatement.bindLong(1, reservation.itineraryId);
+//            insertConfirmationStatement.bindLong(2, confirmationNumber);
+//            insertConfirmationStatement.executeInsert();
+//            insertConfirmationStatement.clearBindings();
+//        }
+//
+//        reservationDatabase.endTransaction();
+    }
+
+    public static Reservation getLatestReservation() {
+        return RESERVATIONS.size() == 0 ? null : RESERVATIONS.iterator().next();
     }
 }

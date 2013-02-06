@@ -24,6 +24,7 @@
         <activity android:name=".activity.HotelList"/>
         <activity android:name=".activity.HotelFullInfo"/>
         <activity android:name=".activity.BookingSummary"/>
+        <activity android:name=".activity.ReservationDisplay"/>
     </application>
     <supports-screens android:smallScreens="true"
                       android:normalScreens="true"
