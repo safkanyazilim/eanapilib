@@ -55,8 +55,7 @@ public class SampleApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        BaseRequest.initialize(
-            "55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), Currency.getInstance(Locale.US).toString());
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
     }
 
     public static RoomOccupancy occupancy() {

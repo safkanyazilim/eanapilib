@@ -3,6 +3,7 @@
  */
 package com.ean.mobile.hotel.request;
 
+import java.util.Currency;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -26,7 +27,7 @@ public class ItineraryRequestIntTest {
 
     @Before
     public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
     }
 
     @Test(expected = EanWsError.class)
@@ -51,13 +52,13 @@ public class ItineraryRequestIntTest {
 
     @Test
     public void testItineraryLookupValidUs() throws Exception {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
         doItineraryLookupValid();
     }
 
     @Test
     public void testItineraryLookupValidItaly() throws Exception {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.ITALY.toString(), "EUR");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.ITALY, Currency.getInstance(Locale.ITALY));
         doItineraryLookupValid();
     }
 

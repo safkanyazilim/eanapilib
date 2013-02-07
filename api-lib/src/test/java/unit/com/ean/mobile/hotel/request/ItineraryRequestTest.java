@@ -5,6 +5,7 @@ package com.ean.mobile.hotel.request;
 
 import java.math.BigDecimal;
 import java.net.URI;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,7 +38,7 @@ public class ItineraryRequestTest {
 
     @Before
     public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
         itineraryRequest = new ItineraryRequest(1234L, "test@expedia.com");
     }
 

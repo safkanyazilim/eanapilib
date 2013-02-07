@@ -3,6 +3,7 @@
  */
 package com.ean.mobile.hotel.request;
 
+import java.util.Currency;
 import java.util.Locale;
 
 import org.junit.Before;
@@ -26,7 +27,7 @@ public class CancellationRequestIntTest {
 
     @Before
     public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
     }
 
     @Test(expected = EanWsError.class)

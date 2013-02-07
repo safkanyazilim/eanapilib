@@ -5,6 +5,7 @@
 package com.ean.mobile.hotel.request;
 
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.List;
 import java.util.Locale;
 
@@ -37,34 +38,12 @@ public class BookingRequestIntTest {
 
     @Before
     public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
     }
 
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
-        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
-        ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY,
-            dateTimes[0], dateTimes[1], null);
-        HotelList hotelList = RequestProcessor.run(hotelListRequest);
-
-        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
-            hotelList.hotels.get(0).hotelId, OCCUPANCY, dateTimes[0], dateTimes[1],
-            hotelList.customerSessionId);
-
-        List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
-        BookingRequest.ReservationInformation resInfo = new BookingRequest.ReservationInformation(
-            "test@expedia.com", "test", "tester", "1234567890",
-            null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
-
-        ReservationRoom room = new ReservationRoom(
-            resInfo.individual.name, rooms.get(0), rooms.get(0).bedTypes.get(0).id, OCCUPANCY);
-
-        BookingRequest bookingRequest = new BookingRequest(
-            hotelList.hotels.get(0).hotelId, dateTimes[0], dateTimes[1],
-            hotelList.hotels.get(0).supplierType, room, resInfo, ADDRESS,
-            hotelList.customerSessionId);
-
-        Reservation reservation = RequestProcessor.run(bookingRequest);
+        Reservation reservation = getTestReservation();
         // TODO: some assertions here on hotel/date/occupancy, etc.
         assertEquals((Long) 1234L, reservation.confirmationNumbers.get(0));
     }
@@ -106,7 +85,14 @@ public class BookingRequestIntTest {
         assertThat(reservation.confirmationNumbers, hasItems(1234L, 1234L));
     }
 
-    public static Reservation getTestReservation() throws Exception {
+    /**
+     * Helper method that performs a test booking and returns the results. Can be used by any integration test class
+     * in this package.
+     *
+     * @return a Reservation object containing details of the booking.
+     * @throws Exception if any error occurs.
+     */
+    protected static Reservation getTestReservation() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
         ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1], null);
         HotelList hotelList = RequestProcessor.run(hotelListRequest);

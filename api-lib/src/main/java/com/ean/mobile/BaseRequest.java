@@ -3,6 +3,9 @@
  */
 package com.ean.mobile;
 
+import java.util.Currency;
+import java.util.Locale;
+
 /**
  * Contains basic elements that (1) are common to all requests and (2) remain the same across multiple requests.
  */
@@ -21,13 +24,13 @@ public final class BaseRequest {
      * @param cid the CID to set.
      * @param apiKey the API key to set.
      * @param locale the locale to set.
-     * @param currencyCode the currency code to set.
+     * @param currency contains the currency code to set.
      */
-    private BaseRequest(final String cid, final String apiKey, final String locale, final String currencyCode) {
+    private BaseRequest(final String cid, final String apiKey, final Locale locale, final Currency currency) {
         this.cid = cid;
         this.apiKey = apiKey;
-        this.locale = locale;
-        this.currencyCode = currencyCode;
+        this.locale = locale == null ? null : locale.toString();
+        this.currencyCode = currency == null ? null : currency.getCurrencyCode();
     }
 
     /**
@@ -37,11 +40,11 @@ public final class BaseRequest {
      * @param cid the CID to use.
      * @param apiKey the API key to use.
      * @param locale the locale to use.
-     * @param currencyCode the currency code to use.
+     * @param currency the currency to use.
      */
     public static void initialize(
-            final String cid, final String apiKey, final String locale, final String currencyCode) {
-        instance = new BaseRequest(cid, apiKey, locale, currencyCode);
+            final String cid, final String apiKey, final Locale locale, final Currency currency) {
+        instance = new BaseRequest(cid, apiKey, locale, currency);
     }
 
     /**

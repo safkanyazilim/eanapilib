@@ -4,6 +4,7 @@
 package com.ean.mobile.hotel.request;
 
 import java.net.URI;
+import java.util.Currency;
 import java.util.Locale;
 
 import org.json.JSONException;
@@ -28,7 +29,7 @@ public class CancellationRequestTest {
 
     @Before
     public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
         cancellationRequest = new CancellationRequest(1234L, 5678L, "test@expedia.com", "test");
     }
 
