@@ -108,7 +108,7 @@ public abstract class Address {
     public List<NameValuePair> asBookingRequestPairs() {
         final List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
         final Iterator<String> lineIterator = lines.iterator();
-        for (int i = 0; lineIterator.hasNext(); i++) {
+        for (int i = 1; lineIterator.hasNext(); i++) {
             addressPairs.add(new BasicNameValuePair("address" + i, lineIterator.next()));
         }
         addressPairs.add(new BasicNameValuePair("city", city));
