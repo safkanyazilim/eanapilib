@@ -37,9 +37,8 @@ public final class InformationRequest extends Request<HotelInformation> {
      * Gets the rest of the information about a hotel not included in previous calls.
      * @param hotelId The hotelId for which to gather more information.
      * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
-     * @param locale The locale for which to get the information about a hotel.
      */
-    public InformationRequest(final long hotelId, final String customerSessionId, final String locale) {
+    public InformationRequest(final long hotelId, final String customerSessionId) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -48,7 +47,7 @@ public final class InformationRequest extends Request<HotelInformation> {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, null));
+        urlParameters.addAll(getBasicUrlParameters());
         urlParameters.addAll(requestParameters);
         setUrlParameters(urlParameters);
     }

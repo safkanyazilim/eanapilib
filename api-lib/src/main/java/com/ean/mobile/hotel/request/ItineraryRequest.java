@@ -28,31 +28,17 @@ public class ItineraryRequest extends Request<Itinerary> {
      *
      * @param itineraryId the ID of the itinerary to retrieve.
      * @param emailAddress the e-mail address associated with the itinerary.
-     * @param locale the locale to specify in the API call.
-     * @param currencyCode the currency code to specify in the API call.
      */
-    public ItineraryRequest(
-            final long itineraryId, final String emailAddress, final String locale, final String currencyCode) {
+    public ItineraryRequest(final long itineraryId, final String emailAddress) {
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("itineraryId", String.valueOf(itineraryId)),
             new BasicNameValuePair("email", emailAddress)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters());
         urlParameters.addAll(requestParameters);
         setUrlParameters(urlParameters);
-    }
-
-    /**
-     * Uses the EAN API to search for hotels in the given destination using http requests.
-     * Uses default locale (en_US) and currency code (USD).
-     *
-     * @param itineraryId the ID of the itinerary to retrieve.
-     * @param emailAddress the e-mail address associated with the itinerary.
-     */
-    public ItineraryRequest(final long itineraryId, final String emailAddress) {
-        this(itineraryId, emailAddress, null, null);
     }
 
     /**

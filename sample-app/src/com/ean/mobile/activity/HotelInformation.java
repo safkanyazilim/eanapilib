@@ -122,7 +122,7 @@ public class HotelInformation extends Activity {
             try {
                 RoomAvailabilityRequest request
                     = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
-                        customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
+                        customerSessionId);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
@@ -152,8 +152,7 @@ public class HotelInformation extends Activity {
         @Override
         protected com.ean.mobile.hotel.HotelInformation doInBackground(Void... voids) {
             try {
-                InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
-                        SampleApp.locale.toString());
+                InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);

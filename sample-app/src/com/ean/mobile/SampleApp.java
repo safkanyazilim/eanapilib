@@ -25,12 +25,6 @@ import com.ean.mobile.hotel.RoomOccupancy;
  */
 public class SampleApp extends Application {
 
-    private static final Locale DEFAULT_LOCALE = Locale.US;
-    public static Locale locale = DEFAULT_LOCALE;
-
-    private static final Currency DEFAULT_CURRENCY = Currency.getInstance(DEFAULT_LOCALE);
-    public static Currency currency = DEFAULT_CURRENCY;
-
     public static String searchQuery;
     public static int numberOfAdults;
     public static int numberOfChildren;
@@ -57,6 +51,13 @@ public class SampleApp extends Application {
 
     public static final Map<HotelImageTuple, HotelImageDrawable> IMAGE_DRAWABLES
             = Collections.synchronizedMap(new HotelImageDrawableMap());
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        BaseRequest.initialize(
+            "55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), Currency.getInstance(Locale.US).toString());
+    }
 
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);

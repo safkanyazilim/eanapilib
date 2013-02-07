@@ -43,15 +43,13 @@ public final class BookingRequest extends Request<Reservation> {
      * @param reservationInformation The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInformation.
      * @param customerSessionId The sessionID associated with this search session.
-     * @param locale The locale in which to book the hotel.
-     * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
               final String supplierType, final ReservationRoom room,
               final ReservationInformation reservationInformation, final Address address,
-              final String customerSessionId, final String locale, final String currencyCode) {
+              final String customerSessionId) {
         this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
-                reservationInformation, address, customerSessionId, locale, currencyCode);
+                reservationInformation, address, customerSessionId);
     }
 
     /**
@@ -65,16 +63,14 @@ public final class BookingRequest extends Request<Reservation> {
      * @param address The address associated with the reservationInformation.
      * @param customerSessionId Customer session id, passed to track user as they move through
      *  the booking flow.
-     * @param locale The locale in which to book the hotel.
-     * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
             final String supplierType, final List<ReservationRoom> roomGroup,
             final ReservationInformation reservationInformation, final Address address,
-            final String customerSessionId, final String locale, final String currencyCode) {
+            final String customerSessionId) {
 
         this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInformation, address,
-                customerSessionId, null, locale, currencyCode);
+                customerSessionId, null);
     }
 
     /**
@@ -88,13 +84,11 @@ public final class BookingRequest extends Request<Reservation> {
      * @param address The address associated with the reservationInformation.
      * @param customerSessionId The session ID carried over from the original search.
      * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
-     * @param locale The locale in which to book the hotel.
-     * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
             final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
             final ReservationInformation reservationInformation, final Address address, final String customerSessionId,
-            final List<NameValuePair> extraBookingData, final String locale, final String currencyCode) {
+            final List<NameValuePair> extraBookingData) {
 
         final List<NameValuePair> rateInformationParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
@@ -103,7 +97,7 @@ public final class BookingRequest extends Request<Reservation> {
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
+        urlParameters.addAll(getBasicUrlParameters(arrivalDate, departureDate));
         urlParameters.addAll(rateInformationParameters);
         urlParameters.addAll(ReservationRoom.asNameValuePairs(roomGroup));
         urlParameters.addAll(reservationInformation.asNameValuePairs());

@@ -6,6 +6,7 @@ package com.ean.mobile.hotel.request;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
@@ -15,6 +16,7 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ean.mobile.BaseRequest;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
@@ -37,8 +39,9 @@ public class RoomAvailabilityRequestTest {
 
     @Before
     public void setUp() {
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
         roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
-            DATES[0], DATES[1], "", "en_US", "USD");
+            DATES[0], DATES[1], "");
     }
 
     @Test
@@ -105,8 +108,7 @@ public class RoomAvailabilityRequestTest {
     @Test
     public void testGetUriMultipleRooms() throws Exception {
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(2, 1));
-        roomAvailabilityRequest
-            = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1], "", "en_US", "USD");
+        roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1], "");
 
         doUriAssertions(roomAvailabilityRequest.getUri(), "&room2=2,0");
     }

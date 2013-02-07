@@ -3,24 +3,16 @@
  */
 package com.ean.mobile.hotel.request;
 
-import java.util.List;
 import java.util.Locale;
 
-import org.joda.time.LocalDate;
-import org.joda.time.YearMonth;
+import org.junit.Before;
 import org.junit.Test;
 
-import com.ean.mobile.Address;
-import com.ean.mobile.BasicAddress;
+import com.ean.mobile.BaseRequest;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.ConfirmationStatus;
-import com.ean.mobile.hotel.HotelList;
-import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.Itinerary;
 import com.ean.mobile.hotel.Reservation;
-import com.ean.mobile.hotel.ReservationRoom;
-import com.ean.mobile.hotel.RoomOccupancy;
-import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
 
 import static org.hamcrest.Matchers.greaterThan;
@@ -30,9 +22,12 @@ import static org.junit.Assert.assertThat;
 
 public class ItineraryRequestIntTest {
 
-    private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
-    private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
     private static final String EMAIL = "test@expedia.com";
+
+    @Before
+    public void setUp() {
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+    }
 
     @Test(expected = EanWsError.class)
     public void testItineraryLookupInvalidItineraryIdAndEmail() throws Exception {
@@ -48,7 +43,7 @@ public class ItineraryRequestIntTest {
 
     @Test(expected = EanWsError.class)
     public void testItineraryLookupInvalidEmail() throws Exception {
-        Reservation testReservation = getTestReservation(Locale.US.toString(), "USD");
+        Reservation testReservation = BookingRequestIntTest.getTestReservation();
         ItineraryRequest itineraryRequest
             = new ItineraryRequest(testReservation.itineraryId, "invalid@expedia.com");
         RequestProcessor.run(itineraryRequest);
@@ -56,18 +51,20 @@ public class ItineraryRequestIntTest {
 
     @Test
     public void testItineraryLookupValidUs() throws Exception {
-        doItineraryLookupValid(Locale.US.toString(), "USD");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
+        doItineraryLookupValid();
     }
 
     @Test
     public void testItineraryLookupValidItaly() throws Exception {
-        doItineraryLookupValid(Locale.ITALY.toString(), "EUR");
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.ITALY.toString(), "EUR");
+        doItineraryLookupValid();
     }
 
-    private void doItineraryLookupValid(final String locale, final String currencyCode) throws Exception {
-        Reservation testReservation = getTestReservation(locale, currencyCode);
+    private void doItineraryLookupValid() throws Exception {
+        Reservation testReservation = BookingRequestIntTest.getTestReservation();
         ItineraryRequest itineraryRequest
-            = new ItineraryRequest(testReservation.itineraryId, EMAIL, locale, currencyCode);
+            = new ItineraryRequest(testReservation.itineraryId, EMAIL);
         Itinerary itinerary = RequestProcessor.run(itineraryRequest);
         assertNotNull(itinerary);
         assertNotNull(itinerary.hotelConfirmations);
@@ -76,32 +73,7 @@ public class ItineraryRequestIntTest {
         Itinerary.HotelConfirmation hotelConfirmation = itinerary.hotelConfirmations.get(0);
         assertNotNull(hotelConfirmation);
         assertEquals(ConfirmationStatus.CONFIRMED, hotelConfirmation.status);
-        assertEquals(locale, hotelConfirmation.locale);
-        assertEquals(currencyCode, hotelConfirmation.rate.chargeable.currencyCode);
-    }
-
-    private Reservation getTestReservation(final String locale, final String currencyCode) throws Exception {
-        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
-        ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY,
-            dateTimes[0], dateTimes[1], null, locale, currencyCode);
-        HotelList hotelList = RequestProcessor.run(hotelListRequest);
-
-        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
-            hotelList.hotels.get(0).hotelId, OCCUPANCY, dateTimes[0], dateTimes[1],
-            hotelList.customerSessionId, locale, currencyCode);
-
-        List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
-        BookingRequest.ReservationInformation resInfo = new BookingRequest.ReservationInformation(
-            EMAIL, "test", "tester", "1234567890", null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
-
-        ReservationRoom room
-            = new ReservationRoom(resInfo.individual.name, rooms.get(0), rooms.get(0).bedTypes.get(0).id, OCCUPANCY);
-
-        BookingRequest bookingRequest = new BookingRequest(
-            hotelList.hotels.get(0).hotelId, dateTimes[0], dateTimes[1],
-            hotelList.hotels.get(0).supplierType, room, resInfo, ADDRESS,
-            hotelList.customerSessionId, locale, currencyCode);
-
-        return RequestProcessor.run(bookingRequest);
+        assertEquals(BaseRequest.getLocale(), hotelConfirmation.locale);
+        assertEquals(BaseRequest.getCurrencyCode(), hotelConfirmation.rate.chargeable.currencyCode);
     }
 }

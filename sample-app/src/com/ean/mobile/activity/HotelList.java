@@ -176,8 +176,6 @@ public class HotelList extends Activity {
         protected Void doInBackground(Void... voids) {
             try {
                 ListRequest request = new ListRequest(
-                    SampleApp.locale.toString(),
-                    SampleApp.currency.getCurrencyCode(),
                     SampleApp.cacheKey,
                     SampleApp.cacheLocation,
                     SampleApp.customerSessionId);

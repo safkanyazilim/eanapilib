@@ -4,12 +4,14 @@
 package com.ean.mobile.hotel.request;
 
 import java.net.URI;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ean.mobile.BaseRequest;
 import com.ean.mobile.JSONFileUtil;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Cancellation;
@@ -26,6 +28,7 @@ public class CancellationRequestTest {
 
     @Before
     public void setUp() {
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
         cancellationRequest = new CancellationRequest(1234L, 5678L, "test@expedia.com", "test");
     }
 
@@ -59,9 +62,10 @@ public class CancellationRequestTest {
 
     @Test
     public void testGetUri() throws Exception {
-        StringBuilder queryString = new StringBuilder(155);
+        StringBuilder queryString = new StringBuilder(186);
         queryString.append("cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&minorRev=20&customerUserAgent=Android");
-        queryString.append("&itineraryId=1234&confirmationNumber=5678&email=test@expedia.com&reason=test");
+        queryString.append("&locale=en_US&currencyCode=USD&itineraryId=1234&confirmationNumber=5678");
+        queryString.append("&email=test@expedia.com&reason=test");
 
         final URI uri = cancellationRequest.getUri();
         assertEquals("http", uri.getScheme());

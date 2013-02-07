@@ -6,12 +6,14 @@ package com.ean.mobile.hotel.request;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ean.mobile.BaseRequest;
 import com.ean.mobile.CustomerAddress;
 import com.ean.mobile.JSONFileUtil;
 import com.ean.mobile.exception.EanWsError;
@@ -35,6 +37,7 @@ public class ItineraryRequestTest {
 
     @Before
     public void setUp() {
+        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US.toString(), "USD");
         itineraryRequest = new ItineraryRequest(1234L, "test@expedia.com");
     }
 
@@ -74,9 +77,9 @@ public class ItineraryRequestTest {
 
     @Test
     public void testGetUri() throws Exception {
-        StringBuilder queryString = new StringBuilder(119);
+        StringBuilder queryString = new StringBuilder(150);
         queryString.append("cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&minorRev=20&customerUserAgent=Android");
-        queryString.append("&itineraryId=1234&email=test@expedia.com");
+        queryString.append("&locale=en_US&currencyCode=USD&itineraryId=1234&email=test@expedia.com");
 
         final URI uri = itineraryRequest.getUri();
         assertEquals("http", uri.getScheme());
