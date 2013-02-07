@@ -1,0 +1,50 @@
+{
+    "HotelRoomAvailabilityResponse": {
+        "arrivalDate": "7/15/2013",
+        "departureDate": "7/16/2013",
+        "HotelRoomResponse": [
+            {
+                "0": {
+                    "RateInfos": {
+                        "RateInfo": {
+                            "ChargeableRateInfo": {
+                                "NightlyRatesPerRoom": {
+                                    "NightlyRate": {
+                                        "@rate": "1.00",
+                                        "@baseRate": "2.00"
+                                    }
+                                },
+                                "Surcharges": {
+                                    "Surcharge": {
+                                        "@amount": "3.00"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            {
+                "1": {
+                    "RateInfos": {
+                        "RateInfo": {
+                            "ChargeableRateInfo": {
+                                "NightlyRatesPerRoom": {
+                                    "NightlyRate": {
+                                        "@rate": "4.00",
+                                        "@baseRate": "5.00"
+                                    }
+                                },
+                                "Surcharges": {
+                                    "Surcharge": {
+                                        "@amount": "6.00"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    }
+}
