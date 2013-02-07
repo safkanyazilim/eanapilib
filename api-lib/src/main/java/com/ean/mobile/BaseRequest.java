@@ -63,7 +63,7 @@ public final class BaseRequest {
     /**
      * Retrieves the CID previously set by the initialize method.
      *
-     * @return the CID previously set, or null if none was set.
+     * @return the CID previously set.
      */
     public static String getCid() {
         return getInstance().cid;
@@ -72,7 +72,7 @@ public final class BaseRequest {
     /**
      * Retrieves the API key previously set by the initialize method.
      *
-     * @return the API key previously set, or null if none was set.
+     * @return the API key previously set.
      */
     public static String getApiKey() {
         return getInstance().apiKey;
@@ -81,7 +81,7 @@ public final class BaseRequest {
     /**
      * Retrieves the locale previously set by the initialize method.
      *
-     * @return the locale previously set, or null if none was set.
+     * @return the locale previously set.
      */
     public static String getLocale() {
         return getInstance().locale;
@@ -90,7 +90,7 @@ public final class BaseRequest {
     /**
      * Retrieves the currency code previously set by the initialize method.
      *
-     * @return the currency code previously set, or null if none was set.
+     * @return the currency code previously set.
      */
     public static String getCurrencyCode() {
         return getInstance().currencyCode;
