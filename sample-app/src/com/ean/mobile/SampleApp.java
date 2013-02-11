@@ -19,6 +19,7 @@ import com.ean.mobile.hotel.HotelInformation;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
@@ -37,8 +38,6 @@ public class SampleApp extends Application {
     public static String cacheKey;
     public static String cacheLocation;
 
-    public static String customerSessionId;
-
     public static Hotel selectedHotel;
 
     public static HotelRoom selectedRoom;
@@ -55,7 +54,11 @@ public class SampleApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
+        CommonParameters.cid = "55505";
+        CommonParameters.apiKey = "";
+        CommonParameters.customerUserAgent = "Android";
+        CommonParameters.locale = Locale.US.toString();
+        CommonParameters.currencyCode = Currency.getInstance(Locale.US).getCurrencyCode();
     }
 
     public static RoomOccupancy occupancy() {
@@ -97,7 +100,7 @@ public class SampleApp extends Application {
             SampleApp.foundHotels.clear();
         }
         SampleApp.foundHotels.addAll(hotelList.hotels);
-        SampleApp.customerSessionId = hotelList.customerSessionId;
+        CommonParameters.customerSessionId = hotelList.customerSessionId;
         SampleApp.cacheKey = hotelList.cacheKey;
         SampleApp.cacheLocation = hotelList.cacheLocation;
     }

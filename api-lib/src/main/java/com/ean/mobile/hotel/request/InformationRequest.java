@@ -36,14 +36,12 @@ public final class InformationRequest extends Request<HotelInformation> {
     /**
      * Gets the rest of the information about a hotel not included in previous calls.
      * @param hotelId The hotelId for which to gather more information.
-     * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
      */
-    public InformationRequest(final long hotelId, final String customerSessionId) {
+    public InformationRequest(final long hotelId) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("customerSessionId", customerSessionId),
-                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-                new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();

@@ -3,17 +3,13 @@
  */
 package com.ean.mobile.hotel.request;
 
-import java.util.Currency;
-import java.util.Locale;
-
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.ean.mobile.BaseRequest;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Cancellation;
 import com.ean.mobile.hotel.Reservation;
+import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.RequestProcessor;
 
 import static org.hamcrest.Matchers.isEmptyOrNullString;
@@ -21,14 +17,9 @@ import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class CancellationRequestIntTest {
+public class CancellationRequestIntTest extends BaseRequestTest {
 
     private static final String EMAIL = "test@expedia.com";
-
-    @Before
-    public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
-    }
 
     @Test(expected = EanWsError.class)
     public void testCancellationInvalidItineraryIdEmailConfirmationNumber() throws Exception {

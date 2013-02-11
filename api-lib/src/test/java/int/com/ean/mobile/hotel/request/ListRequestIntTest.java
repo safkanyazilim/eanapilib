@@ -5,41 +5,34 @@
 package com.ean.mobile.hotel.request;
 
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import org.joda.time.LocalDate;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.ean.mobile.BaseRequest;
 import com.ean.mobile.exception.DataValidationException;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.BaseRequestTest;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class ListRequestIntTest {
+public class ListRequestIntTest extends BaseRequestTest {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
 
-    @Before
-    public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
-    }
-    
     @Test
     public void testSearchForHotelsHappy() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null);
+        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         HotelList results = RequestProcessor.run(listRequest);
 
@@ -51,7 +44,7 @@ public class ListRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
 
         ListRequest listRequest
-            = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null);
+            = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         RequestProcessor.run(listRequest);
     }
@@ -61,7 +54,7 @@ public class ListRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
         ListRequest listRequest = new ListRequest(
-            "sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1], null);
+            "sea of tranquility, moon", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         RequestProcessor.run(listRequest);
     }
@@ -72,7 +65,7 @@ public class ListRequestIntTest {
 
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
 
-        ListRequest listRequest = new ListRequest("rome, it", occupancies, dateTimes[0], dateTimes[1], null);
+        ListRequest listRequest = new ListRequest("rome, it", occupancies, dateTimes[0], dateTimes[1]);
 
         HotelList results = RequestProcessor.run(listRequest);
 
@@ -84,20 +77,23 @@ public class ListRequestIntTest {
         Set<Long> hotelIdsReturned = new HashSet<Long>();
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null);
+        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
         HotelList results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
         // Paginate a few times and make sure they are ordered correctly.
-        listRequest = new ListRequest(results.cacheKey, results.cacheLocation, results.customerSessionId);
+        CommonParameters.customerSessionId = results.customerSessionId;
+        listRequest = new ListRequest(results.cacheKey, results.cacheLocation);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        listRequest = new ListRequest(results.cacheKey, results.cacheLocation, results.customerSessionId);
+        CommonParameters.customerSessionId = results.customerSessionId;
+        listRequest = new ListRequest(results.cacheKey, results.cacheLocation);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        listRequest = new ListRequest(results.cacheKey, results.cacheLocation, results.customerSessionId);
+        CommonParameters.customerSessionId = results.customerSessionId;
+        listRequest = new ListRequest(results.cacheKey, results.cacheLocation);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
     }

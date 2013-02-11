@@ -4,33 +4,24 @@
 
 package com.ean.mobile.hotel.request;
 
-import java.util.Currency;
-import java.util.Locale;
-
 import org.joda.time.LocalDate;
-import org.junit.Before;
 import org.junit.Test;
 
-import com.ean.mobile.BaseRequest;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.DateModifier;
 
 import static org.junit.Assert.assertNull;
 
-public class ListRequestTest {
+public class ListRequestTest extends BaseRequestTest {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
-
-    @Before
-    public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
-    }
 
     @Test
     public void testConsumeNull() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
-        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1], null);
+        ListRequest listRequest = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         HotelList hotelList = listRequest.consume(null);
 

@@ -27,6 +27,7 @@ import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.request.InformationRequest;
 import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 import org.joda.time.LocalDate;
@@ -57,7 +58,8 @@ public class HotelInformation extends Activity {
         } else {
             new AvailabilityInformationLoaderTask(
                 hotel.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
-                SampleApp.arrivalDate, SampleApp.departureDate, SampleApp.customerSessionId).execute((Void) null);
+                SampleApp.arrivalDate, SampleApp.departureDate,
+                CommonParameters.customerSessionId).execute((Void) null);
         }
 
         ImageFetcher.loadThumbnailIntoImageView(
@@ -120,9 +122,9 @@ public class HotelInformation extends Activity {
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
+                CommonParameters.customerSessionId = customerSessionId;
                 RoomAvailabilityRequest request
-                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
-                        customerSessionId);
+                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
@@ -152,7 +154,7 @@ public class HotelInformation extends Activity {
         @Override
         protected com.ean.mobile.hotel.HotelInformation doInBackground(Void... voids) {
             try {
-                InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId);
+                InformationRequest request = new InformationRequest(hotelId);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);

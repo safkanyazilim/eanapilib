@@ -6,7 +6,6 @@ package com.ean.mobile.request;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -17,7 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.BaseRequest;
+import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 
 /**
@@ -64,14 +63,8 @@ public abstract class Request<T> {
      */
     public static List<NameValuePair> getBasicUrlParameters(
             final LocalDate arrivalDate, final LocalDate departureDate) {
-        //TODO: force locale to be a java Locale object?
-        final List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.add(new BasicNameValuePair("cid", BaseRequest.getCid()));
-        params.add(new BasicNameValuePair("apiKey", BaseRequest.getApiKey()));
-        params.add(new BasicNameValuePair("minorRev", "20"));
-        params.add(new BasicNameValuePair("customerUserAgent", "Android"));
-        params.add(new BasicNameValuePair("locale", BaseRequest.getLocale()));
-        params.add(new BasicNameValuePair("currencyCode", BaseRequest.getCurrencyCode()));
+        final List<NameValuePair> params = CommonParameters.asNameValuePairs();
+        params.add(new BasicNameValuePair("minorRev", Constants.MINOR_REV));
         if (arrivalDate != null) {
             params.add(new BasicNameValuePair("arrivalDate", DATE_TIME_FORMATTER.print(arrivalDate)));
         }

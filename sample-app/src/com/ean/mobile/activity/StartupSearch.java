@@ -138,8 +138,7 @@ public class StartupSearch extends Activity {
                     SampleApp.searchQuery,
                     SampleApp.occupancy(),
                     SampleApp.arrivalDate,
-                    SampleApp.departureDate,
-                    null);
+                    SampleApp.departureDate);
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request),true);
             } catch (EanWsError ewe) {

@@ -39,14 +39,11 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
      * @param room The singular room occupancy to search for.
      * @param arrivalDate The date of arrival.
      * @param departureDate The date of departure (from the hotel).
-     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *                          Can be null.
      */
     public RoomAvailabilityRequest(final long hotelId, final RoomOccupancy room,
-                                   final LocalDate arrivalDate, final LocalDate departureDate,
-                                   final String customerSessionId) {
+            final LocalDate arrivalDate, final LocalDate departureDate) {
 
-        this(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId);
+        this(hotelId, Collections.singletonList(room), arrivalDate, departureDate);
     }
     /**
      * Gets the room availability for the specified information.
@@ -58,17 +55,12 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
      * @param rooms The list of room occupancies to search for.
      * @param arrivalDate The date of arrival.
      * @param departureDate The date of departure (from the hotel).
-     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *                          The same customerSessionId as returned to
-     *                          {@link com.ean.mobile.hotel.HotelList#customerSessionId}.
      */
 
     public RoomAvailabilityRequest(final long hotelId, final List<RoomOccupancy> rooms,
-                                   final LocalDate arrivalDate, final LocalDate departureDate,
-                                   final String customerSessionId) {
+            final LocalDate arrivalDate, final LocalDate departureDate) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("customerSessionId", customerSessionId),
             new BasicNameValuePair("hotelId", Long.toString(hotelId)),
             new BasicNameValuePair("includeDetails", "true")
         );

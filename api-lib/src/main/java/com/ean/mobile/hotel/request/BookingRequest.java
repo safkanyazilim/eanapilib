@@ -42,14 +42,12 @@ public final class BookingRequest extends Request<Reservation> {
      * @param room The room and its occupancy that will be booked.
      * @param reservationInformation The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInformation.
-     * @param customerSessionId The sessionID associated with this search session.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
               final String supplierType, final ReservationRoom room,
-              final ReservationInformation reservationInformation, final Address address,
-              final String customerSessionId) {
+              final ReservationInformation reservationInformation, final Address address) {
         this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
-                reservationInformation, address, customerSessionId);
+                reservationInformation, address);
     }
 
     /**
@@ -61,16 +59,12 @@ public final class BookingRequest extends Request<Reservation> {
      * @param roomGroup The Rooms and their occupancies that will be booked.
      * @param reservationInformation The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInformation.
-     * @param customerSessionId Customer session id, passed to track user as they move through
-     *  the booking flow.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
             final String supplierType, final List<ReservationRoom> roomGroup,
-            final ReservationInformation reservationInformation, final Address address,
-            final String customerSessionId) {
+            final ReservationInformation reservationInformation, final Address address) {
 
-        this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInformation, address,
-                customerSessionId, null);
+        this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInformation, address, null);
     }
 
     /**
@@ -82,18 +76,16 @@ public final class BookingRequest extends Request<Reservation> {
      * @param roomGroup The Rooms and their occupancies that will be booked.
      * @param reservationInformation The information about the entity making the reservation. "Billing" information.
      * @param address The address associated with the reservationInformation.
-     * @param customerSessionId The session ID carried over from the original search.
      * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
             final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
-            final ReservationInformation reservationInformation, final Address address, final String customerSessionId,
+            final ReservationInformation reservationInformation, final Address address,
             final List<NameValuePair> extraBookingData) {
 
         final List<NameValuePair> rateInformationParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("customerSessionId", customerSessionId),
-                new BasicNameValuePair("hotelId", hotelId.toString()),
-                new BasicNameValuePair("supplierType", supplierType)
+            new BasicNameValuePair("hotelId", hotelId.toString()),
+            new BasicNameValuePair("supplierType", supplierType)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();

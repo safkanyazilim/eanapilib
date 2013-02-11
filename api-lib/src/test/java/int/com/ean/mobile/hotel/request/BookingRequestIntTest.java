@@ -5,17 +5,13 @@
 package com.ean.mobile.hotel.request;
 
 import java.util.Arrays;
-import java.util.Currency;
 import java.util.List;
-import java.util.Locale;
 
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
-import org.junit.Before;
 import org.junit.Test;
 
 import com.ean.mobile.Address;
-import com.ean.mobile.BaseRequest;
 import com.ean.mobile.BasicAddress;
 import com.ean.mobile.Name;
 import com.ean.mobile.hotel.HotelList;
@@ -23,6 +19,8 @@ import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.ReservationRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.BaseRequestTest;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
 
@@ -30,16 +28,11 @@ import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class BookingRequestIntTest {
+public class BookingRequestIntTest extends BaseRequestTest {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
     private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
     private static final String EMAIL = "test@expedia.com";
-
-    @Before
-    public void setUp() {
-        BaseRequest.initialize("55505", "cbrzfta369qwyrm9t5b8y8kf", Locale.US, Currency.getInstance(Locale.US));
-    }
 
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
@@ -54,12 +47,12 @@ public class BookingRequestIntTest {
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
 
         ListRequest listRequest = new ListRequest("Seattle, WA", occupancies,
-            dateTimes[0], dateTimes[1], null);
+            dateTimes[0], dateTimes[1]);
         HotelList hotelList = RequestProcessor.run(listRequest);
 
+        CommonParameters.customerSessionId = hotelList.customerSessionId;
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
-            hotelList.hotels.get(0).hotelId, occupancies, dateTimes[0], dateTimes[1],
-            hotelList.customerSessionId);
+            hotelList.hotels.get(0).hotelId, occupancies, dateTimes[0], dateTimes[1]);
         List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
 
         List<Name> checkInNames = Arrays.asList(new Name("test", "tester"), new Name("test", "testerson"));
@@ -69,15 +62,14 @@ public class BookingRequestIntTest {
             null, "CA", "5401999999999999", "123", YearMonth.now().plusYears(1));
 
         List<ReservationRoom> bookingRooms = Arrays.asList(
-            new ReservationRoom(
-                checkInNames.get(0), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(0)),
-            new ReservationRoom(
-                checkInNames.get(1), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(1)));
+                new ReservationRoom(
+                        checkInNames.get(0), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(0)),
+                new ReservationRoom(
+                        checkInNames.get(1), rooms.get(0), rooms.get(0).bedTypes.get(0).id, occupancies.get(1)));
 
         BookingRequest bookingRequest = new BookingRequest(
             hotelList.hotels.get(0).hotelId, dateTimes[0], dateTimes[1],
-            hotelList.hotels.get(0).supplierType, bookingRooms, resInfo, ADDRESS,
-            hotelList.customerSessionId);
+            hotelList.hotels.get(0).supplierType, bookingRooms, resInfo, ADDRESS);
         Reservation reservation = RequestProcessor.run(bookingRequest);
 
         // TODO: some assertions here on hotel/date/occupancy, etc.
@@ -94,12 +86,12 @@ public class BookingRequestIntTest {
      */
     protected static Reservation getTestReservation() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
-        ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1], null);
+        ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1]);
         HotelList hotelList = RequestProcessor.run(hotelListRequest);
 
+        CommonParameters.customerSessionId = hotelList.customerSessionId;
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
-            hotelList.hotels.get(0).hotelId, OCCUPANCY, dateTimes[0], dateTimes[1],
-            hotelList.customerSessionId);
+            hotelList.hotels.get(0).hotelId, OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
         BookingRequest.ReservationInformation resInfo = new BookingRequest.ReservationInformation(
@@ -110,8 +102,7 @@ public class BookingRequestIntTest {
 
         BookingRequest bookingRequest = new BookingRequest(
             hotelList.hotels.get(0).hotelId, dateTimes[0], dateTimes[1],
-            hotelList.hotels.get(0).supplierType, room, resInfo, ADDRESS,
-            hotelList.customerSessionId);
+            hotelList.hotels.get(0).supplierType, room, resInfo, ADDRESS);
 
         return RequestProcessor.run(bookingRequest);
     }
