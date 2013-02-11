@@ -63,7 +63,7 @@ public final class SuggestionFactory {
             if (destinations != null) {
                 List<Destination> cities = new ArrayList<Destination>();
                 for (Destination destination : destinations) {
-                    if (destination.category == Destination.Category.CITIES) {
+                    if (destination.category == Destination.Category.CITY) {
                         cities.add(destination);
                         if (cities.size() > 5) {
                             break;

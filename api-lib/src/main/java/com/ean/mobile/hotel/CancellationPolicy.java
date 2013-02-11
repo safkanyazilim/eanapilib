@@ -79,10 +79,6 @@ public final class CancellationPolicy {
      * documentation.
      */
     public final class CancellationPolicyInformation {
-        /**
-         * Version ID value returned by the api.
-         */
-        public final int versionId;
 
         /**
          * The last instant which this cancellation policy is applicable. Calculated using the cancelTime,
@@ -118,7 +114,6 @@ public final class CancellationPolicy {
          * @param arrivalDate The arrival date of the reservation.
          */
         public CancellationPolicyInformation(final JSONObject object, final LocalDate arrivalDate) {
-            this.versionId = object.optInt("versionId");
             this.currencyCode = object.optString("currencyCode");
 
             final Double localNightCount = object.optDouble("nightCount");

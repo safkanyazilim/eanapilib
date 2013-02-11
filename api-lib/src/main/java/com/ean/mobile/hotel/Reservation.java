@@ -15,7 +15,6 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.ean.mobile.Address;
-import com.ean.mobile.BasicAddress;
 
 /**
  * Holds the response from a booking response. Together with an itinerary, represents all information knowable
@@ -76,7 +75,7 @@ public final class Reservation {
     /**
      * The supplier used to actually make the booking.
      */
-    public final String supplierType;
+    public final SupplierType supplierType;
 
     /**
      * Indicates the status of the reservation in the supplier system at the time of booking.
@@ -168,7 +167,7 @@ public final class Reservation {
         this.processedWithConfirmation = object.optBoolean("processedWithConfirmation");
         this.errorText = object.optString("errorText");
         this.hotelReplyText = object.optString("hotelReplyText");
-        this.supplierType = object.optString("supplierType");
+        this.supplierType = SupplierType.getByCode(object.optString("supplierType"));
         this.reservationStatusCode = ConfirmationStatus.fromString(object.optString("reservationStatusCode"));
         this.existingItinerary = object.optBoolean("existingItinerary");
         this.checkInInstructions = object.optString("checkInInstructions");
@@ -180,7 +179,7 @@ public final class Reservation {
         final String stateProvinceCode = object.optString("hotelStateProvinceCode");
         final String countryCode = object.optString("hotelCountryCode");
         final String postalCode = object.optString("hotelPostalCode");
-        this.hotelAddress = new BasicAddress(addressLine1, city, stateProvinceCode, countryCode, postalCode);
+        this.hotelAddress = new Address(addressLine1, city, stateProvinceCode, countryCode, postalCode);
         this.roomDescription = object.optString("roomDescription");
         this.nonRefundable = object.optBoolean("nonRefundable");
         this.rateOccupancyPerRoom = object.optInt("rateOccupancyPerRoom");

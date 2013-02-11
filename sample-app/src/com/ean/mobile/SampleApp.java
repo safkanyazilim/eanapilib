@@ -59,7 +59,7 @@ public class SampleApp extends Application {
             = Collections.synchronizedMap(new HotelImageDrawableMap());
 
     public static RoomOccupancy occupancy() {
-        return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
+        return new RoomOccupancy(numberOfAdults, new ArrayList<Integer>(numberOfChildren));
     }
 
     public static void sendRedirectionToast(final Context context) {

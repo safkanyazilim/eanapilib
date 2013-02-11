@@ -74,7 +74,7 @@ public class RoomAvailabilityRequestIntTest {
     @Test
     public void testGetGoodAvailabilityMultiRoom() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
-        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, Arrays.asList(4, 5, 7)));
         try {
             RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies,
                 dateTimes[0], dateTimes[1], "", "en_US", "USD");

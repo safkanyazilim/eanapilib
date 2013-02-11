@@ -11,7 +11,6 @@ import org.joda.time.YearMonth;
 import org.junit.Test;
 
 import com.ean.mobile.Address;
-import com.ean.mobile.BasicAddress;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.ConfirmationStatus;
 import com.ean.mobile.hotel.HotelList;
@@ -31,7 +30,7 @@ import static org.junit.Assert.assertThat;
 public class ItineraryRequestIntTest {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
-    private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
+    private static final Address ADDRESS = new Address("travelnow", "Seattle", "WA", "US", "98004");
     private static final String EMAIL = "test@expedia.com";
 
     @Test(expected = EanWsError.class)

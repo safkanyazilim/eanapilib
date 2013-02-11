@@ -66,7 +66,7 @@ public class ListRequestIntTest {
     public void testSearchForHotelsMultiRoomType() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
-        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, Arrays.asList(4, 5, 7)));
 
         ListRequest listRequest = new ListRequest("rome, it", occupancies, dateTimes[0], dateTimes[1],
             null, LOCALE, CURRENCY_CODE);

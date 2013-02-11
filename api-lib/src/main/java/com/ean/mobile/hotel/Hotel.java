@@ -63,7 +63,7 @@ public final class Hotel {
     /**
      * The type of supplier for the hotel.
      */
-    public final String supplierType;
+    public final SupplierType supplierType;
 
     /**
      * The high price of the hotel, in the currency specified by {currencyCode}.
@@ -93,7 +93,7 @@ public final class Hotel {
         this.highPrice = new BigDecimal(hotelSummary.getDouble("highRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.currencyCode = hotelSummary.optString("rateCurrencyCode");
-        this.supplierType = hotelSummary.optString("supplierType");
+        this.supplierType = SupplierType.getByCode(hotelSummary.optString("supplierType"));
     }
 
     /**

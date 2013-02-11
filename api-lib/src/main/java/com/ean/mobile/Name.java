@@ -12,19 +12,19 @@ import org.json.JSONObject;
 public final class Name {
 
     /**
-     * The first name of the person represented.
+     * The given name of the person represented.
      */
     public final String first;
 
     /**
-     * The last name of the person represented.
+     * The family/surname of the person represented.
      */
     public final String last;
 
     /**
      * The constructor for this name object.
-     * @param first The first name to set.
-     * @param last The last name.
+     * @param first The given name of the person.
+     * @param last The family/surname of the person.
      */
     public Name(final String first, final String last) {
         this.first = first;

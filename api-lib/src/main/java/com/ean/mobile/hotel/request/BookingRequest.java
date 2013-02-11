@@ -26,6 +26,7 @@ import com.ean.mobile.Individual;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.ReservationRoom;
+import com.ean.mobile.hotel.SupplierType;
 import com.ean.mobile.request.Request;
 
 /**
@@ -47,7 +48,7 @@ public final class BookingRequest extends Request<Reservation> {
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
-              final String supplierType, final ReservationRoom room,
+              final SupplierType supplierType, final ReservationRoom room,
               final ReservationInformation reservationInformation, final Address address,
               final String customerSessionId, final String locale, final String currencyCode) {
         this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
@@ -69,7 +70,7 @@ public final class BookingRequest extends Request<Reservation> {
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
-            final String supplierType, final List<ReservationRoom> roomGroup,
+            final SupplierType supplierType, final List<ReservationRoom> roomGroup,
             final ReservationInformation reservationInformation, final Address address,
             final String customerSessionId, final String locale, final String currencyCode) {
 
@@ -92,14 +93,14 @@ public final class BookingRequest extends Request<Reservation> {
      * @param currencyCode The currency code in which to book the hotel. Must be chargeable, enforced by EAN API.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
-            final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
+            final LocalDate departureDate, final SupplierType supplierType, final List<ReservationRoom> roomGroup,
             final ReservationInformation reservationInformation, final Address address, final String customerSessionId,
             final List<NameValuePair> extraBookingData, final String locale, final String currencyCode) {
 
         final List<NameValuePair> rateInformationParameters = Arrays.<NameValuePair>asList(
                 new BasicNameValuePair("customerSessionId", customerSessionId),
                 new BasicNameValuePair("hotelId", hotelId.toString()),
-                new BasicNameValuePair("supplierType", supplierType)
+                new BasicNameValuePair("supplierType", supplierType.code)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();

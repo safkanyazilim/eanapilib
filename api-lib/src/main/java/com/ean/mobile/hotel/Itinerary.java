@@ -65,11 +65,6 @@ public final class Itinerary {
     public final LocalDate itineraryEndDate;
 
     /**
-     * Affiliate-assigned value used when booking was placed, if applicable.
-     */
-    public final String affiliateCustomerId;
-
-    /**
      * Information about the customer associated with the booking. That is, the customer who was the cardholder
      * of the payment card used to make the booking.
      */
@@ -90,7 +85,6 @@ public final class Itinerary {
         this.creationDate = API_DATE_PARSER.parseLocalDate(object.optString("creationDate"));
         this.itineraryStartDate = API_DATE_PARSER.parseLocalDate(object.optString("itineraryStartDate"));
         this.itineraryEndDate = API_DATE_PARSER.parseLocalDate(object.optString("itineraryEndDate"));
-        this.affiliateCustomerId = object.optString("affiliateCustomerId");
         this.customer = new Customer(object.optJSONObject("Customer"));
 
         final List<HotelConfirmation> confirmations;
@@ -113,16 +107,6 @@ public final class Itinerary {
     public final class Customer extends Individual {
 
         /**
-         * The customer's telephone extension, if provided.
-         */
-        public final String extension;
-
-        /**
-         * The customer's fax number, if provided.
-         */
-        public final String faxPhone;
-
-        /**
          * The customer's address information.
          */
         public final CustomerAddress address;
@@ -134,8 +118,6 @@ public final class Itinerary {
          */
         public Customer(final JSONObject object) {
             super(object);
-            this.extension = object.has("extension") ? object.optString("extension") : null;
-            this.faxPhone = object.has("faxPhone") ? object.optString("faxPhone") : null;
             final JSONObject customerAddressObject
                 = object.has("CustomerAddress")
                 ? object.optJSONObject("CustomerAddress")
@@ -156,7 +138,7 @@ public final class Itinerary {
         /**
          * The id of the supplier used to book the hotel.
          */
-        public final int supplierId;
+        public final SupplierType supplierType;
 
         /**
          * The chain code of the hotel. May be null.
@@ -266,7 +248,7 @@ public final class Itinerary {
          * @param object A JSONObject with the appropriate fields.
          */
         public HotelConfirmation(final JSONObject object) {
-            this.supplierId = object.optInt("supplierId");
+            this.supplierType = SupplierType.getById(object.optInt("supplierId"));
             this.chainCode = object.optString("chainCode");
             this.creditCardType = object.optString("creditCardType");
             this.arrivalDate = API_DATE_PARSER.parseLocalDate(object.optString("arrivalDate"));
@@ -299,18 +281,6 @@ public final class Itinerary {
              */
             public final long id;
 
-            /**
-             * The status code of the hotel.
-             * The current status of the hotel in EAN's database at the time of the itinerary request.
-             * Any status other than A cannot be rebooked.
-             * Values:
-             *      A:Active
-             *      I:Inactive
-             *      D:Deleted
-             *      R:Removed
-             *      C:Confidenced
-             */
-            public final String statusCode;
 
             /**
              * The address of the hotel, including its lat/long.
@@ -330,35 +300,10 @@ public final class Itinerary {
             public final BigDecimal highRate;
 
             /**
-             * Confidence rating of the hotel, for Hotel Collect properties. May be null.
-             */
-            public final Double confidence;
-
-            /**
              * The hotel's star rating.
              * {@link com.ean.mobile.hotel.Hotel#starRating}.
              */
             public final BigDecimal starRating;
-
-            /**
-             * The market the booking was applied to, e.g. Los Angeles. May be null.
-             */
-            public final String market;
-
-            /**
-             * Regional market the booking was applied to, e.g. California. May be null.
-             */
-            public final String region;
-
-            /**
-             * Returns the superregion the booking was applied to, e.g. AMER. May be null.
-             */
-            public final String superRegion;
-
-            /**
-             * Theme of the property booked, e.g. beach hotel, spa hotel, etc. May be null.
-             */
-            public final String theme;
 
             /**
              * Any confirmation extra fields requested during the booking. May be null.
@@ -371,16 +316,10 @@ public final class Itinerary {
              */
             public Hotel(final JSONObject object) {
                 this.id = object.optLong("hotelId");
-                this.statusCode = object.optString("statusCode");
                 this.address = new LatLongAddress(object);
                 this.lowRate = new BigDecimal(object.optString("lowRate"));
                 this.highRate = new BigDecimal(object.optString("highRate"));
-                this.confidence = object.optDouble("confidence");
                 this.starRating = com.ean.mobile.hotel.Hotel.parseStarRating(object.optString("hotelRating"));
-                this.market = object.optString("market");
-                this.region = object.optString("region");
-                this.superRegion = object.optString("superRegion");
-                this.theme = object.optString("theme");
 
                 Map<String, String> localConfirmationExtras;
                 if (object.has("ConfirmationExtras")) {
