@@ -16,6 +16,6 @@ public final class HotelImageDrawableMap extends HashMap<HotelImageTuple, HotelI
         if(!containsKey(tuple)) {
             put(tuple, new HotelImageDrawable(tuple));
         }
-        return super.get(key);    //To change body of overridden methods use File | Settings | File Templates.
+        return super.get(key);
     }
 }

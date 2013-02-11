@@ -133,18 +133,18 @@ public class BookingSummary extends Activity {
     }
 
     public void onLoadDefaultBillingInfoClick(View view) {
-        final EditText addressLine1 = (EditText) findViewById(R.id.billingInformationAddress1);
+        final EditText addressLine1 = SampleApp.getObjectFromId(this, R.id.billingInformationAddress1);
         final EditText addressLine2 = (EditText) findViewById(R.id.billingInformationAddress2);
         final EditText city = (EditText) findViewById(R.id.billingInformationCity);
         final EditText state = (EditText) findViewById(R.id.billingInformationState);
         final EditText country = (EditText) findViewById(R.id.billingInformationCountry);
         final EditText zip = (EditText) findViewById(R.id.billingInformationZip);
 
-        final Spinner cCType = (Spinner) findViewById(R.id.billingInformationCCType);
-        final EditText cCNum = (EditText) findViewById(R.id.billingInformationCCNum);
-        final EditText cCExpMo = (EditText) findViewById(R.id.billingInformationCCExpMo);
-        final EditText cCExpYr = (EditText) findViewById(R.id.billingInformationCCExpYr);
-        final EditText cCSec = (EditText) findViewById(R.id.billingInformationCCSecurityCode);
+        final Spinner cardType = (Spinner) findViewById(R.id.billingInformationCCType);
+        final EditText cardNum = (EditText) findViewById(R.id.billingInformationCCNum);
+        final EditText cardExpirationMonth = (EditText) findViewById(R.id.billingInformationCCExpMo);
+        final EditText cardExpirationYear = (EditText) findViewById(R.id.billingInformationCCExpYr);
+        final EditText cardSecurityCode = (EditText) findViewById(R.id.billingInformationCCSecurityCode);
 
         //sorry, but it's just so simple
         addressLine1.setText("travelnow");
@@ -153,11 +153,11 @@ public class BookingSummary extends Activity {
         state.setText("WA");
         country.setText("US");
         zip.setText("98004");
-        cCType.setSelection(Arrays.asList(getResources().getStringArray(R.array.supported_credit_cards)).indexOf("CA"));
-        cCNum.setText("5401999999999999");
-        cCExpMo.setText("01");
-        cCExpYr.setText(Integer.toString((YearMonth.now().getYear() + 1) % 100));
-        cCSec.setText("123");
+        cardType.setSelection(Arrays.asList(getResources().getStringArray(R.array.supported_credit_cards)).indexOf("CA"));
+        cardNum.setText("5401999999999999");
+        cardExpirationMonth.setText("01");
+        cardExpirationYear.setText(Integer.toString((YearMonth.now().getYear() + 1) % 100));
+        cardSecurityCode.setText("123");
 
     }
 
@@ -174,17 +174,17 @@ public class BookingSummary extends Activity {
         final String country = ((EditText) findViewById(R.id.billingInformationCountry)).getText().toString();
         final String zip = ((EditText) findViewById(R.id.billingInformationZip)).getText().toString();
 
-        final String cCType = ((Spinner) findViewById(R.id.billingInformationCCType)).getSelectedItem().toString();
-        final String cCNum = ((EditText) findViewById(R.id.billingInformationCCNum)).getText().toString();
-        final String cCExpMo = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
-        final String cCExpYr = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
-        final String cCSec = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
+        final String cardType = ((Spinner) findViewById(R.id.billingInformationCCType)).getSelectedItem().toString();
+        final String cardNumber = ((EditText) findViewById(R.id.billingInformationCCNum)).getText().toString();
+        final String cardExpirationMonth = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
+        final String cardExpirationYear = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
+        final String cardSecurityCode = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
 
         //TODO: handle bad user input here.
-        final YearMonth expirationDate = new YearMonth(Integer.parseInt(cCExpYr.length() == 2 ? "20" + cCExpYr : cCExpYr), Integer.parseInt(cCExpMo));
+        final YearMonth expirationDate = new YearMonth(Integer.parseInt(cardExpirationYear.length() == 2 ? "20" + cardExpirationYear : cardExpirationYear), Integer.parseInt(cardExpirationMonth));
 
 
-        final BookingRequest.ReservationInfo reservationInfo = new BookingRequest.ReservationInfo(email, firstName, lastName, phone, null, cCType, cCNum, cCSec, expirationDate);
+        final BookingRequest.ReservationInfo reservationInfo = new BookingRequest.ReservationInfo(email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
         final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id ,SampleApp.occupancy());
         final Address reservationAddress = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
 
