@@ -14,16 +14,16 @@ import com.ean.mobile.exception.DataValidationException;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class RoomAvailabilityRequestIntTest extends BaseRequestTest {
+public class RoomAvailabilityRequestIntTest extends RequestTestBase {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
 

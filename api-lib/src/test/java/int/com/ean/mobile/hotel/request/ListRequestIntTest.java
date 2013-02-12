@@ -16,14 +16,14 @@ import com.ean.mobile.exception.DataValidationException;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-public class ListRequestIntTest extends BaseRequestTest {
+public class ListRequestIntTest extends RequestTestBase {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
 

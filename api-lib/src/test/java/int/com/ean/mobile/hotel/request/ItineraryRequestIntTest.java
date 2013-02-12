@@ -12,16 +12,16 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.ConfirmationStatus;
 import com.ean.mobile.hotel.Itinerary;
 import com.ean.mobile.hotel.Reservation;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.RequestProcessor;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class ItineraryRequestIntTest extends BaseRequestTest {
+public class ItineraryRequestIntTest extends RequestTestBase {
 
     private static final String EMAIL = "test@expedia.com";
 

@@ -4,12 +4,10 @@
 package com.ean.mobile.request;
 
 import org.junit.Before;
-import org.junit.Ignore;
 
 import com.ean.mobile.TestConstants;
 
-@Ignore("Contains no actual tests.")
-public abstract class BaseRequestTest {
+public abstract class RequestTestBase {
 
     @Before
     public void setUp() {

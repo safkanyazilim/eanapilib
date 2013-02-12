@@ -9,12 +9,12 @@ import org.junit.Test;
 
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.DateModifier;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.junit.Assert.assertNull;
 
-public class ListRequestTest extends BaseRequestTest {
+public class ListRequestTest extends RequestTestBase {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
 

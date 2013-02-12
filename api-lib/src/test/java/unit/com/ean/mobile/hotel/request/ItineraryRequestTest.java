@@ -20,9 +20,9 @@ import com.ean.mobile.hotel.ConfirmationStatus;
 import com.ean.mobile.hotel.Itinerary;
 import com.ean.mobile.hotel.NightlyRate;
 import com.ean.mobile.hotel.Rate;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class ItineraryRequestTest extends BaseRequestTest {
+public class ItineraryRequestTest extends RequestTestBase {
 
     private ItineraryRequest itineraryRequest;
 

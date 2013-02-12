@@ -19,9 +19,9 @@ import com.ean.mobile.TestConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
@@ -30,7 +30,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class RoomAvailabilityRequestTest extends BaseRequestTest {
+public class RoomAvailabilityRequestTest extends RequestTestBase {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(2, 1);

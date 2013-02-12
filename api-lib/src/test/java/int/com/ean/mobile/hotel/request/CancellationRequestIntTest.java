@@ -9,15 +9,15 @@ import org.junit.Test;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Cancellation;
 import com.ean.mobile.hotel.Reservation;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.RequestProcessor;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class CancellationRequestIntTest extends BaseRequestTest {
+public class CancellationRequestIntTest extends RequestTestBase {
 
     private static final String EMAIL = "test@expedia.com";
 

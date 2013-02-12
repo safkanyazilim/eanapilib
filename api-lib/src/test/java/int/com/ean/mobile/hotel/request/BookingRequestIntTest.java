@@ -19,15 +19,15 @@ import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.ReservationRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
-import com.ean.mobile.request.BaseRequestTest;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 
-public class BookingRequestIntTest extends BaseRequestTest {
+public class BookingRequestIntTest extends RequestTestBase {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
     private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
