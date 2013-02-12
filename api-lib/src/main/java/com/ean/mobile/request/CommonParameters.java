@@ -10,6 +10,7 @@ import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.ean.mobile.Constants;
+import com.ean.mobile.exception.CommonParameterValidationException;
 
 /**
  * Contains elements that (1) are common to all requests and (2) typically remain the same across multiple requests.
@@ -100,12 +101,12 @@ public final class CommonParameters {
     }
 
     /**
-     * Checks that all variables necessary to execute a request have been initialized. If not, a RuntimeException is
-     * thrown.
+     * Checks that all variables necessary to execute a request have been initialized. If not,
+     * a CommonParameterValidationException is thrown.
      */
     private static void validateParameters() {
         if (cid == null || apiKey == null) {
-            throw new RuntimeException(
+            throw new CommonParameterValidationException(
                 "You MUST initialize both the cid and apiKey in CommonParameters before performing any requests!");
         }
     }
