@@ -9,6 +9,8 @@ import java.util.List;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 
+import com.ean.mobile.Constants;
+
 /**
  * Contains elements that (1) are common to all requests and (2) typically remain the same across multiple requests.
  */
@@ -50,6 +52,12 @@ public final class CommonParameters {
     public static volatile String customerSessionId;
 
     /**
+     * The minor revision to use for API requests. The library has only been tested with the default minor revision,
+     * so this should only be changed if absolutely necessary!
+     */
+    public static volatile String minorRev = Constants.MINOR_REV;
+
+    /**
      * Private, no-op constructor to prevent instantiation.
      */
     private CommonParameters() {
@@ -83,6 +91,9 @@ public final class CommonParameters {
         }
         if (customerSessionId != null) {
             nameValuePairs.add(new BasicNameValuePair("customerSessionId", customerSessionId));
+        }
+        if (minorRev != null) {
+            nameValuePairs.add(new BasicNameValuePair("minorRev", minorRev));
         }
 
         return nameValuePairs;

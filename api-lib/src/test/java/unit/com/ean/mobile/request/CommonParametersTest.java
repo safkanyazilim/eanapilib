@@ -16,6 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
+import com.ean.mobile.Constants;
+
 public class CommonParametersTest {
 
     @Before
@@ -52,9 +54,10 @@ public class CommonParametersTest {
 
         List<NameValuePair> nameValuePairs = CommonParameters.asNameValuePairs();
         assertNotNull(nameValuePairs);
-        assertThat(nameValuePairs.size(), equalTo(2));
-        assertEquals(nameValuePairs.get(0).toString(), "cid=" + TestConstants.CID);
-        assertEquals(nameValuePairs.get(1).toString(), "apiKey=" + TestConstants.API_KEY);
+        assertThat(nameValuePairs.size(), equalTo(3));
+        assertEquals(nameValuePairs.get(0).toString(), String.format("cid=%s", TestConstants.CID));
+        assertEquals(nameValuePairs.get(1).toString(), String.format("apiKey=%s", TestConstants.API_KEY));
+        assertEquals(nameValuePairs.get(2).toString(), String.format("minorRev=%s", Constants.MINOR_REV));
     }
 
     @Test
@@ -69,13 +72,22 @@ public class CommonParametersTest {
 
         List<NameValuePair> nameValuePairs = CommonParameters.asNameValuePairs();
         assertNotNull(nameValuePairs);
-        assertThat(nameValuePairs.size(), equalTo(7));
-        assertEquals(nameValuePairs.get(0).toString(), "cid=" + TestConstants.CID);
-        assertEquals(nameValuePairs.get(1).toString(), "apiKey=" + TestConstants.API_KEY);
-        assertEquals(nameValuePairs.get(2).toString(), "customerUserAgent=" + TestConstants.CUSTOMER_USER_AGENT);
-        assertEquals(nameValuePairs.get(3).toString(), "locale=" + TestConstants.LOCALE);
-        assertEquals(nameValuePairs.get(4).toString(), "currencyCode=" + TestConstants.CURRENCY);
-        assertEquals(nameValuePairs.get(5).toString(), "customerIpAddress=" + TestConstants.CUSTOMER_IP_ADDRESS);
-        assertEquals(nameValuePairs.get(6).toString(), "customerSessionId=" + TestConstants.CUSTOMER_SESSION_ID);
+        assertThat(nameValuePairs.size(), equalTo(8));
+        assertEquals(
+            nameValuePairs.get(0).toString(), String.format("cid=%s", TestConstants.CID));
+        assertEquals(
+            nameValuePairs.get(1).toString(), String.format("apiKey=%s", TestConstants.API_KEY));
+        assertEquals(
+            nameValuePairs.get(2).toString(), String.format("customerUserAgent=%s", TestConstants.CUSTOMER_USER_AGENT));
+        assertEquals(
+            nameValuePairs.get(3).toString(), String.format("locale=%s", TestConstants.LOCALE));
+        assertEquals(
+            nameValuePairs.get(4).toString(), String.format("currencyCode=%s", TestConstants.CURRENCY));
+        assertEquals(
+            nameValuePairs.get(5).toString(), String.format("customerIpAddress=%s", TestConstants.CUSTOMER_IP_ADDRESS));
+        assertEquals(
+            nameValuePairs.get(6).toString(), String.format("customerSessionId=%s", TestConstants.CUSTOMER_SESSION_ID));
+        assertEquals(
+            nameValuePairs.get(7).toString(), String.format("minorRev=%s", Constants.MINOR_REV));
     }
 }

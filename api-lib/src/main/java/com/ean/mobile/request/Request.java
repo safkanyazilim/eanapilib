@@ -16,7 +16,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 
 /**
@@ -64,7 +63,6 @@ public abstract class Request<T> {
     public static List<NameValuePair> getBasicUrlParameters(
             final LocalDate arrivalDate, final LocalDate departureDate) {
         final List<NameValuePair> params = CommonParameters.asNameValuePairs();
-        params.add(new BasicNameValuePair("minorRev", Constants.MINOR_REV));
         if (arrivalDate != null) {
             params.add(new BasicNameValuePair("arrivalDate", DATE_TIME_FORMATTER.print(arrivalDate)));
         }

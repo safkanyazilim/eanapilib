@@ -38,7 +38,8 @@ public abstract class BaseRequestTest {
         queryString.append(CommonParameters.customerIpAddress);
         queryString.append("&customerSessionId=");
         queryString.append(CommonParameters.customerSessionId);
-        queryString.append("&minorRev=20");
+        queryString.append("&minorRev=");
+        queryString.append(CommonParameters.minorRev);
         return queryString;
     }
 
