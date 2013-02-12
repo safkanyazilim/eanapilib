@@ -45,7 +45,7 @@ public final class CommonParameters {
     public static volatile String customerIpAddress;
 
     /**
-     * The session ID to use for API requests.
+     * The session ID to use for API requests. Set automatically when returned as part of a hotel list response.
      */
     public static volatile String customerSessionId;
 

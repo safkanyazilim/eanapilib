@@ -100,7 +100,6 @@ public class SampleApp extends Application {
             SampleApp.foundHotels.clear();
         }
         SampleApp.foundHotels.addAll(hotelList.hotels);
-        CommonParameters.customerSessionId = hotelList.customerSessionId;
         SampleApp.cacheKey = hotelList.cacheKey;
         SampleApp.cacheLocation = hotelList.cacheLocation;
     }

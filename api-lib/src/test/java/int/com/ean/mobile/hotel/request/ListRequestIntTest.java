@@ -17,7 +17,6 @@ import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.BaseRequestTest;
-import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
 
@@ -82,17 +81,14 @@ public class ListRequestIntTest extends BaseRequestTest {
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
         // Paginate a few times and make sure they are ordered correctly.
-        CommonParameters.customerSessionId = results.customerSessionId;
         listRequest = new ListRequest(results.cacheKey, results.cacheLocation);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        CommonParameters.customerSessionId = results.customerSessionId;
         listRequest = new ListRequest(results.cacheKey, results.cacheLocation);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);
 
-        CommonParameters.customerSessionId = results.customerSessionId;
         listRequest = new ListRequest(results.cacheKey, results.cacheLocation);
         results = RequestProcessor.run(listRequest);
         checkForDuplicateHotelId(hotelIdsReturned, results);

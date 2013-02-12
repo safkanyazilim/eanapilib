@@ -25,6 +25,7 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -127,6 +128,8 @@ public final class ListRequest extends Request<HotelList> {
                 Log.e("Unable to process JSON", me.getMessage());
             }
         }
+
+        CommonParameters.customerSessionId = outgoingCustomerSessionId;
 
         return new HotelList(newHotels,
             newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);

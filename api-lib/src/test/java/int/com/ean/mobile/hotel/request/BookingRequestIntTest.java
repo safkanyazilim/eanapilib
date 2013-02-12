@@ -20,7 +20,6 @@ import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.ReservationRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.BaseRequestTest;
-import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
 
@@ -50,7 +49,6 @@ public class BookingRequestIntTest extends BaseRequestTest {
             dateTimes[0], dateTimes[1]);
         HotelList hotelList = RequestProcessor.run(listRequest);
 
-        CommonParameters.customerSessionId = hotelList.customerSessionId;
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
             hotelList.hotels.get(0).hotelId, occupancies, dateTimes[0], dateTimes[1]);
         List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
@@ -89,7 +87,6 @@ public class BookingRequestIntTest extends BaseRequestTest {
         ListRequest hotelListRequest = new ListRequest("Seattle, WA", OCCUPANCY, dateTimes[0], dateTimes[1]);
         HotelList hotelList = RequestProcessor.run(hotelListRequest);
 
-        CommonParameters.customerSessionId = hotelList.customerSessionId;
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
             hotelList.hotels.get(0).hotelId, OCCUPANCY, dateTimes[0], dateTimes[1]);
 

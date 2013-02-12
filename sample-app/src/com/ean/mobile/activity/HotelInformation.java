@@ -27,7 +27,6 @@ import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.request.InformationRequest;
 import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
-import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 import org.joda.time.LocalDate;
@@ -58,8 +57,7 @@ public class HotelInformation extends Activity {
         } else {
             new AvailabilityInformationLoaderTask(
                 hotel.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
-                SampleApp.arrivalDate, SampleApp.departureDate,
-                CommonParameters.customerSessionId).execute((Void) null);
+                SampleApp.arrivalDate, SampleApp.departureDate).execute((Void) null);
         }
 
         ImageFetcher.loadThumbnailIntoImageView(
@@ -104,25 +102,21 @@ public class HotelInformation extends Activity {
         private final int numberOfChildren;
         private final LocalDate arrivalDate;
         private final LocalDate departureDate;
-        private final String customerSessionId;
 
         public AvailabilityInformationLoaderTask(final long hotelId,
                 final int numberOfAdults,  final int numberOfChildren,
-                final LocalDate arrivalDate, final LocalDate departureDate,
-                final String customerSessionId) {
+                final LocalDate arrivalDate, final LocalDate departureDate) {
             this.hotelId = hotelId;
             this.numberOfAdults = numberOfAdults;
             this.numberOfChildren = numberOfChildren;
             this.arrivalDate = arrivalDate;
             this.departureDate = departureDate;
-            this.customerSessionId = customerSessionId;
         }
 
 
         @Override
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
-                CommonParameters.customerSessionId = customerSessionId;
                 RoomAvailabilityRequest request
                     = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
                 return RequestProcessor.run(request);
