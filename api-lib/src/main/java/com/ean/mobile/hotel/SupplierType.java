@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * This class wraps supplier types so that we can univerally references them
+ * This class wraps supplier types so that we can univerally reference them
  * as opposed to dealing with ids and code as the API returns them.
  *
  * Id's come from http://developer.ean.com/docs/read/request_itinerary

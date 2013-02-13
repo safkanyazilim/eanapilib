@@ -300,7 +300,7 @@ public final class Rate {
          */
         public Room(final JSONObject jsonRoom) {
             this.occupancy = new RoomOccupancy(jsonRoom.optInt("numberOfAdults"),
-                    parseChildAgeArray(jsonRoom.optJSONArray("childAges")));
+                parseChildAgeArray(jsonRoom.optJSONArray("childAges")));
             this.rateKey = jsonRoom.optString("rateKey");
         }
 
