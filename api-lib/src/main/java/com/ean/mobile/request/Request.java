@@ -6,9 +6,6 @@ package com.ean.mobile.request;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -31,28 +28,9 @@ public abstract class Request<T> {
     /**
      * A formatter to use for all date/string conversions.
      */
-    public static final DateTimeFormatter DATE_TIME_FORMATTER;
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern("MM/dd/yyyy");
 
-    private static final List<NameValuePair> BASIC_URL_PARAMETERS;
-    private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private List<NameValuePair> urlParameters;
-
-    static {
-        DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
-
-        //TODO: load CID, APIKey, and customerUserAgent from the classpath
-        final String cid = "55505";
-        final String apiKey = "cbrzfta369qwyrm9t5b8y8kf";
-        final String customerUserAgent = "Android";
-
-        final List<NameValuePair> urlParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("cid", cid),
-            new BasicNameValuePair("apiKey", apiKey),
-            new BasicNameValuePair("minorRev", "20"),
-            new BasicNameValuePair("customerUserAgent", customerUserAgent)
-        );
-        BASIC_URL_PARAMETERS = Collections.unmodifiableList(urlParameters);
-    }
 
     /**
      * Parses the specified JSON and returns the appropriate object containing the response data.
@@ -78,23 +56,13 @@ public abstract class Request<T> {
 
     /**
      * Gets the url parameters that will need to be present for every request.
-     * @param locale The locale in which to request.
-     * @param currencyCode The currency code in which to perform this request.
      * @param arrivalDate The arrival date for this request.
      * @param departureDate The departure date for this request.
      * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
      */
-    public static List<NameValuePair> getBasicUrlParameters(final String locale, final String currencyCode,
+    public static List<NameValuePair> getBasicUrlParameters(
             final LocalDate arrivalDate, final LocalDate departureDate) {
-        //TODO: force locale to be a java Locale object?
-        final List<NameValuePair> params = new LinkedList<NameValuePair>();
-        params.addAll(BASIC_URL_PARAMETERS);
-        if (locale != null) {
-            params.add(new BasicNameValuePair("locale", locale));
-        }
-        if (currencyCode != null) {
-            params.add(new BasicNameValuePair("currencyCode", currencyCode));
-        }
+        final List<NameValuePair> params = CommonParameters.asNameValuePairs();
         if (arrivalDate != null) {
             params.add(new BasicNameValuePair("arrivalDate", DATE_TIME_FORMATTER.print(arrivalDate)));
         }
@@ -137,20 +105,10 @@ public abstract class Request<T> {
 
     /**
      * Gets the url parameters that will need to be present for every request.
-     * @param locale The locale in which to request.
-     * @param currencyCode The currency code in which to perform this request.
-     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
-     */
-    public static List<NameValuePair> getBasicUrlParameters(final String locale, final String currencyCode) {
-        return getBasicUrlParameters(locale, currencyCode, null, null);
-    }
-
-    /**
-     * Gets the url parameters that will need to be present for every request.
-     * @return The above parameters plus the cid, apikey, minor rev, and customer user agent url parameters.
+     * @return the cid, apikey, locale, currency code, minor rev, and customer user agent url parameters.
      */
     public static List<NameValuePair> getBasicUrlParameters() {
-        return getBasicUrlParameters(null, null, null, null);
+        return getBasicUrlParameters(null, null);
     }
 
     /**

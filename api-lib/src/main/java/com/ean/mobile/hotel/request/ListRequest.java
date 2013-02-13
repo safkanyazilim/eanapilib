@@ -25,6 +25,7 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -41,17 +42,11 @@ public final class ListRequest extends Request<HotelList> {
      * @param occupancy The stated occupancy to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
-     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *     The same customerSessionId as returned in other API requests
-     * @param locale The locale in which to perform the request.
-     * @param currencyCode The currency which is desired in the response.
      */
     public ListRequest(final String destination, final RoomOccupancy occupancy,
-            final LocalDate arrivalDate, final LocalDate departureDate,
-            final String customerSessionId, final String locale, final String currencyCode) {
+            final LocalDate arrivalDate, final LocalDate departureDate) {
 
-        this(destination, Collections.singletonList(occupancy), arrivalDate, departureDate,
-                customerSessionId, locale, currencyCode);
+        this(destination, Collections.singletonList(occupancy), arrivalDate, departureDate);
     }
     /**
      * Uses the EAN API to search for hotels in the given destination using http requests.
@@ -60,15 +55,9 @@ public final class ListRequest extends Request<HotelList> {
      * @param occupancies The stated occupancy of each room to search for.
      * @param arrivalDate The arrival date of the request.
      * @param departureDate The departure date of the request.
-     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *     The same customerSessionId as returned in other API requests
-     * @param locale The locale to search for the hotels in.
-     * @param currencyCode The currency code to search for.
-     *                     Can be any valid currency, but can only book chargeable currencies.
      */
     public ListRequest(final String destination, final List<RoomOccupancy> occupancies,
-            final LocalDate arrivalDate, final LocalDate departureDate,
-            final String customerSessionId, final String locale, final String currencyCode) {
+            final LocalDate arrivalDate, final LocalDate departureDate) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("destinationString", destination),
@@ -84,11 +73,8 @@ public final class ListRequest extends Request<HotelList> {
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
+        urlParameters.addAll(getBasicUrlParameters(arrivalDate, departureDate));
         urlParameters.addAll(requestParameters);
-        if (customerSessionId != null) {
-            urlParameters.add(new BasicNameValuePair("customerSessionId", customerSessionId));
-        }
         urlParameters.addAll(roomParameters);
 
         setUrlParameters(urlParameters);
@@ -96,25 +82,18 @@ public final class ListRequest extends Request<HotelList> {
 
     /**
      * Loads more results into a HotelList so pagination can be supported.
-     * @param locale Locale
-     * @param currencyCode Currency Code
      * @param cacheKey Cache key from previous request
      * @param cacheLocation Cache location from previous request
-     * @param customerSessionId Customer Session Id obtained from previous requests, pass
-     *      in to track as the user moves around requests and booking flow.
      */
-    public ListRequest(final String locale, final String currencyCode,
-                       final String cacheKey, final String cacheLocation,
-                       final String customerSessionId) {
+    public ListRequest(final String cacheKey, final String cacheLocation) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("cacheKey", cacheKey),
-                new BasicNameValuePair("cacheLocation", cacheLocation),
-                new BasicNameValuePair("customerSessionId", customerSessionId)
+            new BasicNameValuePair("cacheKey", cacheKey),
+            new BasicNameValuePair("cacheLocation", cacheLocation)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode));
+        urlParameters.addAll(getBasicUrlParameters());
         urlParameters.addAll(requestParameters);
 
         setUrlParameters(urlParameters);
@@ -149,6 +128,8 @@ public final class ListRequest extends Request<HotelList> {
                 Log.e("Unable to process JSON", me.getMessage());
             }
         }
+
+        CommonParameters.customerSessionId = outgoingCustomerSessionId;
 
         return new HotelList(newHotels,
             newCacheKey, newCacheLocation, outgoingCustomerSessionId, totalNumberOfResults);

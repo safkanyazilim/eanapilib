@@ -25,6 +25,7 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelImageTuple;
 import com.ean.mobile.hotel.HotelInformation;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -36,19 +37,16 @@ public final class InformationRequest extends Request<HotelInformation> {
     /**
      * Gets the rest of the information about a hotel not included in previous calls.
      * @param hotelId The hotelId for which to gather more information.
-     * @param customerSessionId The session of the customer so the search can happen potentially more quickly.
-     * @param locale The locale for which to get the information about a hotel.
      */
-    public InformationRequest(final long hotelId, final String customerSessionId, final String locale) {
+    public InformationRequest(final long hotelId) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-                new BasicNameValuePair("customerSessionId", customerSessionId),
-                new BasicNameValuePair("hotelId", Long.toString(hotelId)),
-                new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
+            new BasicNameValuePair("hotelId", Long.toString(hotelId)),
+            new BasicNameValuePair("options", "HOTEL_DETAILS,HOTEL_IMAGES")
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, null));
+        urlParameters.addAll(getBasicUrlParameters());
         urlParameters.addAll(requestParameters);
         setUrlParameters(urlParameters);
     }
@@ -81,6 +79,9 @@ public final class InformationRequest extends Request<HotelInformation> {
                 Log.e(Constants.LOG_TAG, "Unable to process JSON", me);
             }
         }
+
+        CommonParameters.customerSessionId = infoResp.optString("customerSessionId");
+
         Log.d(Constants.LOG_TAG, "Found " + imageTuples.size() + " images");
         return new HotelInformation(infoResp.optLong("@hotelId"), longDescription, imageTuples);
     }

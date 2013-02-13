@@ -57,7 +57,7 @@ public class HotelInformation extends Activity {
         } else {
             new AvailabilityInformationLoaderTask(
                 hotel.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
-                SampleApp.arrivalDate, SampleApp.departureDate, SampleApp.customerSessionId).execute((Void) null);
+                SampleApp.arrivalDate, SampleApp.departureDate).execute((Void) null);
         }
 
         ImageFetcher.loadThumbnailIntoImageView(
@@ -102,18 +102,15 @@ public class HotelInformation extends Activity {
         private final int numberOfChildren;
         private final LocalDate arrivalDate;
         private final LocalDate departureDate;
-        private final String customerSessionId;
 
         public AvailabilityInformationLoaderTask(final long hotelId,
                 final int numberOfAdults,  final int numberOfChildren,
-                final LocalDate arrivalDate, final LocalDate departureDate,
-                final String customerSessionId) {
+                final LocalDate arrivalDate, final LocalDate departureDate) {
             this.hotelId = hotelId;
             this.numberOfAdults = numberOfAdults;
             this.numberOfChildren = numberOfChildren;
             this.arrivalDate = arrivalDate;
             this.departureDate = departureDate;
-            this.customerSessionId = customerSessionId;
         }
 
 
@@ -121,8 +118,7 @@ public class HotelInformation extends Activity {
         protected List<HotelRoom> doInBackground(Void... voids) {
             try {
                 RoomAvailabilityRequest request
-                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate,
-                        customerSessionId, SampleApp.locale.toString(), SampleApp.currency.getCurrencyCode());
+                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
@@ -152,8 +148,7 @@ public class HotelInformation extends Activity {
         @Override
         protected com.ean.mobile.hotel.HotelInformation doInBackground(Void... voids) {
             try {
-                InformationRequest request = new InformationRequest(hotelId, SampleApp.customerSessionId,
-                        SampleApp.locale.toString());
+                InformationRequest request = new InformationRequest(hotelId);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);

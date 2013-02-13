@@ -39,7 +39,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class StartupSearch extends Activity {
@@ -139,10 +138,7 @@ public class StartupSearch extends Activity {
                     SampleApp.searchQuery,
                     SampleApp.occupancy(),
                     SampleApp.arrivalDate,
-                    SampleApp.departureDate,
-                    null,
-                    SampleApp.locale.toString(),
-                    SampleApp.currency.toString());
+                    SampleApp.departureDate);
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request),true);
             } catch (EanWsError ewe) {

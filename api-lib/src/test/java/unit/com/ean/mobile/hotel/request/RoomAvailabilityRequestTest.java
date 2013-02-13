@@ -16,10 +16,13 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ean.mobile.JSONFileUtil;
+import com.ean.mobile.TestConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
@@ -29,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class RoomAvailabilityRequestTest {
+public class RoomAvailabilityRequestTest extends RequestTestBase {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(2, 1);
@@ -39,8 +42,10 @@ public class RoomAvailabilityRequestTest {
 
     @Before
     public void setUp() {
+        super.setUp();
+        CommonParameters.customerSessionId = TestConstants.CUSTOMER_SESSION_ID;
         roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
-            DATES[0], DATES[1], "", "en_US", "USD");
+            DATES[0], DATES[1]);
     }
 
     @Test
@@ -93,8 +98,7 @@ public class RoomAvailabilityRequestTest {
     @Test
     public void testGetUriMultipleRooms() throws Exception {
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(2, 1));
-        roomAvailabilityRequest
-            = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1], "", "en_US", "USD");
+        roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1]);
 
         doUriAssertions(roomAvailabilityRequest.getUri(), "&room2=2,0");
     }
@@ -107,13 +111,12 @@ public class RoomAvailabilityRequestTest {
     private static void doUriAssertions(final URI uri, final String suffix) {
         DateTimeFormatter dateTimeFormatter = DateTimeFormat.forPattern("MM/dd/yyyy");
 
-        StringBuilder queryString = new StringBuilder(222);
-        queryString.append("cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&minorRev=20&customerUserAgent=Android");
-        queryString.append("&locale=en_US&currencyCode=USD&arrivalDate=");
+        StringBuilder queryString = buildBaseQueryString();
+        queryString.append("&arrivalDate=");
         queryString.append(dateTimeFormatter.print(DATES[0]));
         queryString.append("&departureDate=");
         queryString.append(dateTimeFormatter.print(DATES[1]));
-        queryString.append("&customerSessionId=&hotelId=106347&includeDetails=true&room1=2,0");
+        queryString.append("&hotelId=106347&includeDetails=true&room1=2,0");
         if (suffix != null) {
             queryString.append(suffix);
         }

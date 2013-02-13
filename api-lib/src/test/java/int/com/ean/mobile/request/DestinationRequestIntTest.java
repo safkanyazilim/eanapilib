@@ -13,7 +13,7 @@ import com.ean.mobile.Destination;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertThat;
 
-public class DestinationRequestIntTest {
+public class DestinationRequestIntTest extends RequestTestBase {
 
     @Test
     public void testGetDestination() throws Exception {

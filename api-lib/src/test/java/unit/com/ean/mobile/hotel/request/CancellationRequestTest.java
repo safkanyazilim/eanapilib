@@ -11,8 +11,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import com.ean.mobile.JSONFileUtil;
+import com.ean.mobile.TestConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Cancellation;
+import com.ean.mobile.request.CommonParameters;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
@@ -20,12 +23,14 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
-public class CancellationRequestTest {
+public class CancellationRequestTest extends RequestTestBase {
 
     private CancellationRequest cancellationRequest;
 
     @Before
     public void setUp() {
+        super.setUp();
+        CommonParameters.customerSessionId = TestConstants.CUSTOMER_SESSION_ID;
         cancellationRequest = new CancellationRequest(1234L, 5678L, "test@expedia.com", "test");
     }
 
@@ -59,8 +64,7 @@ public class CancellationRequestTest {
 
     @Test
     public void testGetUri() throws Exception {
-        StringBuilder queryString = new StringBuilder(155);
-        queryString.append("cid=55505&apiKey=cbrzfta369qwyrm9t5b8y8kf&minorRev=20&customerUserAgent=Android");
+        StringBuilder queryString = buildBaseQueryString();
         queryString.append("&itineraryId=1234&confirmationNumber=5678&email=test@expedia.com&reason=test");
 
         final URI uri = cancellationRequest.getUri();

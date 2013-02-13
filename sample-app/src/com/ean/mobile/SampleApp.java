@@ -19,17 +19,12 @@ import com.ean.mobile.hotel.HotelInformation;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
  */
 public class SampleApp extends Application {
-
-    private static final Locale DEFAULT_LOCALE = Locale.US;
-    public static Locale locale = DEFAULT_LOCALE;
-
-    private static final Currency DEFAULT_CURRENCY = Currency.getInstance(DEFAULT_LOCALE);
-    public static Currency currency = DEFAULT_CURRENCY;
 
     public static String searchQuery;
     public static int numberOfAdults;
@@ -43,8 +38,6 @@ public class SampleApp extends Application {
     public static String cacheKey;
     public static String cacheLocation;
 
-    public static String customerSessionId;
-
     public static Hotel selectedHotel;
 
     public static HotelRoom selectedRoom;
@@ -57,6 +50,16 @@ public class SampleApp extends Application {
 
     public static final Map<HotelImageTuple, HotelImageDrawable> IMAGE_DRAWABLES
             = Collections.synchronizedMap(new HotelImageDrawableMap());
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        CommonParameters.cid = "55505";
+        CommonParameters.apiKey = "";
+        CommonParameters.customerUserAgent = "Android";
+        CommonParameters.locale = Locale.US.toString();
+        CommonParameters.currencyCode = Currency.getInstance(Locale.US).getCurrencyCode();
+    }
 
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
@@ -97,7 +100,6 @@ public class SampleApp extends Application {
             SampleApp.foundHotels.clear();
         }
         SampleApp.foundHotels.addAll(hotelList.hotels);
-        SampleApp.customerSessionId = hotelList.customerSessionId;
         SampleApp.cacheKey = hotelList.cacheKey;
         SampleApp.cacheLocation = hotelList.cacheLocation;
     }

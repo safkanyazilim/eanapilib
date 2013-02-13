@@ -16,13 +16,14 @@ import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
+import com.ean.mobile.request.RequestTestBase;
 
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
-public class RoomAvailabilityRequestIntTest {
+public class RoomAvailabilityRequestIntTest extends RequestTestBase {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
 
@@ -33,7 +34,7 @@ public class RoomAvailabilityRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
             RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
-                dateTimes[0], dateTimes[1], "", "en_US", "USD");
+                dateTimes[0], dateTimes[1]);
             List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
             assertThat(rooms.size(), greaterThan(0));
         } catch (EanWsError ewe) {
@@ -46,7 +47,7 @@ public class RoomAvailabilityRequestIntTest {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         try {
             RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, OCCUPANCY,
-                dateTimes[0], dateTimes[1], "", "en_US", "USD");
+                dateTimes[0], dateTimes[1]);
             List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
             assertThat(rooms.size(), greaterThan(0));
         } catch (EanWsError ewe) {
@@ -58,7 +59,7 @@ public class RoomAvailabilityRequestIntTest {
     public void testGetAvailabilityWrongDates() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
-            HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1], "", "en_US", "USD");
+            HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1]);
         RequestProcessor.run(roomAvailabilityRequest);
     }
 
@@ -66,7 +67,7 @@ public class RoomAvailabilityRequestIntTest {
     public void testGetAvailabilityBadHotel() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
-            -1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1], "", "en_US", "USD");
+            -1L, new RoomOccupancy(1, null), dateTimes[0], dateTimes[1]);
         RequestProcessor.run(roomAvailabilityRequest);
     }
 
@@ -77,7 +78,7 @@ public class RoomAvailabilityRequestIntTest {
         List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
         try {
             RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies,
-                dateTimes[0], dateTimes[1], "", "en_US", "USD");
+                dateTimes[0], dateTimes[1]);
             List<HotelRoom> rooms = RequestProcessor.run(roomAvailabilityRequest);
             assertNotNull(rooms);
             assertThat(rooms.size(), greaterThan(0));

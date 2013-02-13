@@ -27,6 +27,7 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.request.ListRequest;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.RequestProcessor;
 
 import java.text.NumberFormat;
@@ -176,11 +177,8 @@ public class HotelList extends Activity {
         protected Void doInBackground(Void... voids) {
             try {
                 ListRequest request = new ListRequest(
-                    SampleApp.locale.toString(),
-                    SampleApp.currency.getCurrencyCode(),
                     SampleApp.cacheKey,
-                    SampleApp.cacheLocation,
-                    SampleApp.customerSessionId);
+                    SampleApp.cacheLocation);
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request));
             } catch (EanWsError ewe) {

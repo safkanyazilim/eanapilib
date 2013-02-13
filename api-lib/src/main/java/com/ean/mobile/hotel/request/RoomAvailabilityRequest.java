@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -39,17 +40,11 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
      * @param room The singular room occupancy to search for.
      * @param arrivalDate The date of arrival.
      * @param departureDate The date of departure (from the hotel).
-     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *                          Can be null.
-     * @param locale The locale to retrieve the availability with.
-     * @param currencyCode The currency code to use in the request.
      */
     public RoomAvailabilityRequest(final long hotelId, final RoomOccupancy room,
-                                   final LocalDate arrivalDate, final LocalDate departureDate,
-                                   final String customerSessionId, final String locale, final String currencyCode) {
+            final LocalDate arrivalDate, final LocalDate departureDate) {
 
-        this(hotelId, Collections.singletonList(room), arrivalDate, departureDate, customerSessionId,
-            locale, currencyCode);
+        this(hotelId, Collections.singletonList(room), arrivalDate, departureDate);
     }
     /**
      * Gets the room availability for the specified information.
@@ -61,19 +56,12 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
      * @param rooms The list of room occupancies to search for.
      * @param arrivalDate The date of arrival.
      * @param departureDate The date of departure (from the hotel).
-     * @param customerSessionId The session id of this customer, used to help speed requests on the API side.
-     *                          The same customerSessionId as returned to
-     *                          {@link com.ean.mobile.hotel.HotelList#customerSessionId}.
-     * @param locale The locale to retrieve the availability with.
-     * @param currencyCode The currency code to use in the request.
      */
 
     public RoomAvailabilityRequest(final long hotelId, final List<RoomOccupancy> rooms,
-                                   final LocalDate arrivalDate, final LocalDate departureDate,
-                                   final String customerSessionId, final String locale, final String currencyCode) {
+            final LocalDate arrivalDate, final LocalDate departureDate) {
 
         final List<NameValuePair> requestParameters = Arrays.<NameValuePair>asList(
-            new BasicNameValuePair("customerSessionId", customerSessionId),
             new BasicNameValuePair("hotelId", Long.toString(hotelId)),
             new BasicNameValuePair("includeDetails", "true")
         );
@@ -85,7 +73,7 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
         }
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();
-        urlParameters.addAll(getBasicUrlParameters(locale, currencyCode, arrivalDate, departureDate));
+        urlParameters.addAll(getBasicUrlParameters(arrivalDate, departureDate));
         urlParameters.addAll(requestParameters);
         urlParameters.addAll(roomPairs);
 
@@ -107,6 +95,8 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
+
+        CommonParameters.customerSessionId = response.optString("customerSessionId");
 
         final List<HotelRoom> hotelRooms;
         if (response.has("HotelRoomResponse")) {
