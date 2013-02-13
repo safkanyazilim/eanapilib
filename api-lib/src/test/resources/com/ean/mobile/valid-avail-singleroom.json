@@ -1,0 +1,26 @@
+{
+    "HotelRoomAvailabilityResponse": {
+        "HotelRoomResponse": {
+            "RateInfos": {
+                "RateInfo": {
+                    "ChargeableRateInfo": {
+                        "NightlyRatesPerRoom": {
+                            "NightlyRate": {
+                                "@baseRate": "2.00",
+                                "@rate": "1.00"
+                            }
+                        },
+                        "Surcharges": {
+                            "Surcharge": {
+                                "@amount": "3.00"
+                            }
+                        }
+                    },
+                    "RoomGroup": {}
+                }
+            }
+        },
+        "arrivalDate": "7/15/2013",
+        "departureDate": "7/16/2013"
+    }
+}

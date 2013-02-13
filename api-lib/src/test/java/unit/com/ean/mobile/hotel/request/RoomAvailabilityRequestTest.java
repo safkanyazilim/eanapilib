@@ -15,11 +15,13 @@ import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.ean.mobile.JSONFileUtil;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.DateModifier;
 
+import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -51,28 +53,24 @@ public class RoomAvailabilityRequestTest {
         roomAvailabilityRequest.consume(new JSONObject());
     }
 
-    @Test(expected = JSONException.class)
+    @Test
     public void testConsumeInvalidJson() throws Exception {
-        roomAvailabilityRequest.consume(new JSONObject("{ invalid! }"));
+        List<HotelRoom> hotelRooms
+            = roomAvailabilityRequest.consume(JSONFileUtil.loadJsonFromFile("invalid-avail.json"));
+
+        assertNotNull(hotelRooms);
+        assertThat(hotelRooms, empty());
     }
 
     @Test(expected = EanWsError.class)
     public void testConsumeEanWsError() throws Exception {
-        roomAvailabilityRequest.consume(
-            new JSONObject("{ HotelRoomAvailabilityResponse: { EanWsError: { category: 'test' } } }"));
+        roomAvailabilityRequest.consume(JSONFileUtil.loadJsonFromFile("error-avail.json"));
     }
 
     @Test
     public void testConsumeSingleRoom() throws Exception {
-        StringBuilder jsonString = new StringBuilder(308);
-
-        jsonString.append("{ HotelRoomAvailabilityResponse: { arrivalDate: '7/15/2013', departureDate: '7/16/2013', ");
-        jsonString.append("HotelRoomResponse: { RateInfos: { RateInfo: { RoomGroup: { }, ChargeableRateInfo: ");
-        jsonString.append("{ NightlyRatesPerRoom: { NightlyRate: { @rate: '1.00', @baseRate: '2.00' } }, ");
-        jsonString.append("Surcharges: { Surcharge: { @amount: '3.00' } } }");
-        jsonString.append("} } } } } }");
-
-        List<HotelRoom> hotelRooms = roomAvailabilityRequest.consume(new JSONObject(jsonString.toString()));
+        List<HotelRoom> hotelRooms
+            = roomAvailabilityRequest.consume(JSONFileUtil.loadJsonFromFile("valid-avail-singleroom.json"));
 
         assertNotNull(hotelRooms);
         assertThat(hotelRooms.size(), greaterThan(0));
@@ -80,18 +78,8 @@ public class RoomAvailabilityRequestTest {
 
     @Test
     public void testConsumeMultipleRooms() throws Exception {
-        StringBuilder jsonString = new StringBuilder(486);
-
-        jsonString.append("{ HotelRoomAvailabilityResponse: { arrivalDate: '7/15/2013', departureDate: '7/16/2013', ");
-        jsonString.append("HotelRoomResponse: [{ 0: { RateInfos: { RateInfo: { ChargeableRateInfo: ");
-        jsonString.append("{ NightlyRatesPerRoom: { NightlyRate: { @rate: '1.00', @baseRate: '2.00' } }, ");
-        jsonString.append("Surcharges: { Surcharge: { @amount: '3.00' } } }");
-        jsonString.append("} } } }, { 1: { RateInfos: { RateInfo: { ChargeableRateInfo: ");
-        jsonString.append("{ NightlyRatesPerRoom: { NightlyRate: { @rate: '4.00', @baseRate: '5.00' } }, ");
-        jsonString.append("Surcharges: { Surcharge: { @amount: '6.00' } } }");
-        jsonString.append("} } } }] } }");
-
-        List<HotelRoom> hotelRooms = roomAvailabilityRequest.consume(new JSONObject(jsonString.toString()));
+        List<HotelRoom> hotelRooms
+            = roomAvailabilityRequest.consume(JSONFileUtil.loadJsonFromFile("valid-avail-multiroom.json"));
 
         assertNotNull(hotelRooms);
         assertThat(hotelRooms.size(), greaterThan(0));
