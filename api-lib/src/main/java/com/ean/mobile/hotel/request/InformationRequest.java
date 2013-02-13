@@ -25,6 +25,7 @@ import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelImageTuple;
 import com.ean.mobile.hotel.HotelInformation;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -78,6 +79,9 @@ public final class InformationRequest extends Request<HotelInformation> {
                 Log.e(Constants.LOG_TAG, "Unable to process JSON", me);
             }
         }
+
+        CommonParameters.customerSessionId = infoResp.optString("customerSessionId");
+
         Log.d(Constants.LOG_TAG, "Found " + imageTuples.size() + " images");
         return new HotelInformation(infoResp.optLong("@hotelId"), longDescription, imageTuples);
     }

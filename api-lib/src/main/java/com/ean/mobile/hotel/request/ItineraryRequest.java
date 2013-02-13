@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Itinerary;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -54,6 +55,8 @@ public class ItineraryRequest extends Request<Itinerary> {
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
+
+        CommonParameters.customerSessionId = response.optString("customerSessionId");
 
         return new Itinerary(response.getJSONObject("Itinerary"));
     }

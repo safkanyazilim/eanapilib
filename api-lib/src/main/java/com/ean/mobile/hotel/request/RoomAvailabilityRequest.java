@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.HotelRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -94,6 +95,8 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
+
+        CommonParameters.customerSessionId = response.optString("customerSessionId");
 
         final List<HotelRoom> hotelRooms;
         if (response.has("HotelRoomResponse")) {

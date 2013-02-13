@@ -16,6 +16,7 @@ import org.json.JSONObject;
 
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Cancellation;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -59,6 +60,8 @@ public class CancellationRequest extends Request<Cancellation> {
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
+
+        CommonParameters.customerSessionId = response.optString("customerSessionId");
 
         return new Cancellation(response.getString("cancellationNumber"));
     }

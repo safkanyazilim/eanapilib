@@ -26,6 +26,7 @@ import com.ean.mobile.Individual;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.ReservationRoom;
+import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
 /**
@@ -114,6 +115,9 @@ public final class BookingRequest extends Request<Reservation> {
             //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
+
+        CommonParameters.customerSessionId = response.optString("customerSessionId");
+
         //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
         return new Reservation(response);
     }
