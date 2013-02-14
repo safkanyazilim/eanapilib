@@ -13,6 +13,7 @@ public final class TestConstants {
 
     public static final String CID = "55505";
     public static final String API_KEY = "cbrzfta369qwyrm9t5b8y8kf";
+    public static final String SHARED_SECRET = "YOUR_SECRET";
     public static final String CUSTOMER_IP_ADDRESS = "127.0.0.1";
     public static final String CUSTOMER_USER_AGENT = "Android";
     public static final String CUSTOMER_SESSION_ID = "0ABAA856-83A7-F691-3C82-29AA53292D64";
