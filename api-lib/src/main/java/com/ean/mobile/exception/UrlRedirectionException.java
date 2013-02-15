@@ -4,7 +4,6 @@
 
 package com.ean.mobile.exception;
 
-
 /**
  * An exception thrown when a request was unexpectedly redirected while executing, denoting  a network sign on
  * or connectivity issue.

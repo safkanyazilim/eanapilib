@@ -6,8 +6,11 @@ package com.ean.mobile;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -24,8 +27,8 @@ public abstract class Address {
     /**
      * The country codes wherein a state code is supported and required.
      */
-    public static final List<String> VALID_STATE_PROVINCE_CODE_COUNTRY_CODES
-        = Collections.unmodifiableList(Arrays.asList("US", "CA", "AU"));
+    public static final Set<String> VALID_STATE_PROVINCE_CODE_COUNTRY_CODES
+        = Collections.unmodifiableSet(new HashSet<String>(Arrays.asList("US", "CA", "AU")));
 
     /**
      * An ordered list of address lines, starting with address line 1 and maxing out around 3.
@@ -67,7 +70,7 @@ public abstract class Address {
     public Address(final JSONObject object) {
         final List<String> localLines = new LinkedList<String>();
         String line;
-        for (int i = 1; localLines.size() == i - 1; i++) {
+        for (int i = 1; object.has("address" + i); i++) {
             line = object.optString("address" + i);
             if (line != null && !"".equals(line)) {
                 localLines.add(line);
@@ -104,8 +107,9 @@ public abstract class Address {
      */
     public List<NameValuePair> asBookingRequestPairs() {
         final List<NameValuePair> addressPairs = new LinkedList<NameValuePair>();
-        for (int i = 0; i < lines.size(); i++) {
-            addressPairs.add(new BasicNameValuePair("address" + (i + 1), lines.get(i)));
+        final Iterator<String> lineIterator = lines.iterator();
+        for (int i = 1; lineIterator.hasNext(); i++) {
+            addressPairs.add(new BasicNameValuePair("address" + i, lineIterator.next()));
         }
         addressPairs.add(new BasicNameValuePair("city", city));
         if (VALID_STATE_PROVINCE_CODE_COUNTRY_CODES.contains(countryCode)) {
@@ -123,6 +127,9 @@ public abstract class Address {
      */
     @Override
     public String toString() {
+        if (asString != null) {
+            return asString;
+        }
         final StringBuilder addressBuilder = new StringBuilder();
         for (String line : lines) {
             addressBuilder.append(line);

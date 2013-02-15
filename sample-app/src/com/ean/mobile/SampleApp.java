@@ -6,30 +6,32 @@ package com.ean.mobile;
 
 import android.app.Application;
 import android.content.Context;
-import android.os.Build;
-import android.text.StaticLayout;
 import android.widget.Toast;
+import com.ean.mobile.hotel.Reservation;
 import org.joda.time.LocalDate;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.ean.mobile.hotel.Hotel;
+import com.ean.mobile.hotel.HotelImageTuple;
+import com.ean.mobile.hotel.HotelInformation;
+import com.ean.mobile.hotel.HotelList;
+import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.request.CommonParameters;
+
+/**
+ * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
+ */
 public final class SampleApp extends Application {
-
-    private static final Locale DEFAULT_LOCALE = Locale.US;
-    public static Locale locale = DEFAULT_LOCALE;
-
-    private static final Currency DEFAULT_CURRENCY = Currency.getInstance(DEFAULT_LOCALE);
-    public static Currency currency = DEFAULT_CURRENCY;
 
     public static String searchQuery;
     public static int numberOfAdults;
@@ -39,18 +41,16 @@ public final class SampleApp extends Application {
 
     // When a new search is performed, foundHotels, selectedHotel,
     // EXTENDED_INFOS, and HOTEL_ROOMS should be cleared or nullified, as appropriate.
-    public static List<HotelInfo> foundHotels;
+    public static List<Hotel> foundHotels;
     public static String cacheKey;
     public static String cacheLocation;
 
-    public static String customerSessionId;
-
-    public static HotelInfo selectedHotel;
+    public static Hotel selectedHotel;
 
     public static HotelRoom selectedRoom;
 
-    public static final Map<Long, HotelInfoExtended> EXTENDED_INFOS
-            = Collections.synchronizedMap(new HashMap<Long, HotelInfoExtended>());
+    public static final Map<Long, HotelInformation> EXTENDED_INFOS
+            = Collections.synchronizedMap(new HashMap<Long, HotelInformation>());
 
     public static final Map<Long, List<HotelRoom>> HOTEL_ROOMS
             = Collections.synchronizedMap(new HashMap<Long, List<HotelRoom>>());
@@ -59,6 +59,16 @@ public final class SampleApp extends Application {
             = Collections.synchronizedMap(new HotelImageDrawableMap());
 
     private static final Set<Reservation> RESERVATIONS = new TreeSet<Reservation>();
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        CommonParameters.cid = "55505";
+        CommonParameters.apiKey = "";
+        CommonParameters.customerUserAgent = "Android";
+        CommonParameters.locale = Locale.US.toString();
+        CommonParameters.currencyCode = Currency.getInstance(Locale.US).getCurrencyCode();
+    }
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
     }
@@ -87,23 +97,28 @@ public final class SampleApp extends Application {
         IMAGE_DRAWABLES.clear();
     }
 
-    public static void updateFoundHotels(HotelInfoList hotelInfoList) {
-        updateFoundHotels(hotelInfoList, false);
+    public static void updateFoundHotels(HotelList hotelList) {
+        updateFoundHotels(hotelList, false);
     }
 
-    public static synchronized void updateFoundHotels(HotelInfoList hotelInfoList, boolean clearOnUpdate) {
+    public static synchronized void updateFoundHotels(HotelList hotelList, boolean clearOnUpdate) {
         if (SampleApp.foundHotels == null) {
-            SampleApp.foundHotels = new ArrayList<HotelInfo>();
+            SampleApp.foundHotels = new ArrayList<Hotel>();
         } else if (clearOnUpdate) {
             SampleApp.foundHotels.clear();
         }
-        SampleApp.foundHotels.addAll(hotelInfoList.hotelInfos);
-        SampleApp.customerSessionId = hotelInfoList.customerSessionId;
-        SampleApp.cacheKey = hotelInfoList.cacheKey;
-        SampleApp.cacheLocation = hotelInfoList.cacheLocation;
+        if (hotelList != null) {
+            SampleApp.foundHotels.addAll(hotelList.hotels);
+            SampleApp.cacheKey = hotelList.cacheKey;
+            SampleApp.cacheLocation = hotelList.cacheLocation;
+        }
     }
 
-    public static void addReservationToCache(final Reservation reservation) {
+    public static void addReservationToCache(final Context context, final Reservation reservation) {
         RESERVATIONS.add(reservation);
+    }
+
+    public static Reservation getLatestReservation() {
+        return RESERVATIONS.size() == 0 ? null : RESERVATIONS.iterator().next();
     }
 }

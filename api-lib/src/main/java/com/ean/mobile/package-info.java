@@ -3,6 +3,7 @@
  */
 
 /**
- * Classes in this package are used to interact with the java system and hold EAN data in java objects.
+ * Classes in this package are used to interact with the java system and hold non-hotel specific
+ * EAN data in java objects.
  */
 package com.ean.mobile;

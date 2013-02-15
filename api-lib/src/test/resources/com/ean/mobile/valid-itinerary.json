@@ -1,0 +1,125 @@
+{
+    "HotelItineraryResponse":{
+        "Itinerary":{
+            "Customer":{
+                "lastName":"tester",
+                "email":"test@expedia.com",
+                "CustomerAddresses":{
+                    "isPrimary":true,
+                    "postalCode":98004,
+                    "stateProvinceCode":"WA",
+                    "countryCode":"US",
+                    "address1":"travelnow",
+                    "type":1,
+                    "city":"Seattle"
+                },
+                "firstName":"test",
+                "homePhone":1234567890
+            },
+            "creationDate":"01/28/2013",
+            "itineraryId":107730857,
+            "itineraryStartDate":"02/07/2013",
+            "itineraryEndDate":"02/10/2013",
+            "creationTime":"14:11:34 CST",
+            "HotelConfirmation":{
+                "roomTypeCode":7220,
+                "supplierId":13,
+                "status":"CF",
+                "departureDate":"02/10/2013",
+                "RateInfos":{
+                    "@size":"1",
+                    "RateInfo":{
+                        "nonRefundable":false,
+                        "rateType":"MerchantStandard",
+                        "ChargeableRateInfo":{
+                            "@commissionableUsdTotal":"430.0",
+                            "@surchargeTotal":"79.96",
+                            "@total":"509.96",
+                            "@currencyCode":"USD",
+                            "@averageBaseRate":"143.33333",
+                            "@averageRate":"143.33333",
+                            "@maxNightlyRate":"169.0",
+                            "Surcharges":{
+                                "Surcharge":{
+                                    "@type":"TaxAndServiceFee",
+                                    "@amount":"79.96"
+                                },
+                                "@size":"1"
+                            },
+                            "NightlyRatesPerRoom":{
+                                "NightlyRate":[
+                                    {
+                                        "@baseRate":"169.0",
+                                        "@rate":"169.0",
+                                        "@promo":"false"
+                                    },
+                                    {
+                                        "@baseRate":"126.75",
+                                        "@rate":"126.75",
+                                        "@promo":"false"
+                                    },
+                                    {
+                                        "@baseRate":"134.25",
+                                        "@rate":"134.25",
+                                        "@promo":"false"
+                                    }
+                                ],
+                                "@size":"3"
+                            },
+                            "@nightlyRateTotal":"430.0"
+                        },
+                        "@rateChange":"true",
+                        "@priceBreakdown":"true",
+                        "@promo":"false",
+                        "online":true,
+                        "cancellationPolicy":"Test cancellation policy"
+                    }
+                },
+                "supplierPropertyId":28647,
+                "locale":"en_US",
+                "confirmationNumber":1234,
+                "smokingPreference":"N",
+                "Hotel":{
+                    "region":"Mountain (USA)",
+                    "phone":"1-206-7286299",
+                    "fax":"1-206-3826996",
+                    "theme":"Pet-friendly Hotel",
+                    "countryCode":"US",
+                    "address1":"620 Stewart St",
+                    "address2":"",
+                    "confidence":99,
+                    "coordinateAccuracyCode":1,
+                    "hotelId":113426,
+                    "city":"Seattle",
+                    "statusCode":"A",
+                    "tripAdvisorRating":4,
+                    "lowRate":169,
+                    "market":"Seattle, WA",
+                    "postalCode":98101,
+                    "highRate":189,
+                    "name":"Hotel Max, a Provenance Hotel",
+                    "stateProvinceCode":"WA",
+                    "hotelRating":3.5,
+                    "longitude":-122.33686,
+                    "latitude":47.61381,
+                    "superRegion":"AMER"
+                },
+                "rateCode":7220,
+                "numberOfAdults":1,
+                "rateDescription":"7-Day Advance Purchase Special (on select nights)",
+                "numberOfChildren":0,
+                "chainCode":"EP",
+                "nights":3,
+                "arrivalDate":"02/07/2013",
+                "roomDescription":"Queen of Art",
+                "ReservationGuest":{
+                    "lastName":"tester",
+                    "firstName":"test"
+                }
+            },
+            "affiliateId":55505
+        },
+        "customerSessionId":"0ABAA856-83A7-F691-3C82-29AA53292D64",
+        "@size":"1"
+    }
+}

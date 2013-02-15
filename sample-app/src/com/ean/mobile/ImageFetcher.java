@@ -4,23 +4,21 @@
 
 package com.ean.mobile;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import android.os.Build;
 import android.widget.ImageView;
-import com.ean.mobile.task.ImageDrawableLoaderTask;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
-import android.util.Log;
+import com.ean.mobile.hotel.HotelImageTuple;
+import com.ean.mobile.task.ImageDrawableLoaderTask;
 
 /**
  * Uses methods described <a href="http://android-developers.blogspot.com/2011/09/androids-http-clients.html">here</a>

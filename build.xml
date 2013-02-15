@@ -46,4 +46,8 @@
     <target name="clean.cache" description="Cleans ivy cache of artifacts.">
         <ant dir="${api-lib.dir}" target="clean.cache" />
     </target>
+
+    <target name="installd" description="installs the debug version of the sample-app to a locally running android device">
+        <ant dir="${sample-app.dir}" target="installd" />
+    </target>
 </project>

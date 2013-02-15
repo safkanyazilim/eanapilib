@@ -8,6 +8,8 @@ import android.graphics.drawable.Drawable;
 
 import java.io.IOException;
 
+import com.ean.mobile.hotel.HotelImageTuple;
+
 public final class HotelImageDrawable {
 
     private HotelImageTuple tuple;

@@ -4,12 +4,6 @@
 
 package com.ean.mobile;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import org.junit.Test;
@@ -18,36 +12,7 @@ import static org.junit.Assert.assertEquals;
 
 public class DestinationTest {
 
-    private static final String TEST_JSON_STRING;
-
-    private static final JSONObject TEST_JSON;
-
-    static {
-        InputStream jsonResource = DestinationTest.class.getResourceAsStream("DestinationTest.json");
-        if (jsonResource == null) {
-            throw new RuntimeException(
-                    "Could not load DestinationTest.json for test. Check classpath and resource settings.");
-        }
-
-        final BufferedReader reader = new BufferedReader(new InputStreamReader(jsonResource));
-        final StringBuilder jsonBuilder = new StringBuilder();
-        String line;
-        try {
-            while ((line = reader.readLine()) != null) {
-                jsonBuilder.append(line);
-            }
-        } catch (IOException ioe) {
-            jsonBuilder.append("error");
-        }
-        TEST_JSON_STRING = jsonBuilder.toString();
-        JSONObject jsonObject;
-        try {
-            jsonObject = new JSONObject(TEST_JSON_STRING);
-        } catch (JSONException jse) {
-            jsonObject = null;
-        }
-        TEST_JSON = jsonObject;
-    }
+    private static final JSONObject TEST_JSON = JSONFileUtil.loadJsonFromFile("DestinationTest.json");
 
     @Test
     public void testDestinationCreatedCorrectly() throws Exception {

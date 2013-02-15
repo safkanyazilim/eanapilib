@@ -45,13 +45,6 @@
     </string>
     <string name="number_of_adults_prompt">Select number of adults</string>
     <string name="number_of_children_prompt">Select number of children</string>
-    <string-array name="number_of_people_array">
-        <item>1</item>
-        <item>2</item>
-        <item>3</item>
-        <item>4</item>
-        <item>5</item>
-    </string-array>
     <string name="taxes_and_fees">Taxes &amp; Fees</string>
     <string name="redirected">Couldn\'t connect to EAN API network.</string>
     <string name="adults_comma_children">%1$d Adult(s), %2$d Child(ren)</string>
@@ -59,4 +52,5 @@
     <string name="searching">Searching</string>
     <string name="loading_more_hotels">Loading more hotels&#8230;</string>
     <string name="complete_booking">Complete Booking</string>
+    <string name="load_default_billing_info">Load Default Billing Info</string>
 </resources>
