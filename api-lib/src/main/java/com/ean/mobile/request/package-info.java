@@ -3,8 +3,8 @@
  */
 
 /**
- * This package holds the concrete implementations and the abstract class for the requests to be performed to the
- * EAN API.
+ * This package holds the concrete implementations and the abstract class for the non-hotel requests to be
+ * performed to the EAN API.
  */
 
 package com.ean.mobile.request;

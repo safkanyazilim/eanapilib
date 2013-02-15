@@ -5,6 +5,8 @@
 package com.ean.mobile.request;
 
 import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public final class DateModifier {
 
@@ -27,5 +29,15 @@ public final class DateModifier {
             calendars[i] = LocalDate.now().plusDays(offsets[i]);
         }
         return calendars;
+    }
+
+    /**
+     * Returns a LocalDate that matches the given dateString.
+     * @param dateString a String representation of the desired date. MUST be in the format MM/DD/yyyy.
+     * @return a LocalDate object representing the desired date.
+     */
+    public static LocalDate getDateFromString(final String dateString) {
+        final DateTimeFormatter dtf = DateTimeFormat.forPattern("MM/dd/yyyy");
+        return dtf.parseLocalDate(dateString);
     }
 }

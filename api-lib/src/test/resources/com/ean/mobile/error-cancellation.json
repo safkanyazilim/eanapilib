@@ -1,0 +1,7 @@
+{
+    "HotelRoomCancellationResponse": {
+        "EanWsError": {
+            "category": "test"
+        }
+    }
+}

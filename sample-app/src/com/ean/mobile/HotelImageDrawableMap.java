@@ -1,6 +1,7 @@
 package com.ean.mobile;
 
 import java.util.HashMap;
+import com.ean.mobile.hotel.HotelImageTuple;
 
 /**
  * Extends map in such a way that if the HotelImageDrawable that has been requested by the HotelImageTuple

@@ -2,15 +2,10 @@ package com.ean.mobile;
 
 import android.app.Application;
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteStatement;
-import android.os.Build;
-import android.text.StaticLayout;
 import android.widget.Toast;
+import com.ean.mobile.hotel.Reservation;
 import org.joda.time.LocalDate;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -21,6 +16,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+
+import com.ean.mobile.hotel.Hotel;
+import com.ean.mobile.hotel.HotelImageTuple;
+import com.ean.mobile.hotel.HotelInformation;
+import com.ean.mobile.hotel.HotelList;
+import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.RoomOccupancy;
 
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
@@ -41,18 +43,18 @@ public final class SampleApp extends Application {
 
     // When a new search is performed, foundHotels, selectedHotel,
     // EXTENDED_INFOS, and HOTEL_ROOMS should be cleared or nullified, as appropriate.
-    public static List<HotelInfo> foundHotels;
+    public static List<Hotel> foundHotels;
     public static String cacheKey;
     public static String cacheLocation;
 
     public static String customerSessionId;
 
-    public static HotelInfo selectedHotel;
+    public static Hotel selectedHotel;
 
     public static HotelRoom selectedRoom;
 
-    public static final Map<Long, HotelInfoExtended> EXTENDED_INFOS
-            = Collections.synchronizedMap(new HashMap<Long, HotelInfoExtended>());
+    public static final Map<Long, HotelInformation> EXTENDED_INFOS
+            = Collections.synchronizedMap(new HashMap<Long, HotelInformation>());
 
     public static final Map<Long, List<HotelRoom>> HOTEL_ROOMS
             = Collections.synchronizedMap(new HashMap<Long, List<HotelRoom>>());
@@ -89,43 +91,26 @@ public final class SampleApp extends Application {
         IMAGE_DRAWABLES.clear();
     }
 
-    public static void updateFoundHotels(HotelInfoList hotelInfoList) {
-        updateFoundHotels(hotelInfoList, false);
+    public static void updateFoundHotels(HotelList hotelList) {
+        updateFoundHotels(hotelList, false);
     }
 
-    public static synchronized void updateFoundHotels(HotelInfoList hotelInfoList, boolean clearOnUpdate) {
+    public static synchronized void updateFoundHotels(HotelList hotelList, boolean clearOnUpdate) {
         if (SampleApp.foundHotels == null) {
-            SampleApp.foundHotels = new ArrayList<HotelInfo>();
+            SampleApp.foundHotels = new ArrayList<Hotel>();
         } else if (clearOnUpdate) {
             SampleApp.foundHotels.clear();
         }
-        if (hotelInfoList != null) {
-            SampleApp.foundHotels.addAll(hotelInfoList.hotelInfos);
-            SampleApp.customerSessionId = hotelInfoList.customerSessionId;
-            SampleApp.cacheKey = hotelInfoList.cacheKey;
-            SampleApp.cacheLocation = hotelInfoList.cacheLocation;
+        if (hotelList != null) {
+            SampleApp.foundHotels.addAll(hotelList.hotels);
+            SampleApp.customerSessionId = hotelList.customerSessionId;
+            SampleApp.cacheKey = hotelList.cacheKey;
+            SampleApp.cacheLocation = hotelList.cacheLocation;
         }
     }
 
     public static void addReservationToCache(final Context context, final Reservation reservation) {
         RESERVATIONS.add(reservation);
-//        SQLiteDatabase reservationDatabase = new ReservationOpenHelper(context).getWritableDatabase();
-//
-//        reservationDatabase.beginTransaction();
-//
-//        SQLiteStatement insertReservationStatement = reservationDatabase.compileStatement(context.getString(R.string.add_reservation_sql));
-//        insertReservationStatement.bindLong(1, reservation.itineraryId);
-//        insertReservationStatement.executeInsert();
-//
-//        SQLiteStatement insertConfirmationStatement = reservationDatabase.compileStatement(context.getString(R.string.add_confirmation_sql));
-//        for (Long confirmationNumber : reservation.confirmationNumbers) {
-//            insertConfirmationStatement.bindLong(1, reservation.itineraryId);
-//            insertConfirmationStatement.bindLong(2, confirmationNumber);
-//            insertConfirmationStatement.executeInsert();
-//            insertConfirmationStatement.clearBindings();
-//        }
-//
-//        reservationDatabase.endTransaction();
     }
 
     public static Reservation getLatestReservation() {

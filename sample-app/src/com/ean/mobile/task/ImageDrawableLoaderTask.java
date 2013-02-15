@@ -4,9 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
-import com.ean.mobile.Constants;
 import com.ean.mobile.HotelImageDrawable;
-import com.ean.mobile.HotelImageTuple;
 import com.ean.mobile.SampleConstants;
 
 import java.io.IOException;

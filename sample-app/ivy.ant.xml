@@ -42,7 +42,7 @@
 
     <target name="resolve.dependencies"
             description="Retrieve dependencies with Ivy"
-            depends="ivy.install, ivy.resolve">
+            depends="ivy.install, ivy.resolve, ivy.delete.dexed.libs">
         <!-- Clear out the local jars so we don't get conflicts with the api-lib at dex time. -->
         <delete>
             <fileset dir="${jar.libs.absolute.dir}" includes="*.jar" />
@@ -51,6 +51,10 @@
         <delete dir="${ivy.report.dir}" failonerror="false"/>
         <mkdir dir="${ivy.report.dir}"/>
         <ivy:report todir="${ivy.report.dir}"/>
+    </target>
+
+    <target name="delete.dexed.libs" if="ivy.deps.changed">
+        <delete dir="${out.absolute.dir}/dexedLibs" failonerror="false"/>
     </target>
 
     <target name="clean.cache" description="Clean the Ivy cache" depends="ivy.install">

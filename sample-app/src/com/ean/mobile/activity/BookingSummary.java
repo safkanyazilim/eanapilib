@@ -19,17 +19,18 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import com.ean.mobile.Address;
 import com.ean.mobile.BasicAddress;
-import com.ean.mobile.HotelInfo;
-import com.ean.mobile.HotelRoom;
-import com.ean.mobile.NightlyRate;
 import com.ean.mobile.R;
-import com.ean.mobile.Reservation;
-import com.ean.mobile.ReservationRoom;
-import com.ean.mobile.RoomOccupancy;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.request.BookingRequest;
+import com.ean.mobile.exception.UrlRedirectionException;
+import com.ean.mobile.hotel.Hotel;
+import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.NightlyRate;
+import com.ean.mobile.hotel.Reservation;
+import com.ean.mobile.hotel.ReservationRoom;
+import com.ean.mobile.hotel.RoomOccupancy;
+import com.ean.mobile.hotel.request.BookingRequest;
 import com.ean.mobile.request.RequestProcessor;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
@@ -69,11 +70,11 @@ public class BookingSummary extends Activity {
         TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
         LinearLayout priceBreakdownList = (LinearLayout) findViewById(R.id.priceDetailsBreakdown);
         ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
-        final HotelInfo hotelInfo = SampleApp.selectedHotel;
+        final Hotel hotel = SampleApp.selectedHotel;
         HotelRoom hotelRoom = SampleApp.selectedRoom;
         RoomOccupancy occupancy = hotelRoom.rate.roomGroup.get(0).occupancy;
 
-        hotelName.setText(hotelInfo.name);
+        hotelName.setText(hotel.name);
         checkIn.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
         checkOut.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
         numGuests.setText(String.format(getString(R.string.adults_comma_children), occupancy.numberOfAdults, occupancy.childAges.size()));
@@ -82,7 +83,7 @@ public class BookingSummary extends Activity {
         drrPromoText.setText(hotelRoom.promoDescription);
 
         NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-        currencyFormat.setCurrency(Currency.getInstance(hotelInfo.currencyCode));
+        currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
 
         taxesAndFees.setText(currencyFormat.format(hotelRoom.getTaxesAndFees()));
 
@@ -97,7 +98,7 @@ public class BookingSummary extends Activity {
             totalHighPrice.setVisibility(TextView.VISIBLE);
             drrIcon.setVisibility(ImageView.VISIBLE);
             drrPromoText.setVisibility(ImageView.VISIBLE);
-            totalHighPrice.setText(currencyFormat.format(hotelInfo.highPrice));
+            totalHighPrice.setText(currencyFormat.format(hotel.highPrice));
             totalHighPrice.setPaintFlags(totalHighPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
 
@@ -114,7 +115,7 @@ public class BookingSummary extends Activity {
             currentDate = currentDate.plusDays(1);
             date.setText(NIGHTLY_RATE_FORMATTER.print(currentDate));
 
-            currencyFormat.setCurrency(Currency.getInstance(hotelInfo.currencyCode));
+            currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(rate.rate));
             if(rate.rate.equals(rate.baseRate)){
                 highPrice.setVisibility(TextView.GONE);
@@ -133,7 +134,7 @@ public class BookingSummary extends Activity {
     }
 
     public void onLoadDefaultBillingInfoClick(View view) {
-        final EditText addressLine1 = SampleApp.getObjectFromId(this, R.id.billingInformationAddress1);
+        final EditText addressLine1 = (EditText) findViewById(R.id.billingInformationAddress1);
         final EditText addressLine2 = (EditText) findViewById(R.id.billingInformationAddress2);
         final EditText city = (EditText) findViewById(R.id.billingInformationCity);
         final EditText state = (EditText) findViewById(R.id.billingInformationState);
@@ -184,7 +185,7 @@ public class BookingSummary extends Activity {
         final YearMonth expirationDate = new YearMonth(Integer.parseInt(cardExpirationYear.length() == 2 ? "20" + cardExpirationYear : cardExpirationYear), Integer.parseInt(cardExpirationMonth));
 
 
-        final BookingRequest.ReservationInfo reservationInfo = new BookingRequest.ReservationInfo(email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
+        final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
         final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id ,SampleApp.occupancy());
         final Address reservationAddress = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
 
@@ -214,6 +215,8 @@ public class BookingSummary extends Activity {
                     reservations.add(RequestProcessor.run(request));
                 } catch (EanWsError ewe) {
                     Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                } catch (UrlRedirectionException  ure) {
+                    SampleApp.sendRedirectionToast(getApplicationContext());
                 }
             }
             return reservations;

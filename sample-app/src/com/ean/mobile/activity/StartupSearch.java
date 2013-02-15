@@ -30,7 +30,8 @@ import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
-import com.ean.mobile.request.ListRequest;
+import com.ean.mobile.exception.UrlRedirectionException;
+import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
 import org.joda.time.LocalDate;
@@ -147,6 +148,8 @@ public class StartupSearch extends Activity {
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
          }

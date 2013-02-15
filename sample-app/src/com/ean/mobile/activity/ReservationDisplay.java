@@ -8,8 +8,8 @@ import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
 import com.ean.mobile.R;
-import com.ean.mobile.Reservation;
 import com.ean.mobile.SampleApp;
+import com.ean.mobile.hotel.Reservation;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
