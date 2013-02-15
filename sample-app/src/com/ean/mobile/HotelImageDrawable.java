@@ -14,10 +14,6 @@ public final class HotelImageDrawable {
 
     private HotelImageTuple tuple;
 
-    public HotelImageDrawable(final HotelImageTuple tuple) {
-        this.tuple = tuple;
-    }
-
     /**
      * The thumbnail resource for this image.
      */
@@ -27,6 +23,10 @@ public final class HotelImageDrawable {
      * The main drawable resource for the main image .
      */
     private Drawable main;
+
+    public HotelImageDrawable(final HotelImageTuple tuple) {
+        this.tuple = tuple;
+    }
 
     /**
      * Shows without loading the image whether or not the thumbnail image has been loaded from the remote url.

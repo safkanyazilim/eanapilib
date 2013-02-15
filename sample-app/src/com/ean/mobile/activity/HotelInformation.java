@@ -99,6 +99,57 @@ public class HotelInformation extends Activity {
         }
     }
 
+    private void populateRateList() {
+        final Hotel hotel = SampleApp.selectedHotel;
+        final TextView loadingView = (TextView) this.findViewById(R.id.loadingRoomsView);
+        loadingView.setVisibility(TextView.GONE);
+        if (!SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
+            final TextView noAvail = (TextView) this.findViewById(R.id.noRoomsAvailableView);
+            noAvail.setVisibility(TextView.VISIBLE);
+            return;
+        }
+        final TableLayout rateList = (TableLayout) findViewById(R.id.roomRateList);
+        View view;
+        final LayoutInflater inflater = getLayoutInflater();
+        for (HotelRoom room : SampleApp.HOTEL_ROOMS.get(hotel.hotelId)) {
+            view = inflater.inflate(R.layout.roomtypelistlayout, null);
+
+            final TextView roomDesc = (TextView) view.findViewById(R.id.roomRateDescritpiton);
+            roomDesc.setText(room.description);
+
+            final TextView drrPromoText = (TextView) view.findViewById(R.id.drrPromoText);
+            drrPromoText.setText(room.promoDescription);
+
+            final TextView highPrice = (TextView) view.findViewById(R.id.highPrice);
+            final TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
+            final ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
+            final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+            currencyFormat.setCurrency(Currency.getInstance(room.rate.chargeable.currencyCode));
+            lowPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageRate()));
+            if (room.rate.chargeable.areAverageRatesEqual()) {
+                highPrice.setVisibility(TextView.GONE);
+                drrIcon.setVisibility(ImageView.GONE);
+                drrPromoText.setVisibility(ImageView.GONE);
+            } else {
+                highPrice.setVisibility(TextView.VISIBLE);
+                drrIcon.setVisibility(ImageView.VISIBLE);
+                drrPromoText.setVisibility(ImageView.VISIBLE);
+                highPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageBaseRate()));
+                highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
+            }
+            view.setTag(room);
+            view.setClickable(true);
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(final View view) {
+                    SampleApp.selectedRoom = (HotelRoom) view.getTag();
+                    startActivity(new Intent(HotelInformation.this, BookingSummary.class));
+                }
+            });
+            rateList.addView(view);
+        }
+    }
+
     private class AvailabilityInformationLoaderTask extends AsyncTask<Void, Void, List<HotelRoom>> {
         private final long hotelId;
         private final int numberOfAdults;
@@ -164,57 +215,6 @@ public class HotelInformation extends Activity {
         protected void onPostExecute(final com.ean.mobile.hotel.HotelInformation hotelInformation) {
             SampleApp.EXTENDED_INFOS.put(hotelId, hotelInformation);
             setExtendedInfoFields();
-        }
-    }
-
-    private void populateRateList() {
-        final Hotel hotel = SampleApp.selectedHotel;
-        final TextView loadingView = (TextView) this.findViewById(R.id.loadingRoomsView);
-        loadingView.setVisibility(TextView.GONE);
-        if (!SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
-            final TextView noAvail = (TextView) this.findViewById(R.id.noRoomsAvailableView);
-            noAvail.setVisibility(TextView.VISIBLE);
-            return;
-        }
-        final TableLayout rateList = (TableLayout) findViewById(R.id.roomRateList);
-        View view;
-        final LayoutInflater inflater = getLayoutInflater();
-        for (HotelRoom room : SampleApp.HOTEL_ROOMS.get(hotel.hotelId)) {
-            view = inflater.inflate(R.layout.roomtypelistlayout, null);
-
-            final TextView roomDesc = (TextView) view.findViewById(R.id.roomRateDescritpiton);
-            roomDesc.setText(room.description);
-
-            final TextView drrPromoText = (TextView) view.findViewById(R.id.drrPromoText);
-            drrPromoText.setText(room.promoDescription);
-
-            final TextView highPrice = (TextView) view.findViewById(R.id.highPrice);
-            final TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
-            final ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
-            final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-            currencyFormat.setCurrency(Currency.getInstance(room.rate.chargeable.currencyCode));
-            lowPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageRate()));
-            if (room.rate.chargeable.areAverageRatesEqual()) {
-                highPrice.setVisibility(TextView.GONE);
-                drrIcon.setVisibility(ImageView.GONE);
-                drrPromoText.setVisibility(ImageView.GONE);
-            } else {
-                highPrice.setVisibility(TextView.VISIBLE);
-                drrIcon.setVisibility(ImageView.VISIBLE);
-                drrPromoText.setVisibility(ImageView.VISIBLE);
-                highPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageBaseRate()));
-                highPrice.setPaintFlags(highPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
-            }
-            view.setTag(room);
-            view.setClickable(true);
-            view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(final View view) {
-                    SampleApp.selectedRoom = (HotelRoom) view.getTag();
-                    startActivity(new Intent(HotelInformation.this, BookingSummary.class));
-                }
-            });
-            rateList.addView(view);
         }
     }
 }

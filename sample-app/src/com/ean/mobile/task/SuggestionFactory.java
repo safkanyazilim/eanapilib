@@ -19,7 +19,7 @@ import com.ean.mobile.request.DestinationRequest;
 import com.ean.mobile.request.RequestProcessor;
 
 public final class SuggestionFactory {
-    private static SuggestDestinationTask suggestDestinationTask = null;
+    private static SuggestDestinationTask suggestDestinationTask;
 
     /**
      * Private no-op constructor to prevent instantiation.
@@ -42,6 +42,8 @@ public final class SuggestionFactory {
     }
 
     private static final class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
+
+        private static final int NUMBER_OF_CITIES_TO_DISPLAY = 6;
 
         private final ArrayAdapter<Destination> suggestionAdapter;
 
@@ -68,7 +70,7 @@ public final class SuggestionFactory {
                 for (Destination destination : destinations) {
                     if (destination.category == Destination.Category.CITIES) {
                         cities.add(destination);
-                        if (cities.size() > 5) {
+                        if (cities.size() >= NUMBER_OF_CITIES_TO_DISPLAY) {
                             break;
                         }
                     }

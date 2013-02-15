@@ -57,7 +57,7 @@ public class HotelList extends Activity {
     public void onStart() {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
-        final ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
+        final ListView hotelListView = (ListView) findViewById(R.id.HotelList);
         hotelListView.setAdapter(new HotelAdapter(getApplicationContext(), R.layout.hotellistlayout));
         hotelListView.setOnScrollListener(new HotelScrollListener());
     }
@@ -69,7 +69,7 @@ public class HotelList extends Activity {
         }
     }
 
-    private final static class HotelAdapter extends ArrayAdapter<Hotel> {
+    private static final class HotelAdapter extends ArrayAdapter<Hotel> {
 
         private final LayoutInflater layoutInflater;
 
@@ -87,6 +87,7 @@ public class HotelList extends Activity {
         /**
          * {@inheritDoc}
          */
+        @Override
         public View getView(final int position, final View convertView, final ViewGroup parent) {
             View view = convertView;
             if (view == null) {
@@ -147,9 +148,11 @@ public class HotelList extends Activity {
 
         private PerformLoadTask loadingTask;
 
+        private final int distanceFromLastPositionToLoad = 7;
+
         @Override
         public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
-            if (view.getLastVisiblePosition() >= SampleApp.foundHotels.size() - 7) {
+            if (view.getLastVisiblePosition() >= SampleApp.foundHotels.size() - distanceFromLastPositionToLoad) {
                 if (loadingTask == null || loadingTask.getStatus() == AsyncTask.Status.FINISHED) {
                     loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());
                 }

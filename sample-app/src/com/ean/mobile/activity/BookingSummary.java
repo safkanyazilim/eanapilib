@@ -153,6 +153,8 @@ public class BookingSummary extends Activity {
         final EditText cardExpirationYear = (EditText) findViewById(R.id.billingInformationCCExpYr);
         final EditText cardSecurityCode = (EditText) findViewById(R.id.billingInformationCCSecurityCode);
 
+        final int yearsInACentury = 100;
+
         //sorry, but it's just so simple
         addressLine1.setText("travelnow");
         addressLine2.setText("");
@@ -163,7 +165,7 @@ public class BookingSummary extends Activity {
         cardType.setSelection(Arrays.asList(getResources().getStringArray(R.array.supported_credit_cards)).indexOf("CA"));
         cardNum.setText("5401999999999999");
         cardExpirationMonth.setText("01");
-        cardExpirationYear.setText(Integer.toString((YearMonth.now().getYear() + 1) % 100));
+        cardExpirationYear.setText(Integer.toString((YearMonth.now().getYear() + 1) % yearsInACentury));
         cardSecurityCode.setText("123");
 
     }
@@ -208,38 +210,12 @@ public class BookingSummary extends Activity {
             new BookingRequestTask().execute(request);
     }
 
-    public class BookingRequestTask extends AsyncTask<BookingRequest, Void, List<Reservation>> {
-        @Override
-        protected List<Reservation> doInBackground(final BookingRequest... bookingRequests) {
-            final List<Reservation> reservations = new LinkedList<Reservation>();
-            for (BookingRequest request : bookingRequests) {
-                try {
-                    reservations.add(RequestProcessor.run(request));
-                } catch (EanWsError ewe) {
-                    Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
-                } catch (UrlRedirectionException  ure) {
-                    SampleApp.sendRedirectionToast(getApplicationContext());
-                }
-            }
-            return reservations;
-        }
-
-        @Override
-        protected void onPostExecute(final List<Reservation> reservations) {
-            super.onPostExecute(reservations);
-            for (Reservation reservation : reservations) {
-                SampleApp.addReservationToCache(getApplicationContext(), reservation);
-            }
-            startActivity(new Intent(BookingSummary.this, ReservationDisplay.class));
-        }
-    }
-
     @Override
     public void onActivityResult(final int reqCode, final int resultCode, final Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
         switch(reqCode) {
-            case (PICK_CONTACT_INTENT):
+            case PICK_CONTACT_INTENT:
                 if (resultCode == Activity.RESULT_OK) {
                     final Uri contactData = data.getData();
                     final String id = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts._ID);
@@ -272,5 +248,31 @@ public class BookingSummary extends Activity {
         }
         cursor.close();
         return value;
+    }
+
+    public class BookingRequestTask extends AsyncTask<BookingRequest, Void, List<Reservation>> {
+        @Override
+        protected List<Reservation> doInBackground(final BookingRequest... bookingRequests) {
+            final List<Reservation> reservations = new LinkedList<Reservation>();
+            for (BookingRequest request : bookingRequests) {
+                try {
+                    reservations.add(RequestProcessor.run(request));
+                } catch (EanWsError ewe) {
+                    Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                } catch (UrlRedirectionException  ure) {
+                    SampleApp.sendRedirectionToast(getApplicationContext());
+                }
+            }
+            return reservations;
+        }
+
+        @Override
+        protected void onPostExecute(final List<Reservation> reservations) {
+            super.onPostExecute(reservations);
+            for (Reservation reservation : reservations) {
+                SampleApp.addReservationToCache(getApplicationContext(), reservation);
+            }
+            startActivity(new Intent(BookingSummary.this, ReservationDisplay.class));
+        }
     }
 }

@@ -11,6 +11,13 @@ import android.widget.LinearLayout;
 
 public final class StarRating {
 
+    /**
+     * Private no-op constructor to prevent instantiation.
+     */
+    private StarRating() {
+        // see javadoc.
+    }
+
     public static void populate(final LinearLayout parent, final BigDecimal starRating) {
         final ImageView[] stars = {
             (ImageView) parent.findViewById(R.id.hotelStar1),

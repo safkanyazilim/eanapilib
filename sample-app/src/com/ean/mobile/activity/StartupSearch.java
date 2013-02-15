@@ -5,6 +5,7 @@
 package com.ean.mobile.activity;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.joda.time.LocalDate;
@@ -52,6 +53,8 @@ public class StartupSearch extends Activity {
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
+    private static final long TEN_MEGABYTES = 10 * 1024 * 1024;
+
     public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -85,12 +88,18 @@ public class StartupSearch extends Activity {
             System.setProperty("http.keepAlive", "false");
         }
         try {
-            final long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            final long httpCacheSize = TEN_MEGABYTES;
             final File httpCacheDir = new File(getCacheDir(), "http");
             Class.forName("android.net.http.HttpResponseCache")
                     .getMethod("install", File.class, long.class)
                     .invoke(null, httpCacheDir, httpCacheSize);
-        } catch (Exception httpResponseCacheNotAvailable) {
+        } catch (ClassNotFoundException cnfe) {
+            //do nothing, just swallow it.
+        } catch (NoSuchMethodException nsme) {
+            //do nothing, just swallow it.
+        } catch (IllegalAccessException iae) {
+            //do nothing, just swallow it.
+        } catch (InvocationTargetException ite) {
             //do nothing, just swallow it.
         }
     }
@@ -291,6 +300,7 @@ public class StartupSearch extends Activity {
         /**
          * {@inheritDoc}
          */
+        @Override
         public View getView(final int position, final View convertView, final ViewGroup parent) {
             View view = convertView;
             if (view == null) {
