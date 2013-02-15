@@ -87,7 +87,7 @@ public class HotelList extends Activity {
         /**
          * {@inheritDoc}
          */
-        public View getView (int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             View view = convertView;
             if (view == null) {
                 view = layoutInflater.inflate(R.layout.hotellistlayout, null);
@@ -130,7 +130,7 @@ public class HotelList extends Activity {
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
             currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(hotel.lowPrice));
-            if(hotel.lowPrice.equals(hotel.highPrice)){
+            if (hotel.lowPrice.equals(hotel.highPrice)) {
                 highPrice.setVisibility(TextView.GONE);
                 drrIcon.setVisibility(ImageView.GONE);
             } else {

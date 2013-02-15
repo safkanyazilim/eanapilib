@@ -147,7 +147,7 @@ public class StartupSearch extends Activity {
                     SampleApp.arrivalDate,
                     SampleApp.departureDate);
 
-                SampleApp.updateFoundHotels(RequestProcessor.run(request),true);
+                SampleApp.updateFoundHotels(RequestProcessor.run(request), true);
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
@@ -292,7 +292,7 @@ public class StartupSearch extends Activity {
         /**
          * {@inheritDoc}
          */
-        public View getView (int position, View convertView, ViewGroup parent) {
+        public View getView(int position, View convertView, ViewGroup parent) {
             View view = convertView;
             if (view == null) {
                 view = layoutInflater.inflate(R.layout.destinationlistlayout, null);
