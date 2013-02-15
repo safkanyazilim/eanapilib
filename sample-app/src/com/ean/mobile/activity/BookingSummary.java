@@ -4,6 +4,7 @@
 
 package com.ean.mobile.activity;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,11 +72,7 @@ public class BookingSummary extends Activity {
         final TextView roomType = (TextView) findViewById(R.id.roomTypeDisplay);
         final TextView bedType = (TextView) findViewById(R.id.bedTypeDisplay);
         final TextView taxesAndFees = (TextView) findViewById(R.id.taxes_and_fees_display);
-        final TextView totalHighPrice = (TextView) findViewById(R.id.highPrice);
         final TextView totalLowPrice = (TextView) findViewById(R.id.lowPrice);
-        final TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
-        final LinearLayout priceBreakdownList = (LinearLayout) findViewById(R.id.priceDetailsBreakdown);
-        final ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
         final Hotel hotel = SampleApp.selectedHotel;
         final HotelRoom hotelRoom = SampleApp.selectedRoom;
         final RoomOccupancy occupancy = hotelRoom.rate.roomGroup.get(0).occupancy;
@@ -86,14 +83,22 @@ public class BookingSummary extends Activity {
         numGuests.setText(String.format(getString(R.string.adults_comma_children), occupancy.numberOfAdults, occupancy.childAges.size()));
         roomType.setText(hotelRoom.description);
         bedType.setText(hotelRoom.bedTypes.get(0).description);
-        drrPromoText.setText(hotelRoom.promoDescription);
 
-        final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-        currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
+        final NumberFormat currencyFormat = getCurrencyFormat(hotel.currencyCode);
 
         taxesAndFees.setText(currencyFormat.format(hotelRoom.getTaxesAndFees()));
 
         totalLowPrice.setText(currencyFormat.format(hotelRoom.getTotalRate()));
+
+        displayTotalHighPrice(hotelRoom, hotel.highPrice, currencyFormat);
+        populatePriceBreakdownList(currencyFormat);
+    }
+
+    private void displayTotalHighPrice(final HotelRoom hotelRoom, final BigDecimal highPrice, final NumberFormat currencyFormat) {
+        final TextView totalHighPrice = (TextView) findViewById(R.id.highPrice);
+        final ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
+        final TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
+
         if (hotelRoom.getTotalRate().equals(hotelRoom.getTotalBaseRate())) {
             // if there's no promo, then we make the promo stuff disappear.
             totalHighPrice.setVisibility(TextView.GONE);
@@ -101,13 +106,23 @@ public class BookingSummary extends Activity {
             drrPromoText.setVisibility(ImageView.GONE);
         } else {
             // if there is a promo, we make it show up.
+            drrPromoText.setText(hotelRoom.promoDescription);
             totalHighPrice.setVisibility(TextView.VISIBLE);
             drrIcon.setVisibility(ImageView.VISIBLE);
             drrPromoText.setVisibility(ImageView.VISIBLE);
-            totalHighPrice.setText(currencyFormat.format(hotel.highPrice));
+            totalHighPrice.setText(currencyFormat.format(highPrice));
             totalHighPrice.setPaintFlags(totalHighPrice.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
         }
+    }
 
+    private NumberFormat getCurrencyFormat(String currencyCode) {
+        final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+        currencyFormat.setCurrency(Currency.getInstance(currencyCode));
+        return currencyFormat;
+    }
+
+    private void populatePriceBreakdownList(final NumberFormat currencyFormat) {
+        final LinearLayout priceBreakdownList = (LinearLayout) findViewById(R.id.priceDetailsBreakdown);
         View view;
         final LayoutInflater inflater = getLayoutInflater();
 
@@ -121,7 +136,6 @@ public class BookingSummary extends Activity {
             currentDate = currentDate.plusDays(1);
             date.setText(NIGHTLY_RATE_FORMATTER.print(currentDate));
 
-            currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(rate.rate));
             if (rate.rate.equals(rate.baseRate)) {
                 highPrice.setVisibility(TextView.GONE);
