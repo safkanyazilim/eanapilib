@@ -94,7 +94,7 @@ public class BookingSummary extends Activity {
         taxesAndFees.setText(currencyFormat.format(hotelRoom.getTaxesAndFees()));
 
         totalLowPrice.setText(currencyFormat.format(hotelRoom.getTotalRate()));
-        if(hotelRoom.getTotalRate().equals(hotelRoom.getTotalBaseRate())){
+        if (hotelRoom.getTotalRate().equals(hotelRoom.getTotalBaseRate())) {
             // if there's no promo, then we make the promo stuff disappear.
             totalHighPrice.setVisibility(TextView.GONE);
             drrIcon.setVisibility(ImageView.GONE);
@@ -123,7 +123,7 @@ public class BookingSummary extends Activity {
 
             currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(rate.rate));
-            if(rate.rate.equals(rate.baseRate)){
+            if (rate.rate.equals(rate.baseRate)) {
                 highPrice.setVisibility(TextView.GONE);
             } else {
                 highPrice.setVisibility(TextView.VISIBLE);
@@ -192,7 +192,7 @@ public class BookingSummary extends Activity {
 
 
         final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
-        final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id ,SampleApp.occupancy());
+        final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id, SampleApp.occupancy());
         final Address reservationAddress = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
 
         final BookingRequest request = new BookingRequest(
@@ -235,7 +235,7 @@ public class BookingSummary extends Activity {
     }
 
     @Override
-    public void onActivityResult(int reqCode, int resultCode, Intent data){
+    public void onActivityResult(int reqCode, int resultCode, Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
         switch(reqCode) {
@@ -267,7 +267,7 @@ public class BookingSummary extends Activity {
     private static String getStringForUriQueryAndContactId(ContentResolver resolver, Uri uri, String selection, String[] selectionArgs, String columnName) {
         String value = "";
         Cursor cursor = resolver.query(uri, null, selection, selectionArgs, null, null);
-        if(cursor.moveToNext()){
+        if (cursor.moveToNext()) {
             value = cursor.getString(cursor.getColumnIndex(columnName));
         }
         cursor.close();

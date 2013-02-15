@@ -45,7 +45,7 @@ public class HotelInformation extends Activity {
         Log.d(SampleConstants.DEBUG, "starting HotelInformation");
         final Hotel hotel = SampleApp.selectedHotel;
 
-        if(hotel == null) {
+        if (hotel == null) {
             Log.d(SampleConstants.DEBUG, "hotel info was null");
             return;
         }
@@ -55,7 +55,7 @@ public class HotelInformation extends Activity {
 
         StarRating.populate((LinearLayout) this.findViewById(R.id.hotelInformationStars), hotel.starRating);
 
-        if(SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
+        if (SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
             populateRateList();
         } else {
             new AvailabilityInformationLoaderTask(
@@ -67,7 +67,7 @@ public class HotelInformation extends Activity {
             (ImageView) findViewById(R.id.hotelInformationThumb),
             hotel.mainHotelImageTuple);
 
-        if(SampleApp.EXTENDED_INFOS.containsKey(hotel.hotelId)){
+        if (SampleApp.EXTENDED_INFOS.containsKey(hotel.hotelId)) {
             setExtendedInfoFields();
         } else {
             new ExtendedInformationLoaderTask(hotel.hotelId).execute((Void) null);
@@ -89,7 +89,7 @@ public class HotelInformation extends Activity {
         address.setText(SampleApp.selectedHotel.address.toString());
         com.ean.mobile.hotel.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(hotelInformation.longDescription, "text/html", null);
-        for(int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++){
+        for (int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++) {
             HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));
             if (thisDrawable.isThumbnailLoaded()) {
                 smallThumbs[i].setImageDrawable(thisDrawable.getThumbnailImage());
@@ -168,7 +168,7 @@ public class HotelInformation extends Activity {
         }
     }
 
-    private void populateRateList(){
+    private void populateRateList() {
         final Hotel hotel = SampleApp.selectedHotel;
         TextView loadingView = (TextView) this.findViewById(R.id.loadingRoomsView);
         loadingView.setVisibility(TextView.GONE);
@@ -195,7 +195,7 @@ public class HotelInformation extends Activity {
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
             currencyFormat.setCurrency(Currency.getInstance(room.rate.chargeable.currencyCode));
             lowPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageRate()));
-            if(room.rate.chargeable.areAverageRatesEqual()){
+            if (room.rate.chargeable.areAverageRatesEqual()) {
                 highPrice.setVisibility(TextView.GONE);
                 drrIcon.setVisibility(ImageView.GONE);
                 drrPromoText.setVisibility(ImageView.GONE);

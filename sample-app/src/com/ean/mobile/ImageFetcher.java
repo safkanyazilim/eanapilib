@@ -73,7 +73,7 @@ public final class ImageFetcher {
     public static void loadThumbnailIntoImageView(ImageView thumb, HotelImageTuple tuple) {
         HotelImageDrawable hotelImageDrawable = SampleApp.IMAGE_DRAWABLES.get(tuple);
         if (tuple.thumbnailUrl != null) {
-            if (hotelImageDrawable.isThumbnailLoaded()){
+            if (hotelImageDrawable.isThumbnailLoaded()) {
                 thumb.setImageDrawable(hotelImageDrawable.getThumbnailImage());
             } else {
                 new ImageDrawableLoaderTask(thumb, false).execute(hotelImageDrawable);

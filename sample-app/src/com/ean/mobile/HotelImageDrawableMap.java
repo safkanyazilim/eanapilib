@@ -19,7 +19,7 @@ public final class HotelImageDrawableMap extends HashMap<HotelImageTuple, HotelI
             return null;
         }
         HotelImageTuple tuple = (HotelImageTuple) key;
-        if(!containsKey(tuple)) {
+        if (!containsKey(tuple)) {
             put(tuple, new HotelImageDrawable(tuple));
         }
         return super.get(key);
