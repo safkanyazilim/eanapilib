@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EAN.com, L.P. All rights reserved.
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile;
@@ -9,13 +9,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
-import android.os.Build;
-import android.widget.ImageView;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+
+import android.os.Build;
+import android.widget.ImageView;
 
 import com.ean.mobile.hotel.HotelImageTuple;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
@@ -70,10 +70,10 @@ public final class ImageFetcher {
         return fetch(url, true);
     }
 
-    public static void loadThumbnailIntoImageView(ImageView thumb, HotelImageTuple tuple) {
-        HotelImageDrawable hotelImageDrawable = SampleApp.IMAGE_DRAWABLES.get(tuple);
+    public static void loadThumbnailIntoImageView(final ImageView thumb, final HotelImageTuple tuple) {
+        final HotelImageDrawable hotelImageDrawable = SampleApp.IMAGE_DRAWABLES.get(tuple);
         if (tuple.thumbnailUrl != null) {
-            if (hotelImageDrawable.isThumbnailLoaded()){
+            if (hotelImageDrawable.isThumbnailLoaded()) {
                 thumb.setImageDrawable(hotelImageDrawable.getThumbnailImage());
             } else {
                 new ImageDrawableLoaderTask(thumb, false).execute(hotelImageDrawable);

@@ -1,4 +1,20 @@
+/*
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile.activity;
+
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.joda.time.YearMonth;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -17,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.ean.mobile.Address;
 import com.ean.mobile.BasicAddress;
 import com.ean.mobile.R;
@@ -32,17 +49,6 @@ import com.ean.mobile.hotel.ReservationRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.hotel.request.BookingRequest;
 import com.ean.mobile.request.RequestProcessor;
-import org.joda.time.LocalDate;
-import org.joda.time.YearMonth;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.LinkedList;
-import java.util.List;
 
 public class BookingSummary extends Activity {
 
@@ -54,25 +60,25 @@ public class BookingSummary extends Activity {
     private static final int SET_DEFAULT_CREDIT_CARD_INTENT = 2;
 
 
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.bookingsummary);
 
-        TextView hotelName = (TextView) findViewById(R.id.hotelName);
-        TextView checkIn = (TextView) findViewById(R.id.arrivalDisplay);
-        TextView checkOut = (TextView) findViewById(R.id.departureDisplay);
-        TextView numGuests = (TextView) findViewById(R.id.guestsNumberDisplay);
-        TextView roomType = (TextView) findViewById(R.id.roomTypeDisplay);
-        TextView bedType = (TextView) findViewById(R.id.bedTypeDisplay);
-        TextView taxesAndFees = (TextView) findViewById(R.id.taxes_and_fees_display);
-        TextView totalHighPrice = (TextView) findViewById(R.id.highPrice);
-        TextView totalLowPrice = (TextView) findViewById(R.id.lowPrice);
-        TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
-        LinearLayout priceBreakdownList = (LinearLayout) findViewById(R.id.priceDetailsBreakdown);
-        ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
+        final TextView hotelName = (TextView) findViewById(R.id.hotelName);
+        final TextView checkIn = (TextView) findViewById(R.id.arrivalDisplay);
+        final TextView checkOut = (TextView) findViewById(R.id.departureDisplay);
+        final TextView numGuests = (TextView) findViewById(R.id.guestsNumberDisplay);
+        final TextView roomType = (TextView) findViewById(R.id.roomTypeDisplay);
+        final TextView bedType = (TextView) findViewById(R.id.bedTypeDisplay);
+        final TextView taxesAndFees = (TextView) findViewById(R.id.taxes_and_fees_display);
+        final TextView totalHighPrice = (TextView) findViewById(R.id.highPrice);
+        final TextView totalLowPrice = (TextView) findViewById(R.id.lowPrice);
+        final TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
+        final LinearLayout priceBreakdownList = (LinearLayout) findViewById(R.id.priceDetailsBreakdown);
+        final ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
         final Hotel hotel = SampleApp.selectedHotel;
-        HotelRoom hotelRoom = SampleApp.selectedRoom;
-        RoomOccupancy occupancy = hotelRoom.rate.roomGroup.get(0).occupancy;
+        final HotelRoom hotelRoom = SampleApp.selectedRoom;
+        final RoomOccupancy occupancy = hotelRoom.rate.roomGroup.get(0).occupancy;
 
         hotelName.setText(hotel.name);
         checkIn.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
@@ -82,13 +88,13 @@ public class BookingSummary extends Activity {
         bedType.setText(hotelRoom.bedTypes.get(0).description);
         drrPromoText.setText(hotelRoom.promoDescription);
 
-        NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+        final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
         currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
 
         taxesAndFees.setText(currencyFormat.format(hotelRoom.getTaxesAndFees()));
 
         totalLowPrice.setText(currencyFormat.format(hotelRoom.getTotalRate()));
-        if(hotelRoom.getTotalRate().equals(hotelRoom.getTotalBaseRate())){
+        if (hotelRoom.getTotalRate().equals(hotelRoom.getTotalBaseRate())) {
             // if there's no promo, then we make the promo stuff disappear.
             totalHighPrice.setVisibility(TextView.GONE);
             drrIcon.setVisibility(ImageView.GONE);
@@ -108,16 +114,16 @@ public class BookingSummary extends Activity {
         LocalDate currentDate = SampleApp.arrivalDate.minusDays(1);
         for (NightlyRate rate : SampleApp.selectedRoom.rate.chargeable.nightlyRates) {
             view = inflater.inflate(R.layout.pricebreakdownlayout, null);
-            TextView date = (TextView) view.findViewById(R.id.priceBreakdownDate);
-            TextView highPrice = (TextView) view.findViewById(R.id.priceBreakdownHighPrice);
-            TextView lowPrice = (TextView) view.findViewById(R.id.priceBreakdownLowPrice);
+            final TextView date = (TextView) view.findViewById(R.id.priceBreakdownDate);
+            final TextView highPrice = (TextView) view.findViewById(R.id.priceBreakdownHighPrice);
+            final TextView lowPrice = (TextView) view.findViewById(R.id.priceBreakdownLowPrice);
 
             currentDate = currentDate.plusDays(1);
             date.setText(NIGHTLY_RATE_FORMATTER.print(currentDate));
 
             currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(rate.rate));
-            if(rate.rate.equals(rate.baseRate)){
+            if (rate.rate.equals(rate.baseRate)) {
                 highPrice.setVisibility(TextView.GONE);
             } else {
                 highPrice.setVisibility(TextView.VISIBLE);
@@ -128,12 +134,12 @@ public class BookingSummary extends Activity {
         }
     }
 
-    public void onContactChooseButtonClick(View view) {
-        Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
+    public void onContactChooseButtonClick(final View view) {
+        final Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(intent, PICK_CONTACT_INTENT);
     }
 
-    public void onLoadDefaultBillingInfoClick(View view) {
+    public void onLoadDefaultBillingInfoClick(final View view) {
         final EditText addressLine1 = (EditText) findViewById(R.id.billingInformationAddress1);
         final EditText addressLine2 = (EditText) findViewById(R.id.billingInformationAddress2);
         final EditText city = (EditText) findViewById(R.id.billingInformationCity);
@@ -162,7 +168,7 @@ public class BookingSummary extends Activity {
 
     }
 
-    public void onCompleteBookingButtonClick(View view) {
+    public void onCompleteBookingButtonClick(final View view) {
         final String firstName = ((EditText) findViewById(R.id.guestFirstName)).getText().toString();
         final String lastName = ((EditText) findViewById(R.id.guestLastName)).getText().toString();
         final String phone = ((EditText) findViewById(R.id.guestPhoneNumber)).getText().toString();
@@ -186,7 +192,7 @@ public class BookingSummary extends Activity {
 
 
         final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
-        final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id ,SampleApp.occupancy());
+        final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id, SampleApp.occupancy());
         final Address reservationAddress = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
 
         final BookingRequest request = new BookingRequest(
@@ -204,8 +210,8 @@ public class BookingSummary extends Activity {
 
     public class BookingRequestTask extends AsyncTask<BookingRequest, Void, List<Reservation>> {
         @Override
-        protected List<Reservation> doInBackground(BookingRequest... bookingRequests) {
-            List<Reservation> reservations = new LinkedList<Reservation>();
+        protected List<Reservation> doInBackground(final BookingRequest... bookingRequests) {
+            final List<Reservation> reservations = new LinkedList<Reservation>();
             for (BookingRequest request : bookingRequests) {
                 try {
                     reservations.add(RequestProcessor.run(request));
@@ -219,7 +225,7 @@ public class BookingSummary extends Activity {
         }
 
         @Override
-        protected void onPostExecute(List<Reservation> reservations) {
+        protected void onPostExecute(final List<Reservation> reservations) {
             super.onPostExecute(reservations);
             for (Reservation reservation : reservations) {
                 SampleApp.addReservationToCache(getApplicationContext(), reservation);
@@ -229,26 +235,26 @@ public class BookingSummary extends Activity {
     }
 
     @Override
-    public void onActivityResult(int reqCode, int resultCode, Intent data){
+    public void onActivityResult(final int reqCode, final int resultCode, final Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
 
         switch(reqCode) {
             case (PICK_CONTACT_INTENT):
                 if (resultCode == Activity.RESULT_OK) {
-                    Uri contactData = data.getData();
-                    String id = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts._ID);
-                    String[] idAsSelectionArgs = new String[] {id};
-                    String[] displayNamePieces = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts.DISPLAY_NAME).split(" ");
-                    String firstName = displayNamePieces[0];
-                    String lastName = displayNamePieces[displayNamePieces.length - 1];
+                    final Uri contactData = data.getData();
+                    final String id = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts._ID);
+                    final String[] idAsSelectionArgs = new String[] {id};
+                    final String[] displayNamePieces = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts.DISPLAY_NAME).split(" ");
+                    final String firstName = displayNamePieces[0];
+                    final String lastName = displayNamePieces[displayNamePieces.length - 1];
 
-                    String email = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Email.CONTENT_URI, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Email.ADDRESS);
-                    String phoneNumber = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Phone.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    final String email = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Email.CONTENT_URI, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Email.ADDRESS);
+                    final String phoneNumber = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Phone.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Phone.NUMBER);
 
-                    EditText guestFirstName = (EditText) findViewById(R.id.guestFirstName);
-                    EditText guestLastName = (EditText) findViewById(R.id.guestLastName);
-                    EditText guestPhoneNumber = (EditText) findViewById(R.id.guestPhoneNumber);
-                    EditText guestEmail = (EditText) findViewById(R.id.guestEmail);
+                    final EditText guestFirstName = (EditText) findViewById(R.id.guestFirstName);
+                    final EditText guestLastName = (EditText) findViewById(R.id.guestLastName);
+                    final EditText guestPhoneNumber = (EditText) findViewById(R.id.guestPhoneNumber);
+                    final EditText guestEmail = (EditText) findViewById(R.id.guestEmail);
 
                     guestFirstName.setText(firstName);
                     guestLastName.setText(lastName);
@@ -258,10 +264,10 @@ public class BookingSummary extends Activity {
         }
     }
 
-    private static String getStringForUriQueryAndContactId(ContentResolver resolver, Uri uri, String selection, String[] selectionArgs, String columnName) {
+    private static String getStringForUriQueryAndContactId(final ContentResolver resolver, final Uri uri, final String selection, final String[] selectionArgs, final String columnName) {
         String value = "";
-        Cursor cursor = resolver.query(uri, null, selection, selectionArgs, null, null);
-        if(cursor.moveToNext()){
+        final Cursor cursor = resolver.query(uri, null, selection, selectionArgs, null, null);
+        if (cursor.moveToNext()) {
             value = cursor.getString(cursor.getColumnIndex(columnName));
         }
         cursor.close();

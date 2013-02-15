@@ -1,33 +1,35 @@
-package com.ean.mobile;
+/*
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
+ */
 
-import android.app.Application;
-import android.content.Context;
-import android.widget.Toast;
-import com.ean.mobile.hotel.Reservation;
-import org.joda.time.LocalDate;
+package com.ean.mobile;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.joda.time.LocalDate;
+
+import android.app.Application;
+import android.content.Context;
+import android.widget.Toast;
+
+
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelImageTuple;
 import com.ean.mobile.hotel.HotelInformation;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.CommonParameters;
 
-/**
- * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
- */
 public final class SampleApp extends Application {
 
     public static String searchQuery;
@@ -75,7 +77,7 @@ public final class SampleApp extends Application {
     }
 
     public static void resetDates() {
-        LocalDate today = LocalDate.now();
+        final LocalDate today = LocalDate.now();
         arrivalDate = today;
         departureDate = today.plusDays(1);
     }
@@ -94,11 +96,11 @@ public final class SampleApp extends Application {
         IMAGE_DRAWABLES.clear();
     }
 
-    public static void updateFoundHotels(HotelList hotelList) {
+    public static void updateFoundHotels(final HotelList hotelList) {
         updateFoundHotels(hotelList, false);
     }
 
-    public static synchronized void updateFoundHotels(HotelList hotelList, boolean clearOnUpdate) {
+    public static synchronized void updateFoundHotels(final HotelList hotelList, final boolean clearOnUpdate) {
         if (SampleApp.foundHotels == null) {
             SampleApp.foundHotels = new ArrayList<Hotel>();
         } else if (clearOnUpdate) {

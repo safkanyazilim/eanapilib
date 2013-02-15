@@ -1,18 +1,22 @@
+/*
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
+ */
 
 package com.ean.mobile.task;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+
 import com.ean.mobile.Destination;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.DestinationRequest;
 import com.ean.mobile.request.RequestProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class SuggestionFactory {
     private static SuggestDestinationTask suggestDestinationTask = null;
@@ -37,19 +41,18 @@ public final class SuggestionFactory {
         suggestDestinationTask.execute(query);
     }
 
-    private static class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
+    private static final class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
 
         private final ArrayAdapter<Destination> suggestionAdapter;
 
-        private SuggestDestinationTask(ArrayAdapter<Destination> suggestionAdapter) {
+        private SuggestDestinationTask(final ArrayAdapter<Destination> suggestionAdapter) {
             this.suggestionAdapter = suggestionAdapter;
         }
 
         @Override
-        protected List<Destination> doInBackground(String... strings) {
+        protected List<Destination> doInBackground(final String... strings) {
             try {
-                DestinationRequest destinationRequest = new DestinationRequest(strings[0]);
-                return RequestProcessor.run(destinationRequest);
+                return RequestProcessor.run(new DestinationRequest(strings[0]));
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "The API call returned an error", ewe);
             } catch (UrlRedirectionException ure) {
@@ -59,9 +62,9 @@ public final class SuggestionFactory {
         }
 
         @Override
-        protected void onPostExecute(List<Destination> destinations) {
+        protected void onPostExecute(final List<Destination> destinations) {
             if (destinations != null) {
-                List<Destination> cities = new ArrayList<Destination>();
+                final List<Destination> cities = new ArrayList<Destination>();
                 for (Destination destination : destinations) {
                     if (destination.category == Destination.Category.CITIES) {
                         cities.add(destination);

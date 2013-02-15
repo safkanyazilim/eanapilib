@@ -1,13 +1,18 @@
+/*
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile.task;
+
+import java.io.IOException;
 
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.ean.mobile.HotelImageDrawable;
 import com.ean.mobile.SampleConstants;
-
-import java.io.IOException;
 
 public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable, Integer, Drawable> {
 
@@ -22,7 +27,7 @@ public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable,
     }
 
     @Override
-    protected Drawable doInBackground(HotelImageDrawable... hotelImageTuples) {
+    protected Drawable doInBackground(final HotelImageDrawable... hotelImageTuples) {
         try {
             if (loadMain) {
                 return hotelImageTuples[0].loadMainImage();
@@ -35,7 +40,7 @@ public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable,
     }
 
     @Override
-    protected void onPostExecute(Drawable drawable) {
+    protected void onPostExecute(final Drawable drawable) {
         view.setImageDrawable(drawable);
     }
 

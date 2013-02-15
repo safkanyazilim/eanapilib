@@ -1,7 +1,14 @@
-/**
- * $Copyright: Copyright 2012 EAN.com, L.P. All rights reserved. $
+/*
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
+
 package com.ean.mobile.activity;
+
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.List;
+
+import org.joda.time.LocalDate;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -15,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
 import com.ean.mobile.HotelImageDrawable;
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
@@ -29,11 +37,6 @@ import com.ean.mobile.hotel.request.InformationRequest;
 import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
-import org.joda.time.LocalDate;
-
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.List;
 
 public class HotelInformation extends Activity {
     public void onResume() {
@@ -42,17 +45,17 @@ public class HotelInformation extends Activity {
         Log.d(SampleConstants.DEBUG, "starting HotelInformation");
         final Hotel hotel = SampleApp.selectedHotel;
 
-        if(hotel == null) {
+        if (hotel == null) {
             Log.d(SampleConstants.DEBUG, "hotel info was null");
             return;
         }
 
-        TextView name = (TextView) this.findViewById(R.id.hotelInformationName);
+        final TextView name = (TextView) this.findViewById(R.id.hotelInformationName);
         name.setText(hotel.name);
 
         StarRating.populate((LinearLayout) this.findViewById(R.id.hotelInformationStars), hotel.starRating);
 
-        if(SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
+        if (SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
             populateRateList();
         } else {
             new AvailabilityInformationLoaderTask(
@@ -64,7 +67,7 @@ public class HotelInformation extends Activity {
             (ImageView) findViewById(R.id.hotelInformationThumb),
             hotel.mainHotelImageTuple);
 
-        if(SampleApp.EXTENDED_INFOS.containsKey(hotel.hotelId)){
+        if (SampleApp.EXTENDED_INFOS.containsKey(hotel.hotelId)) {
             setExtendedInfoFields();
         } else {
             new ExtendedInformationLoaderTask(hotel.hotelId).execute((Void) null);
@@ -84,10 +87,10 @@ public class HotelInformation extends Activity {
         };
 
         address.setText(SampleApp.selectedHotel.address.toString());
-        com.ean.mobile.hotel.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
+        final com.ean.mobile.hotel.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(hotelInformation.longDescription, "text/html", null);
-        for(int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++){
-            HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));
+        for (int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++) {
+            final HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));
             if (thisDrawable.isThumbnailLoaded()) {
                 smallThumbs[i].setImageDrawable(thisDrawable.getThumbnailImage());
             } else {
@@ -115,9 +118,9 @@ public class HotelInformation extends Activity {
 
 
         @Override
-        protected List<HotelRoom> doInBackground(Void... voids) {
+        protected List<HotelRoom> doInBackground(final Void... voids) {
             try {
-                RoomAvailabilityRequest request
+                final RoomAvailabilityRequest request
                     = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
@@ -129,7 +132,7 @@ public class HotelInformation extends Activity {
         }
 
         @Override
-        protected void onPostExecute(List<HotelRoom> hotelRooms) {
+        protected void onPostExecute(final List<HotelRoom> hotelRooms) {
             super.onPostExecute(hotelRooms);
             SampleApp.HOTEL_ROOMS.put(hotelId, hotelRooms);
             populateRateList();
@@ -141,15 +144,14 @@ public class HotelInformation extends Activity {
 
         private final long hotelId;
 
-        public ExtendedInformationLoaderTask(long hotelId) {
+        public ExtendedInformationLoaderTask(final long hotelId) {
             this.hotelId = hotelId;
         }
 
         @Override
-        protected com.ean.mobile.hotel.HotelInformation doInBackground(Void... voids) {
+        protected com.ean.mobile.hotel.HotelInformation doInBackground(final Void... voids) {
             try {
-                InformationRequest request = new InformationRequest(hotelId);
-                return RequestProcessor.run(request);
+                return RequestProcessor.run(new InformationRequest(hotelId));
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
             } catch (UrlRedirectionException ure) {
@@ -159,40 +161,40 @@ public class HotelInformation extends Activity {
         }
 
         @Override
-        protected void onPostExecute(com.ean.mobile.hotel.HotelInformation hotelInformation) {
+        protected void onPostExecute(final com.ean.mobile.hotel.HotelInformation hotelInformation) {
             SampleApp.EXTENDED_INFOS.put(hotelId, hotelInformation);
             setExtendedInfoFields();
         }
     }
 
-    private void populateRateList(){
+    private void populateRateList() {
         final Hotel hotel = SampleApp.selectedHotel;
-        TextView loadingView = (TextView) this.findViewById(R.id.loadingRoomsView);
+        final TextView loadingView = (TextView) this.findViewById(R.id.loadingRoomsView);
         loadingView.setVisibility(TextView.GONE);
         if (!SampleApp.HOTEL_ROOMS.containsKey(hotel.hotelId)) {
-            TextView noAvail = (TextView) this.findViewById(R.id.noRoomsAvailableView);
+            final TextView noAvail = (TextView) this.findViewById(R.id.noRoomsAvailableView);
             noAvail.setVisibility(TextView.VISIBLE);
             return;
         }
-        TableLayout rateList = (TableLayout) findViewById(R.id.roomRateList);
+        final TableLayout rateList = (TableLayout) findViewById(R.id.roomRateList);
         View view;
         final LayoutInflater inflater = getLayoutInflater();
         for (HotelRoom room : SampleApp.HOTEL_ROOMS.get(hotel.hotelId)) {
             view = inflater.inflate(R.layout.roomtypelistlayout, null);
 
-            TextView roomDesc = (TextView) view.findViewById(R.id.roomRateDescritpiton);
+            final TextView roomDesc = (TextView) view.findViewById(R.id.roomRateDescritpiton);
             roomDesc.setText(room.description);
 
-            TextView drrPromoText = (TextView) view.findViewById(R.id.drrPromoText);
+            final TextView drrPromoText = (TextView) view.findViewById(R.id.drrPromoText);
             drrPromoText.setText(room.promoDescription);
 
-            TextView highPrice = (TextView) view.findViewById(R.id.highPrice);
-            TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
-            ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+            final TextView highPrice = (TextView) view.findViewById(R.id.highPrice);
+            final TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
+            final ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
+            final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
             currencyFormat.setCurrency(Currency.getInstance(room.rate.chargeable.currencyCode));
             lowPrice.setText(currencyFormat.format(room.rate.chargeable.getAverageRate()));
-            if(room.rate.chargeable.areAverageRatesEqual()){
+            if (room.rate.chargeable.areAverageRatesEqual()) {
                 highPrice.setVisibility(TextView.GONE);
                 drrIcon.setVisibility(ImageView.GONE);
                 drrPromoText.setVisibility(ImageView.GONE);
@@ -207,10 +209,9 @@ public class HotelInformation extends Activity {
             view.setClickable(true);
             view.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View view) {
-                SampleApp.selectedRoom = (HotelRoom) view.getTag();
-                Intent intent = new Intent(HotelInformation.this, BookingSummary.class);
-                startActivity(intent);
+                public void onClick(final View view) {
+                    SampleApp.selectedRoom = (HotelRoom) view.getTag();
+                    startActivity(new Intent(HotelInformation.this, BookingSummary.class));
                 }
             });
             rateList.addView(view);

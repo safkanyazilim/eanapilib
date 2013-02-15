@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="checkstyle">
+    <property file="ant.properties" />
+    <property name="checkstyle.xml"         location="checkstyle.xml"/>
+    <property name="checkstyle.xsl"         location="checkstyle.xsl"/>
+    <property name="checkstyle.dir"         location="${out.absolute.dir}/checkstyle"/>
+    <property name="checkstyle.output"      location="${checkstyle.dir}/checkstyle_errors" />
+    <property name="checkstyle.output.xml"  location="${checkstyle.output}.xml" />
+    <property name="checkstyle.output.html" location="${checkstyle.output}.html" />
+
+    <target name="check">
+        <!-- We add a depend so that if the source hasn't changed, then we don't have to run the check. -->
+
+        <taskdef resource="checkstyletask.properties">
+            <classpath>
+                <fileset dir="${jar.libs.absolute.dir}/checkstyle">
+                    <include name="*.jar"/>
+                </fileset>
+            </classpath>
+        </taskdef>
+
+        <mkdir dir="${checkstyle.dir}" />
+        <tstamp>
+            <format property="copyrightYear" pattern="yyyy" />
+        </tstamp>
+        <!-- compile the exceptions so checkstyle can get them-->
+        <javac debug="true"
+               deprecation="true"
+               classpathref="project.classpath"
+               includeantruntime="false"
+               target="1.6"
+               source="1.6"
+               srcdir="${source.absolute.dir}"
+               destdir="${checkstyle.dir}">
+            <include name="**/*Exception.java" />
+        </javac>
+
+        <checkstyle config="${checkstyle.xml}"
+                    failureProperty="checkstyle.failure"
+                    failOnViolation="false">
+            <classpath>
+                <fileset dir="${jar.libs.absolute.dir}">
+                    <include name="**/*.jar"/>
+                </fileset>
+                <path location="${checkstyle.dir}"/>
+            </classpath>
+            <fileset dir="${source.absolute.dir}" includes="**/*.java" excludes="stubs/"/>
+            <formatter type="xml" toFile="${checkstyle.output.xml}" />
+        </checkstyle>
+
+        <xslt basedir="${checkstyle.dir}"
+              destdir="${checkstyle.dir}"
+              style="${checkstyle.xsl}"
+              includes="*.xml" />
+        <fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>
+    </target>
+</project>

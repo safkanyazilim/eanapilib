@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
+ */
+
 package com.ean.mobile;
 
 public final class SampleConstants {
