@@ -4,14 +4,15 @@
 
 package com.ean.mobile.task;
 
+import java.io.IOException;
+
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
+
 import com.ean.mobile.HotelImageDrawable;
 import com.ean.mobile.SampleConstants;
-
-import java.io.IOException;
 
 public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable, Integer, Drawable> {
 

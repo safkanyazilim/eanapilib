@@ -4,6 +4,12 @@
 
 package com.ean.mobile.activity;
 
+import java.text.NumberFormat;
+import java.util.Currency;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Paint;
@@ -16,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
 import com.ean.mobile.HotelImageDrawable;
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
@@ -30,11 +37,6 @@ import com.ean.mobile.hotel.request.InformationRequest;
 import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
-import org.joda.time.LocalDate;
-
-import java.text.NumberFormat;
-import java.util.Currency;
-import java.util.List;
 
 public class HotelInformation extends Activity {
     public void onResume() {

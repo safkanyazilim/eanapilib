@@ -4,6 +4,9 @@
 
 package com.ean.mobile.activity;
 
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -11,11 +14,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TableLayout;
 import android.widget.TextView;
+
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.hotel.Reservation;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 public class ReservationDisplay extends Activity {
 

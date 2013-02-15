@@ -1,22 +1,22 @@
-
 /*
  * Copyright 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile.task;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+
 import com.ean.mobile.Destination;
 import com.ean.mobile.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.DestinationRequest;
 import com.ean.mobile.request.RequestProcessor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class SuggestionFactory {
     private static SuggestDestinationTask suggestDestinationTask = null;

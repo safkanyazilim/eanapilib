@@ -4,24 +4,28 @@
 
 package com.ean.mobile.activity;
 
+import java.text.NumberFormat;
+import java.util.Currency;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Paint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.ArrayAdapter;
-import android.util.Log;
 import android.widget.Toast;
+
 import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
@@ -31,11 +35,7 @@ import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.request.ListRequest;
-import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.RequestProcessor;
-
-import java.text.NumberFormat;
-import java.util.Currency;
 
 public class HotelList extends Activity {
 

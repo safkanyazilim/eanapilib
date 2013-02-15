@@ -4,10 +4,10 @@
 
 package com.ean.mobile;
 
+import java.math.BigDecimal;
+
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
-import java.math.BigDecimal;
 
 public final class StarRating {
 

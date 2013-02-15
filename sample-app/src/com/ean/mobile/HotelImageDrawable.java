@@ -4,9 +4,9 @@
 
 package com.ean.mobile;
 
-import android.graphics.drawable.Drawable;
-
 import java.io.IOException;
+
+import android.graphics.drawable.Drawable;
 
 import com.ean.mobile.hotel.HotelImageTuple;
 

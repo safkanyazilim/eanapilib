@@ -5,6 +5,7 @@
 package com.ean.mobile;
 
 import java.util.HashMap;
+
 import com.ean.mobile.hotel.HotelImageTuple;
 
 /**

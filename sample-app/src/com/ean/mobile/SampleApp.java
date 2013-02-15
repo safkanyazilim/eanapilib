@@ -4,12 +4,6 @@
 
 package com.ean.mobile;
 
-import android.app.Application;
-import android.content.Context;
-import android.widget.Toast;
-import com.ean.mobile.hotel.Reservation;
-import org.joda.time.LocalDate;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -20,11 +14,19 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.joda.time.LocalDate;
+
+import android.app.Application;
+import android.content.Context;
+import android.widget.Toast;
+
+
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelImageTuple;
 import com.ean.mobile.hotel.HotelInformation;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.HotelRoom;
+import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.CommonParameters;
 

@@ -4,6 +4,18 @@
 
 package com.ean.mobile.activity;
 
+import java.text.NumberFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Currency;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.joda.time.LocalDate;
+import org.joda.time.YearMonth;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.Intent;
@@ -21,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.ean.mobile.Address;
 import com.ean.mobile.BasicAddress;
 import com.ean.mobile.R;
@@ -36,17 +49,6 @@ import com.ean.mobile.hotel.ReservationRoom;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.hotel.request.BookingRequest;
 import com.ean.mobile.request.RequestProcessor;
-import org.joda.time.LocalDate;
-import org.joda.time.YearMonth;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.text.NumberFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Currency;
-import java.util.LinkedList;
-import java.util.List;
 
 public class BookingSummary extends Activity {
 

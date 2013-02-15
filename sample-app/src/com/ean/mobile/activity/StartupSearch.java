@@ -4,6 +4,13 @@
 
 package com.ean.mobile.activity;
 
+import java.io.File;
+import java.util.ArrayList;
+
+import org.joda.time.LocalDate;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -29,6 +36,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.ean.mobile.Destination;
 import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
@@ -38,12 +46,6 @@ import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
-import org.joda.time.LocalDate;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
-
-import java.io.File;
-import java.util.ArrayList;
 
 public class StartupSearch extends Activity {
 
