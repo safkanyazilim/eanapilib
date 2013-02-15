@@ -21,9 +21,9 @@ public final class StarRating {
         };
         //Log.d("EANDebug starrating", starRating);
         //Log.d("EANDebug starbitslen", starBits.length+"");
-        int fullStars = starRating == null ? 0 : starRating.intValue();
+        final int fullStars = starRating == null ? 0 : starRating.intValue();
         //Log.d("EANDebug starbitsfullstar", fullStars+"");
-        boolean halfStars = starRating != null && starRating.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0;
+        final boolean halfStars = starRating != null && starRating.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0;
         //Log.d("EANDebug starbitshalfstar", halfStars+"");
 
         for (int i = 0; i < stars.length; i++) {

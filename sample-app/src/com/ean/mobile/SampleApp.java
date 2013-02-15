@@ -80,7 +80,7 @@ public final class SampleApp extends Application {
     }
 
     public static void resetDates() {
-        LocalDate today = LocalDate.now();
+        final LocalDate today = LocalDate.now();
         arrivalDate = today;
         departureDate = today.plusDays(1);
     }
@@ -99,11 +99,11 @@ public final class SampleApp extends Application {
         IMAGE_DRAWABLES.clear();
     }
 
-    public static void updateFoundHotels(HotelList hotelList) {
+    public static void updateFoundHotels(final HotelList hotelList) {
         updateFoundHotels(hotelList, false);
     }
 
-    public static synchronized void updateFoundHotels(HotelList hotelList, boolean clearOnUpdate) {
+    public static synchronized void updateFoundHotels(final HotelList hotelList, final boolean clearOnUpdate) {
         if (SampleApp.foundHotels == null) {
             SampleApp.foundHotels = new ArrayList<Hotel>();
         } else if (clearOnUpdate) {

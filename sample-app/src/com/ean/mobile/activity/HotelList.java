@@ -43,10 +43,10 @@ public class HotelList extends Activity {
 
     /** Called when the activity is first created. */
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.hotellist);
-        ListView hotelListView = (ListView) findViewById(R.id.HotelList);
+        final ListView hotelListView = (ListView) findViewById(R.id.HotelList);
         hotelListView.setOnItemClickListener(new HotelListAdapterListener());
 
         loadingMoreHotelsToast = Toast.makeText(getApplicationContext(),
@@ -57,19 +57,19 @@ public class HotelList extends Activity {
     public void onStart() {
         super.onStart();
         ((TextView) findViewById(R.id.searchQuery)).setText(SampleApp.searchQuery);
-        ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
+        final ListView hotelListView = ((ListView) findViewById(R.id.HotelList));
         hotelListView.setAdapter(new HotelAdapter(getApplicationContext(), R.layout.hotellistlayout));
         hotelListView.setOnScrollListener(new HotelScrollListener());
     }
 
     private class HotelListAdapterListener implements AdapterView.OnItemClickListener {
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(final AdapterView<?> parent, final View view, final int position, final long id) {
             SampleApp.selectedHotel = (Hotel) parent.getItemAtPosition(position);
             startActivity(new Intent(HotelList.this, HotelInformation.class));
         }
     }
 
-    private static class HotelAdapter extends ArrayAdapter<Hotel> {
+    private final static class HotelAdapter extends ArrayAdapter<Hotel> {
 
         private final LayoutInflater layoutInflater;
 
@@ -79,7 +79,7 @@ public class HotelList extends Activity {
          * @param context The context passed in by the calling class.
          * @param resource The resourceId of the resource this is being applied to.
          */
-        private HotelAdapter(Context context, int resource) {
+        private HotelAdapter(final Context context, final int resource) {
             super(context, resource, SampleApp.foundHotels);
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
@@ -87,7 +87,7 @@ public class HotelList extends Activity {
         /**
          * {@inheritDoc}
          */
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, final View convertView, final ViewGroup parent) {
             View view = convertView;
             if (view == null) {
                 view = layoutInflater.inflate(R.layout.hotellistlayout, null);
@@ -123,11 +123,11 @@ public class HotelList extends Activity {
             return view;
         }
 
-        private static void fixUpPricesAndDrr(View view, Hotel hotel) {
+        private static void fixUpPricesAndDrr(final View view, final Hotel hotel) {
             final TextView highPrice = (TextView) view.findViewById(R.id.highPrice);
             final TextView lowPrice = (TextView) view.findViewById(R.id.lowPrice);
             final ImageView drrIcon = (ImageView) view.findViewById(R.id.drrPromoImg);
-            NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
+            final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
             currencyFormat.setCurrency(Currency.getInstance(hotel.currencyCode));
             lowPrice.setText(currencyFormat.format(hotel.lowPrice));
             if (hotel.lowPrice.equals(hotel.highPrice)) {
@@ -148,7 +148,7 @@ public class HotelList extends Activity {
         private PerformLoadTask loadingTask;
 
         @Override
-        public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
             if (view.getLastVisiblePosition() >= SampleApp.foundHotels.size() - 7) {
                 if (loadingTask == null || loadingTask.getStatus() == AsyncTask.Status.FINISHED) {
                     loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());
@@ -164,23 +164,23 @@ public class HotelList extends Activity {
          * no op, implemented for the interface.
          */
         @Override
-        public void onScrollStateChanged(AbsListView absListView, int i) {
+        public void onScrollStateChanged(final AbsListView absListView, final int i) {
             // see javadoc.
         }
     }
 
-    private class PerformLoadTask extends AsyncTask<Void, Integer, Void> {
+    private final class PerformLoadTask extends AsyncTask<Void, Integer, Void> {
 
         private final ArrayAdapter adapter;
 
-        private PerformLoadTask(ArrayAdapter adapter) {
+        private PerformLoadTask(final ArrayAdapter adapter) {
             this.adapter = adapter;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Void doInBackground(final Void... voids) {
             try {
-                ListRequest request = new ListRequest(
+                final ListRequest request = new ListRequest(
                     SampleApp.cacheKey,
                     SampleApp.cacheLocation);
 
@@ -194,7 +194,7 @@ public class HotelList extends Activity {
         }
 
         @Override
-        protected void onPostExecute(Void aVoid) {
+        protected void onPostExecute(final Void aVoid) {
             adapter.notifyDataSetChanged();
             loadingMoreHotelsToast.cancel();
         }

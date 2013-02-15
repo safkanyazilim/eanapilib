@@ -27,7 +27,7 @@ public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable,
     }
 
     @Override
-    protected Drawable doInBackground(HotelImageDrawable... hotelImageTuples) {
+    protected Drawable doInBackground(final HotelImageDrawable... hotelImageTuples) {
         try {
             if (loadMain) {
                 return hotelImageTuples[0].loadMainImage();
@@ -40,7 +40,7 @@ public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable,
     }
 
     @Override
-    protected void onPostExecute(Drawable drawable) {
+    protected void onPostExecute(final Drawable drawable) {
         view.setImageDrawable(drawable);
     }
 

@@ -41,19 +41,18 @@ public final class SuggestionFactory {
         suggestDestinationTask.execute(query);
     }
 
-    private static class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
+    private static final class SuggestDestinationTask extends AsyncTask<String, Integer, List<Destination>> {
 
         private final ArrayAdapter<Destination> suggestionAdapter;
 
-        private SuggestDestinationTask(ArrayAdapter<Destination> suggestionAdapter) {
+        private SuggestDestinationTask(final ArrayAdapter<Destination> suggestionAdapter) {
             this.suggestionAdapter = suggestionAdapter;
         }
 
         @Override
-        protected List<Destination> doInBackground(String... strings) {
+        protected List<Destination> doInBackground(final String... strings) {
             try {
-                DestinationRequest destinationRequest = new DestinationRequest(strings[0]);
-                return RequestProcessor.run(destinationRequest);
+                return RequestProcessor.run(new DestinationRequest(strings[0]));
             } catch (EanWsError ewe) {
                 Log.d(SampleConstants.DEBUG, "The API call returned an error", ewe);
             } catch (UrlRedirectionException ure) {
@@ -63,9 +62,9 @@ public final class SuggestionFactory {
         }
 
         @Override
-        protected void onPostExecute(List<Destination> destinations) {
+        protected void onPostExecute(final List<Destination> destinations) {
             if (destinations != null) {
-                List<Destination> cities = new ArrayList<Destination>();
+                final List<Destination> cities = new ArrayList<Destination>();
                 for (Destination destination : destinations) {
                     if (destination.category == Destination.Category.CITIES) {
                         cities.add(destination);

@@ -24,13 +24,13 @@ public class ReservationDisplay extends Activity {
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.reservationdisplay);
 
-        Reservation reservationToDisplay = SampleApp.getLatestReservation();
+        final Reservation reservationToDisplay = SampleApp.getLatestReservation();
 
-        TableLayout infoList = (TableLayout) findViewById(R.id.reservationInfoList);
+        final TableLayout infoList = (TableLayout) findViewById(R.id.reservationInfoList);
         infoList.addView(inflateKeyValue(getLayoutInflater(), "Itinerary ID", reservationToDisplay.itineraryId));
         infoList.addView(inflateKeyValue(getLayoutInflater(), "Confirmation Numbers", TextUtils.join(",", reservationToDisplay.confirmationNumbers)));
         infoList.addView(inflateKeyValue(getLayoutInflater(), "Check-In Instructions", reservationToDisplay.checkInInstructions));
@@ -42,13 +42,13 @@ public class ReservationDisplay extends Activity {
 
     }
 
-    private View inflateKeyValue(LayoutInflater inflater, String key, Object value) {
-        View view = inflater.inflate(R.layout.reservationinfolistlayout, null);
+    private View inflateKeyValue(final LayoutInflater inflater, final String key, final Object value) {
+        final View view = inflater.inflate(R.layout.reservationinfolistlayout, null);
 
-        TextView keyView = (TextView) view.findViewById(R.id.reservationinfokey);
+        final TextView keyView = (TextView) view.findViewById(R.id.reservationinfokey);
         keyView.setText(key);
 
-        TextView valueView = (TextView) view.findViewById(R.id.reservationinfovalue);
+        final TextView valueView = (TextView) view.findViewById(R.id.reservationinfovalue);
         valueView.setText(value.toString());
         return view;
     }

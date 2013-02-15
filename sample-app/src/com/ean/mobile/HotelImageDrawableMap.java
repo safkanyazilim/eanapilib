@@ -14,11 +14,11 @@ import com.ean.mobile.hotel.HotelImageTuple;
  */
 public final class HotelImageDrawableMap extends HashMap<HotelImageTuple, HotelImageDrawable> {
     @Override
-    public HotelImageDrawable get(Object key) {
+    public HotelImageDrawable get(final Object key) {
         if (!(key instanceof HotelImageTuple)) {
             return null;
         }
-        HotelImageTuple tuple = (HotelImageTuple) key;
+        final HotelImageTuple tuple = (HotelImageTuple) key;
         if (!containsKey(tuple)) {
             put(tuple, new HotelImageDrawable(tuple));
         }
