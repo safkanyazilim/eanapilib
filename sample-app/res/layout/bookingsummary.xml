@@ -119,11 +119,7 @@
                           android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
-                <LinearLayout android:layout_width="fill_parent"
-                              android:layout_height="4dip"
-                              android:background="#D6D5D4"
-                              android:layout_marginBottom="4dip"
-                              android:layout_marginTop="4dip" />
+
                 <TextView android:id="@+id/priceDetailsLabel"
                           android:layout_width="fill_parent"
                           android:layout_height="wrap_content"
@@ -207,6 +203,16 @@
                           android:layout_height="wrap_content"
                           android:orientation="vertical">
 
+                <Button
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:text="@string/choose_contact"
+                        android:id="@+id/choose_contact_button"
+                        android:layout_weight="500"
+                        android:layout_gravity="top"
+                        android:singleLine="true"
+                        android:onClick="onContactChooseButtonClick"/>
+
                 <LinearLayout android:id="@+id/guestinfolayout"
                               android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
@@ -249,6 +255,17 @@
                               android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
                               android:text="@string/billing_information" />
+
+                    <Button
+                            android:layout_width="fill_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/load_default_billing_info"
+                            android:id="@+id/loadDefaultBillingInfoButton"
+                            android:layout_gravity="left|center_vertical"
+                            android:focusable="true"
+                            android:singleLine="true"
+                            android:onClick="onLoadDefaultBillingInfoClick"/>
+
                     <EditText android:id="@+id/billingInformationAddress1"
                               android:layout_width="fill_parent"
                               android:layout_height="wrap_content"
@@ -309,6 +326,15 @@
                     </LinearLayout>
                     <LinearLayout android:layout_width="fill_parent"
                                   android:layout_height="wrap_content">
+
+                        <Spinner
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/billingInformationCCType"
+                                android:layout_gravity="center_horizontal|top"
+                                android:entries="@array/supported_credit_cards"
+                                android:longClickable="true"/>
+
                         <TextView android:layout_height="wrap_content"
                                   android:layout_width="0dip"
                                   android:layout_weight="7"
@@ -323,18 +349,14 @@
                               android:layout_height="wrap_content"
                               android:text="@string/billing_legal_disclaimer" />
                 </LinearLayout>
-
             </LinearLayout>
 
             <Button
                     android:layout_width="fill_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/choose_contact"
-                    android:id="@+id/choose_contact_button"
-                    android:layout_weight="500"
-                    android:layout_gravity="top"
-                    android:singleLine="true"
-                    android:onClick="onContactChooseButtonClick"/>
+                    android:text="@string/complete_booking"
+                    android:id="@+id/button"
+                    android:onClick="onCompleteBookingButtonClick"/>
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

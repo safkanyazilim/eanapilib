@@ -23,7 +23,7 @@ import com.ean.mobile.BasicAddress;
  * Built from the <a href="http://developer.ean.com/docs/read/hotels/version_3/book_reservation/Response_Format">
  *     HotelRoomReservationResponse</a> documentation, as well as experimental results with test bookings.
  */
-public final class Reservation {
+public final class Reservation implements Comparable<Reservation> {
 
     /**
      * The formatter used for paring DateTime objects from returned api date fields.
@@ -148,6 +148,11 @@ public final class Reservation {
     public final List<Rate> rateInformations;
 
     /**
+     * The cached hashCode for this object.
+     */
+    private final int hashCache;
+
+    /**
      * Constructs a reservation object from an appropriately structured JSONObject.
      * @param object The appropriately structured JSONObject.
      */
@@ -186,5 +191,39 @@ public final class Reservation {
         this.rateOccupancyPerRoom = object.optInt("rateOccupancyPerRoom");
         this.cancellationPolicy = new CancellationPolicy(object, this.arrivalDate);
         this.rateInformations = Collections.unmodifiableList(Rate.parseFromRateInformations(object));
+
+        final int prime = 31;
+        int localHash = new Long(itineraryId).hashCode();
+        for (Long confirmationNumber : confirmationNumbers) {
+            localHash += prime * confirmationNumber.hashCode();
+        }
+        this.hashCache = localHash;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean equals(final Object o) {
+        return o instanceof Reservation && o.hashCode() == this.hashCode();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int hashCode() {
+        return hashCache;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * When used as the comparison for Collections.sort or a sorted collection, reservations with later arrival dates
+     * will come first.
+     */
+    @Override
+    public int compareTo(final Reservation reservation) {
+        return reservation.arrivalDate.compareTo(arrivalDate);
     }
 }

@@ -4,6 +4,9 @@
 
 package com.ean.mobile;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.json.JSONObject;
 
 /**
@@ -29,6 +32,19 @@ public final class BasicAddress extends Address {
      */
     public BasicAddress(final String addressLine1, final String city, final String stateProvinceCode,
             final String countryCode, final String postalCode) {
-        super(addressLine1, city,  stateProvinceCode, countryCode, postalCode);
+        this(Collections.singletonList(addressLine1), city, stateProvinceCode, countryCode, postalCode);
+    }
+
+    /**
+     * Creates a basic address object from the various parameters.
+     * @param addressLines The lines of the address.
+     * @param city City of address.
+     * @param stateProvinceCode State/province code for state.
+     * @param countryCode ISO country code for country.
+     * @param postalCode Postal code for country.
+     */
+    public BasicAddress(final List<String> addressLines, final String city, final String stateProvinceCode,
+            final String countryCode, final String postalCode) {
+        super(addressLines, city,  stateProvinceCode, countryCode, postalCode);
     }
 }

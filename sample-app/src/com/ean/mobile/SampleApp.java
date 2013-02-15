@@ -3,15 +3,19 @@ package com.ean.mobile;
 import android.app.Application;
 import android.content.Context;
 import android.widget.Toast;
+import com.ean.mobile.hotel.Reservation;
 import org.joda.time.LocalDate;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelImageTuple;
@@ -24,7 +28,7 @@ import com.ean.mobile.request.CommonParameters;
 /**
  * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
  */
-public class SampleApp extends Application {
+public final class SampleApp extends Application {
 
     public static String searchQuery;
     public static int numberOfAdults;
@@ -51,6 +55,8 @@ public class SampleApp extends Application {
     public static final Map<HotelImageTuple, HotelImageDrawable> IMAGE_DRAWABLES
             = Collections.synchronizedMap(new HotelImageDrawableMap());
 
+    private static final Set<Reservation> RESERVATIONS = new TreeSet<Reservation>();
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -60,7 +66,6 @@ public class SampleApp extends Application {
         CommonParameters.locale = Locale.US.toString();
         CommonParameters.currencyCode = Currency.getInstance(Locale.US).getCurrencyCode();
     }
-
     public static RoomOccupancy occupancy() {
         return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
     }
@@ -99,8 +104,18 @@ public class SampleApp extends Application {
         } else if (clearOnUpdate) {
             SampleApp.foundHotels.clear();
         }
-        SampleApp.foundHotels.addAll(hotelList.hotels);
-        SampleApp.cacheKey = hotelList.cacheKey;
-        SampleApp.cacheLocation = hotelList.cacheLocation;
+        if (hotelList != null) {
+            SampleApp.foundHotels.addAll(hotelList.hotels);
+            SampleApp.cacheKey = hotelList.cacheKey;
+            SampleApp.cacheLocation = hotelList.cacheLocation;
+        }
+    }
+
+    public static void addReservationToCache(final Context context, final Reservation reservation) {
+        RESERVATIONS.add(reservation);
+    }
+
+    public static Reservation getLatestReservation() {
+        return RESERVATIONS.size() == 0 ? null : RESERVATIONS.iterator().next();
     }
 }

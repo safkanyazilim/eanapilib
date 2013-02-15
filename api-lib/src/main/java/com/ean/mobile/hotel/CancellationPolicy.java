@@ -79,6 +79,9 @@ public final class CancellationPolicy {
      * documentation.
      */
     public final class CancellationPolicyInformation {
+        //TODO: instead of all of these fields this class should contain:
+        //  - FIRST instant applicable: The first instant that this cancellation is applicable. Null for 0.
+        //  - cost: The cost of this cancellation, calculated against the cost of the reservation.
         /**
          * Version ID value returned by the api.
          */

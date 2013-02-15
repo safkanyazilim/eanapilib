@@ -73,6 +73,7 @@ public class StartupSearch extends Activity {
     }
 
     private void setupHttpConnectionStuff() {
+        // exists due to advice found at http://android-developers.blogspot.com/2011/09/androids-http-clients.html.
         // HTTP connection reuse which was buggy pre-froyo
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepAlive", "false");
