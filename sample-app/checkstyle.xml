@@ -57,7 +57,7 @@
     <!-- See http://checkstyle.sf.net/config_header.html   -->
     <module name="Header">
         <property name="header"
-                  value="/*\n * Copyright \(c\) ${copyrightYear} EAN.com, L.P. All rights reserved.\n */" />
+                  value="/*\n * Copyright (c) ${copyrightYear} EAN.com, L.P. All rights reserved.\n */" />
     </module>
 
     <module name="StrictDuplicateCode">
