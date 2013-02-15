@@ -26,12 +26,10 @@ public final class StarRating {
             (ImageView) parent.findViewById(R.id.hotelStar4),
             (ImageView) parent.findViewById(R.id.hotelStar5),
         };
-        //Log.d("EANDebug starrating", starRating);
-        //Log.d("EANDebug starbitslen", starBits.length+"");
+
         final int fullStars = starRating == null ? 0 : starRating.intValue();
-        //Log.d("EANDebug starbitsfullstar", fullStars+"");
-        final boolean halfStars = starRating != null && starRating.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0;
-        //Log.d("EANDebug starbitshalfstar", halfStars+"");
+        final boolean halfStars
+            = starRating != null && starRating.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) != 0;
 
         for (int i = 0; i < stars.length; i++) {
             if (i < fullStars) {

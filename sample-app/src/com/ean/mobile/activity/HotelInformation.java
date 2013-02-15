@@ -87,7 +87,8 @@ public class HotelInformation extends Activity {
         };
 
         address.setText(SampleApp.selectedHotel.address.toString());
-        final com.ean.mobile.hotel.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
+        final com.ean.mobile.hotel.HotelInformation hotelInformation
+                = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(hotelInformation.longDescription, "text/html", null);
         for (int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++) {
             final HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));

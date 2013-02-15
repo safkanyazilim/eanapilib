@@ -151,7 +151,8 @@ public class HotelList extends Activity {
         private final int distanceFromLastPositionToLoad = 7;
 
         @Override
-        public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount, final int totalItemCount) {
+        public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
+                final int totalItemCount) {
             if (view.getLastVisiblePosition() >= SampleApp.foundHotels.size() - distanceFromLastPositionToLoad) {
                 if (loadingTask == null || loadingTask.getStatus() == AsyncTask.Status.FINISHED) {
                     loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());

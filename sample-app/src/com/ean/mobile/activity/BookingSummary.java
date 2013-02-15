@@ -56,7 +56,8 @@ public class BookingSummary extends Activity {
     private static final String DATE_FORMAT_STRING = "EEEE, MMMM dd, yyyy";
     private static final String NIGHTLY_RATE_FORMAT_STRING = "MM-dd-yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
-    private static final DateTimeFormatter NIGHTLY_RATE_FORMATTER = DateTimeFormat.forPattern(NIGHTLY_RATE_FORMAT_STRING);
+    private static final DateTimeFormatter NIGHTLY_RATE_FORMATTER
+        = DateTimeFormat.forPattern(NIGHTLY_RATE_FORMAT_STRING);
     private static final int PICK_CONTACT_INTENT = 1;
     private static final int SET_DEFAULT_CREDIT_CARD_INTENT = 2;
 
@@ -80,7 +81,8 @@ public class BookingSummary extends Activity {
         hotelName.setText(hotel.name);
         checkIn.setText(DATE_TIME_FORMATTER.print(SampleApp.arrivalDate));
         checkOut.setText(DATE_TIME_FORMATTER.print(SampleApp.departureDate));
-        numGuests.setText(String.format(getString(R.string.adults_comma_children), occupancy.numberOfAdults, occupancy.childAges.size()));
+        numGuests.setText(String.format(
+            getString(R.string.adults_comma_children), occupancy.numberOfAdults, occupancy.childAges.size()));
         roomType.setText(hotelRoom.description);
         bedType.setText(hotelRoom.bedTypes.get(0).description);
 
@@ -94,7 +96,8 @@ public class BookingSummary extends Activity {
         populatePriceBreakdownList(currencyFormat);
     }
 
-    private void displayTotalHighPrice(final HotelRoom hotelRoom, final BigDecimal highPrice, final NumberFormat currencyFormat) {
+    private void displayTotalHighPrice(final HotelRoom hotelRoom, final BigDecimal highPrice,
+             final NumberFormat currencyFormat) {
         final TextView totalHighPrice = (TextView) findViewById(R.id.highPrice);
         final ImageView drrIcon = (ImageView) findViewById(R.id.drrPromoImg);
         final TextView drrPromoText = (TextView) findViewById(R.id.drrPromoText);
@@ -115,7 +118,7 @@ public class BookingSummary extends Activity {
         }
     }
 
-    private NumberFormat getCurrencyFormat(String currencyCode) {
+    private NumberFormat getCurrencyFormat(final String currencyCode) {
         final NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
         currencyFormat.setCurrency(Currency.getInstance(currencyCode));
         return currencyFormat;
@@ -176,7 +179,8 @@ public class BookingSummary extends Activity {
         state.setText("WA");
         country.setText("US");
         zip.setText("98004");
-        cardType.setSelection(Arrays.asList(getResources().getStringArray(R.array.supported_credit_cards)).indexOf("CA"));
+        cardType.setSelection(
+            Arrays.asList(getResources().getStringArray(R.array.supported_credit_cards)).indexOf("CA"));
         cardNum.setText("5401999999999999");
         cardExpirationMonth.setText("01");
         cardExpirationYear.setText(Integer.toString((YearMonth.now().getYear() + 1) % yearsInACentury));
@@ -199,17 +203,30 @@ public class BookingSummary extends Activity {
 
         final String cardType = ((Spinner) findViewById(R.id.billingInformationCCType)).getSelectedItem().toString();
         final String cardNumber = ((EditText) findViewById(R.id.billingInformationCCNum)).getText().toString();
-        final String cardExpirationMonth = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
-        final String cardExpirationYear = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
-        final String cardSecurityCode = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
+        final String cardExpirationMonth
+            = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
+        final String cardExpirationYear
+            = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
+        final String cardSecurityCode
+            = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
 
         //TODO: handle bad user input here.
-        final YearMonth expirationDate = new YearMonth(Integer.parseInt(cardExpirationYear.length() == 2 ? "20" + cardExpirationYear : cardExpirationYear), Integer.parseInt(cardExpirationMonth));
+        final int cardExpirationFullYear
+            = Integer.parseInt(cardExpirationYear.length() == 2 ? "20" + cardExpirationYear : cardExpirationYear);
+        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, Integer.parseInt(cardExpirationMonth));
 
 
-        final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
-        final ReservationRoom reservationRoom = new ReservationRoom(reservationInfo.individual.name, SampleApp.selectedRoom, SampleApp.selectedRoom.bedTypes.get(0).id, SampleApp.occupancy());
-        final Address reservationAddress = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
+        final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(
+            email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
+
+        final ReservationRoom reservationRoom = new ReservationRoom(
+            reservationInfo.individual.name,
+            SampleApp.selectedRoom,
+            SampleApp.selectedRoom.bedTypes.get(0).id,
+            SampleApp.occupancy());
+
+        final Address reservationAddress
+            = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
 
         final BookingRequest request = new BookingRequest(
             SampleApp.selectedHotel.hotelId,
@@ -232,14 +249,37 @@ public class BookingSummary extends Activity {
             case PICK_CONTACT_INTENT:
                 if (resultCode == Activity.RESULT_OK) {
                     final Uri contactData = data.getData();
-                    final String id = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts._ID);
+                    final String id = getStringForUriQueryAndContactId(
+                        getContentResolver(),
+                        contactData,
+                        null,
+                        null,
+                        ContactsContract.Contacts._ID);
+
                     final String[] idAsSelectionArgs = new String[] {id};
-                    final String[] displayNamePieces = getStringForUriQueryAndContactId(getContentResolver(), contactData, null, null, ContactsContract.Contacts.DISPLAY_NAME).split(" ");
+                    final String[] displayNamePieces = getStringForUriQueryAndContactId(
+                        getContentResolver(),
+                        contactData,
+                        null,
+                        null,
+                        ContactsContract.Contacts.DISPLAY_NAME).split(" ");
+
                     final String firstName = displayNamePieces[0];
                     final String lastName = displayNamePieces[displayNamePieces.length - 1];
 
-                    final String email = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Email.CONTENT_URI, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Email.ADDRESS);
-                    final String phoneNumber = getStringForUriQueryAndContactId(getContentResolver(), ContactsContract.CommonDataKinds.Phone.CONTENT_URI, ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?", idAsSelectionArgs, ContactsContract.CommonDataKinds.Phone.NUMBER);
+                    final String email = getStringForUriQueryAndContactId(
+                        getContentResolver(),
+                        ContactsContract.CommonDataKinds.Email.CONTENT_URI,
+                        ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                        idAsSelectionArgs,
+                        ContactsContract.CommonDataKinds.Email.ADDRESS);
+
+                    final String phoneNumber = getStringForUriQueryAndContactId(
+                        getContentResolver(),
+                        ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
+                        ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                        idAsSelectionArgs,
+                        ContactsContract.CommonDataKinds.Phone.NUMBER);
 
                     final EditText guestFirstName = (EditText) findViewById(R.id.guestFirstName);
                     final EditText guestLastName = (EditText) findViewById(R.id.guestLastName);
@@ -254,7 +294,8 @@ public class BookingSummary extends Activity {
         }
     }
 
-    private static String getStringForUriQueryAndContactId(final ContentResolver resolver, final Uri uri, final String selection, final String[] selectionArgs, final String columnName) {
+    private static String getStringForUriQueryAndContactId(final ContentResolver resolver, final Uri uri,
+            final String selection, final String[] selectionArgs, final String columnName) {
         String value = "";
         final Cursor cursor = resolver.query(uri, null, selection, selectionArgs, null, null);
         if (cursor.moveToNext()) {

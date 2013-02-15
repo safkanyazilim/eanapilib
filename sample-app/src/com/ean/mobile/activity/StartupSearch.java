@@ -67,7 +67,8 @@ public class StartupSearch extends Activity {
         setUpPeopleSpinner(R.id.adults_spinner);
         setUpPeopleSpinner(R.id.children_spinner);
 
-        final ArrayAdapter<Destination> suggestionAdapter = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
+        final ArrayAdapter<Destination> suggestionAdapter
+                = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
         final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
 
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
@@ -110,7 +111,10 @@ public class StartupSearch extends Activity {
     }
 
     private void setUpPeopleSpinner(final int resourceId) {
-        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.number_of_people_array, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
+            getApplicationContext(),
+            R.array.number_of_people_array,
+            android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         final Spinner spinner = (Spinner) findViewById(resourceId);
@@ -158,7 +162,8 @@ public class StartupSearch extends Activity {
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request), true);
             } catch (EanWsError ewe) {
-                //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
+                //TODO: This should be handled better.
+                // If this exception occurs, it's likely an input error and should be recoverable.
                 Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
@@ -203,11 +208,17 @@ public class StartupSearch extends Activity {
                 date = SampleApp.departureDate;
             }
 
-            return new DatePickerDialog(getActivity(), this, date.getYear(), date.getMonthOfYear() - 1, date.getDayOfMonth());
+            return new DatePickerDialog(
+                getActivity(),
+                this,
+                date.getYear(),
+                date.getMonthOfYear() - 1,
+                date.getDayOfMonth());
         }
 
         @Override
-        public void onDateSet(final DatePicker datePicker, final int year, final int monthOfYear, final int dayOfMonth) {
+        public void onDateSet(final DatePicker datePicker, final int year, final int monthOfYear,
+                final int dayOfMonth) {
             final LocalDate chosenDate = new LocalDate(year, monthOfYear + 1, dayOfMonth);
             pickerButton.setText(DATE_TIME_FORMATTER.print(chosenDate));
             switch(pickerId) {
@@ -262,7 +273,9 @@ public class StartupSearch extends Activity {
             // If the event is a key-down event on the "enter" button
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 // Perform action on key press
-                performSearch(searchBox.getText().toString().trim(), ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true));
+                performSearch(
+                    searchBox.getText().toString().trim(),
+                    ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true));
                 return true;
             }
             return false;
