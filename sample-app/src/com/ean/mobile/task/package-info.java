@@ -1,5 +1,6 @@
 /*
- * Copyright 2013 EAN.com, L.P. All rights reserved.
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
+ */
  */
 
 /**

@@ -1,5 +1,5 @@
 /*
- * Copyright 2013 EAN.com, L.P. All rights reserved.
+ * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
 package com.ean.mobile;
@@ -30,9 +30,6 @@ import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.CommonParameters;
 
-/**
- * Copyright (c) 2002-2012 EAN.com, L.P. All rights reserved.
- */
 public final class SampleApp extends Application {
 
     public static String searchQuery;

@@ -1,4 +1,8 @@
 <?xml version="1.0"?>
+<!--
+  ~ Copyright 2013 EAN.com, L.P. All rights reserved.
+  -->
+
 <!DOCTYPE module PUBLIC
           "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
           "http://www.puppycrawl.com/dtds/configuration_1_3.dtd">
@@ -53,7 +57,7 @@
     <!-- See http://checkstyle.sf.net/config_header.html   -->
     <module name="Header">
         <property name="header"
-                  value="/*\n * Copyright ${copyrightYear} EAN.com, L.P. All rights reserved.\n */" />
+                  value="/*\n * Copyright \(c\) ${copyrightYear} EAN.com, L.P. All rights reserved.\n */" />
     </module>
 
     <module name="StrictDuplicateCode">
