@@ -12,7 +12,7 @@ import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.ean.mobile.Destination;
-import com.ean.mobile.SampleConstants;
+import com.ean.mobile.app.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.DestinationRequest;

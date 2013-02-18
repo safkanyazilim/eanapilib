@@ -2,12 +2,13 @@
  * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
-package com.ean.mobile;
+package com.ean.mobile.app;
 
 import java.math.BigDecimal;
 
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import com.ean.mobile.R;
 
 /**
  * A class to make it easier to populate a star rating layout.
