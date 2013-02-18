@@ -9,6 +9,9 @@ import java.math.BigDecimal;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+/**
+ * A class to make it easier to populate a star rating layout.
+ */
 public final class StarRating {
 
     /**
@@ -18,6 +21,15 @@ public final class StarRating {
         // see javadoc.
     }
 
+    /**
+     * The method that actually populates the star rating layout. Resolves to half stars, rounded down.
+     * 1.1 : 1 star
+     * 1.9 : 1.5 star
+     * 4.5 : 4.5 stars
+     * 4.9 : 4.5 stars
+     * @param parent The root of the StarRating layout.
+     * @param starRating The actual star rating to display.
+     */
     public static void populate(final LinearLayout parent, final BigDecimal starRating) {
         final ImageView[] stars = {
             (ImageView) parent.findViewById(R.id.hotelStar1),

@@ -51,6 +51,10 @@ import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.hotel.request.BookingRequest;
 import com.ean.mobile.request.RequestProcessor;
 
+/**
+ * The code behind the BookingSummary layout. Manages everything that goes on screen in that page, as well
+ * as handles the button clicks and starts the reservation process.
+ */
 public class BookingSummary extends Activity {
 
     private static final String DATE_FORMAT_STRING = "EEEE, MMMM dd, yyyy";
@@ -59,9 +63,11 @@ public class BookingSummary extends Activity {
     private static final DateTimeFormatter NIGHTLY_RATE_FORMATTER
         = DateTimeFormat.forPattern(NIGHTLY_RATE_FORMAT_STRING);
     private static final int PICK_CONTACT_INTENT = 1;
-    private static final int SET_DEFAULT_CREDIT_CARD_INTENT = 2;
 
-
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.bookingsummary);
@@ -151,11 +157,19 @@ public class BookingSummary extends Activity {
         }
     }
 
+    /**
+     * (Event handler) Contains the action to handle the contact choose button.
+     * @param view The view that fired this event.
+     */
     public void onContactChooseButtonClick(final View view) {
         final Intent intent = new Intent(Intent.ACTION_PICK, ContactsContract.Contacts.CONTENT_URI);
         startActivityForResult(intent, PICK_CONTACT_INTENT);
     }
 
+    /**
+     * (Event handler) Contains the action to handle the load default billing info button.
+     * @param view The view that fired this event.
+     */
     public void onLoadDefaultBillingInfoClick(final View view) {
         final EditText addressLine1 = (EditText) findViewById(R.id.billingInformationAddress1);
         final EditText addressLine2 = (EditText) findViewById(R.id.billingInformationAddress2);
@@ -188,6 +202,11 @@ public class BookingSummary extends Activity {
 
     }
 
+    /**
+     * (Event hanlder) Handles the complete booking button click. Loads the information from the inputs and
+     * creates a new booking request based on that.
+     * @param view The view that fired the event.
+     */
     public void onCompleteBookingButtonClick(final View view) {
         final String firstName = ((EditText) findViewById(R.id.guestFirstName)).getText().toString();
         final String lastName = ((EditText) findViewById(R.id.guestLastName)).getText().toString();
@@ -238,9 +257,12 @@ public class BookingSummary extends Activity {
             reservationAddress);
 
 
-            new BookingRequestTask().execute(request);
+        new BookingRequestTask().execute(request);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onActivityResult(final int reqCode, final int resultCode, final Intent data) {
         super.onActivityResult(reqCode, resultCode, data);
@@ -305,7 +327,10 @@ public class BookingSummary extends Activity {
         return value;
     }
 
-    public class BookingRequestTask extends AsyncTask<BookingRequest, Void, List<Reservation>> {
+    /**
+     * The task used to actually perform the booking request and pass the returned data off to the next activity.
+     */
+    private class BookingRequestTask extends AsyncTask<BookingRequest, Void, List<Reservation>> {
         @Override
         protected List<Reservation> doInBackground(final BookingRequest... bookingRequests) {
             final List<Reservation> reservations = new LinkedList<Reservation>();
@@ -313,19 +338,18 @@ public class BookingSummary extends Activity {
                 try {
                     reservations.add(RequestProcessor.run(request));
                 } catch (EanWsError ewe) {
-                    Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                    Log.d(SampleConstants.LOG_TAG, "An APILevel Exception occurred.", ewe);
                 } catch (UrlRedirectionException  ure) {
                     SampleApp.sendRedirectionToast(getApplicationContext());
                 }
             }
             return reservations;
         }
-
         @Override
         protected void onPostExecute(final List<Reservation> reservations) {
             super.onPostExecute(reservations);
             for (Reservation reservation : reservations) {
-                SampleApp.addReservationToCache(getApplicationContext(), reservation);
+                SampleApp.addReservationToCache(reservation);
             }
             startActivity(new Intent(BookingSummary.this, ReservationDisplay.class));
         }

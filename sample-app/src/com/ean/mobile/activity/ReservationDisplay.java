@@ -19,11 +19,18 @@ import com.ean.mobile.R;
 import com.ean.mobile.SampleApp;
 import com.ean.mobile.hotel.Reservation;
 
+/**
+ * The code behind the ReservationDisplay activity.
+ */
 public class ReservationDisplay extends Activity {
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setContentView(R.layout.reservationdisplay);

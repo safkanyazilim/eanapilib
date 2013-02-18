@@ -37,11 +37,16 @@ import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 
+/**
+ * The code behind the HotelList layout.
+ */
 public class HotelList extends Activity {
 
     private Toast loadingMoreHotelsToast;
 
-    /** Called when the activity is first created. */
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,6 +58,9 @@ public class HotelList extends Activity {
             getString(R.string.loading_more_hotels), Toast.LENGTH_LONG);
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -75,12 +83,12 @@ public class HotelList extends Activity {
 
         /**
          * Overloads the constructor who takes the same parameters plus a list of objects.
-         * Uses {@link SampleApp#foundHotels} as the list of objects it will use.
+         * Uses {@link SampleApp#FOUND_HOTELS} as the list of objects it will use.
          * @param context The context passed in by the calling class.
          * @param resource The resourceId of the resource this is being applied to.
          */
         private HotelAdapter(final Context context, final int resource) {
-            super(context, resource, SampleApp.foundHotels);
+            super(context, resource, SampleApp.FOUND_HOTELS);
             layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         }
 
@@ -96,7 +104,7 @@ public class HotelList extends Activity {
 
             //Get the hotel.
             final Hotel hotel = this.getItem(position);
-            Log.d(SampleConstants.DEBUG, "name " + hotel.name);
+            Log.d(SampleConstants.LOG_TAG, "name " + hotel.name);
 
             //Set the name field
             final TextView name = (TextView) view.findViewById(R.id.hotelName);
@@ -150,10 +158,13 @@ public class HotelList extends Activity {
 
         private final int distanceFromLastPositionToLoad = 7;
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         public void onScroll(final AbsListView view, final int firstVisibleItem, final int visibleItemCount,
                 final int totalItemCount) {
-            if (view.getLastVisiblePosition() >= SampleApp.foundHotels.size() - distanceFromLastPositionToLoad) {
+            if (view.getLastVisiblePosition() >= SampleApp.FOUND_HOTELS.size() - distanceFromLastPositionToLoad) {
                 if (loadingTask == null || loadingTask.getStatus() == AsyncTask.Status.FINISHED) {
                     loadingTask = new PerformLoadTask((ArrayAdapter) view.getAdapter());
                 }
@@ -166,6 +177,7 @@ public class HotelList extends Activity {
 
         /**
          * no op, implemented for the interface.
+         * {@inheritDoc}
          */
         @Override
         public void onScrollStateChanged(final AbsListView absListView, final int i) {
@@ -181,6 +193,9 @@ public class HotelList extends Activity {
             this.adapter = adapter;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected Void doInBackground(final Void... voids) {
             try {
@@ -190,13 +205,16 @@ public class HotelList extends Activity {
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request));
             } catch (EanWsError ewe) {
-                Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                Log.d(SampleConstants.LOG_TAG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
             }
             return null;
         }
 
+        /**
+         * {@inheritDoc}
+         */
         @Override
         protected void onPostExecute(final Void aVoid) {
             adapter.notifyDataSetChanged();

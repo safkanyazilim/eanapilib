@@ -10,6 +10,10 @@ import android.graphics.drawable.Drawable;
 
 import com.ean.mobile.hotel.HotelImageTuple;
 
+/**
+ * Holder of the actual {@link Drawable} objects found at the urls specified by a HotelImageTuple. Also contains
+ * code to actually fetch the images using the {@link ImageFetcher}.
+ */
 public final class HotelImageDrawable {
 
     private HotelImageTuple tuple;
@@ -24,6 +28,11 @@ public final class HotelImageDrawable {
      */
     private Drawable main;
 
+    /**
+     * Constructs this object with the associated {@link HotelImageTuple} so we have the urls to download the
+     * appropriate images.
+     * @param tuple The object used for the source of the {@link Drawable} objects in this class.
+     */
     public HotelImageDrawable(final HotelImageTuple tuple) {
         this.tuple = tuple;
     }

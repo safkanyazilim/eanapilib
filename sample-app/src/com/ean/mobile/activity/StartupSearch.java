@@ -48,6 +48,9 @@ import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
 
+/**
+ * The code behind the StartupSearch layout.
+ */
 public class StartupSearch extends Activity {
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
@@ -55,6 +58,10 @@ public class StartupSearch extends Activity {
 
     private static final long TEN_MEGABYTES = 10 * 1024 * 1024;
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -121,6 +128,10 @@ public class StartupSearch extends Activity {
         spinner.setAdapter(spinnerAdapter);
     }
 
+    /**
+     * (Event handler) Handles the clicks on either of the date dialogs.
+     * @param view The view (button) that fired the event.
+     */
     public void showDatePickerDialog(final View view) {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
@@ -164,7 +175,7 @@ public class StartupSearch extends Activity {
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better.
                 // If this exception occurs, it's likely an input error and should be recoverable.
-                Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                Log.d(SampleConstants.LOG_TAG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
             }
@@ -187,7 +198,7 @@ public class StartupSearch extends Activity {
         }
     }
 
-    public static final class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    private static final class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private final int pickerId;
 
@@ -234,7 +245,7 @@ public class StartupSearch extends Activity {
         }
     }
 
-    private class SuggestionListAdapterClickListener implements AdapterView.OnItemClickListener {
+    private static final class SuggestionListAdapterClickListener implements AdapterView.OnItemClickListener {
 
         private final EditText searchBox;
 
@@ -261,7 +272,7 @@ public class StartupSearch extends Activity {
         }
     }
 
-    private class SearchBoxKeyListener implements View.OnKeyListener {
+    private final class SearchBoxKeyListener implements View.OnKeyListener {
         private final EditText searchBox;
 
         public SearchBoxKeyListener(final EditText searchBox) {

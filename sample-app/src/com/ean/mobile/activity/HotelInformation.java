@@ -38,15 +38,23 @@ import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 
+/**
+ * The code behind the HotelInformation layout.
+ */
 public class HotelInformation extends Activity {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onResume() {
         super.onResume();
         setContentView(R.layout.hotelinformation);
-        Log.d(SampleConstants.DEBUG, "starting HotelInformation");
+        Log.d(SampleConstants.LOG_TAG, "starting HotelInformation");
         final Hotel hotel = SampleApp.selectedHotel;
 
         if (hotel == null) {
-            Log.d(SampleConstants.DEBUG, "hotel info was null");
+            Log.d(SampleConstants.LOG_TAG, "hotel info was null");
             return;
         }
 
@@ -176,7 +184,7 @@ public class HotelInformation extends Activity {
                     = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
                 return RequestProcessor.run(request);
             } catch (EanWsError ewe) {
-                Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
+                Log.d(SampleConstants.LOG_TAG, "An error occurred in the api", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
             }
@@ -205,7 +213,7 @@ public class HotelInformation extends Activity {
             try {
                 return RequestProcessor.run(new InformationRequest(hotelId));
             } catch (EanWsError ewe) {
-                Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
+                Log.d(SampleConstants.LOG_TAG, "Unexpected error occurred within the api", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
             }

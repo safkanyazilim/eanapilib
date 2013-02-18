@@ -18,6 +18,9 @@ import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.request.DestinationRequest;
 import com.ean.mobile.request.RequestProcessor;
 
+/**
+ * Gets suggestions to display based on the current contents of the search bar.
+ */
 public final class SuggestionFactory {
     private static SuggestDestinationTask suggestDestinationTask;
 
@@ -28,13 +31,20 @@ public final class SuggestionFactory {
         throw new UnsupportedOperationException("Do not use an instance of this class, instead use the factory.");
     }
 
-
+    /**
+     * If there is a suggestion task in progress, kill it. Used to abort current suggestions if they are in progress.
+     */
     public static void killSuggestDestinationTask() {
         if (suggestDestinationTask != null && suggestDestinationTask.getStatus() == AsyncTask.Status.RUNNING) {
             suggestDestinationTask.cancel(true);
         }
     }
 
+    /**
+     * Gets the list of suggestions and automatically populates an ArrayAdapter with suggestions.
+     * @param query The query to get suggestions for.
+     * @param suggestionAdapter The adapter to place the suggestions into.
+     */
     public static void suggest(final String query, final ArrayAdapter<Destination> suggestionAdapter) {
         killSuggestDestinationTask();
         suggestDestinationTask = new SuggestDestinationTask(suggestionAdapter);
@@ -56,9 +66,9 @@ public final class SuggestionFactory {
             try {
                 return RequestProcessor.run(new DestinationRequest(strings[0]));
             } catch (EanWsError ewe) {
-                Log.d(SampleConstants.DEBUG, "The API call returned an error", ewe);
+                Log.d(SampleConstants.LOG_TAG, "The API call returned an error", ewe);
             } catch (UrlRedirectionException ure) {
-                Log.d(SampleConstants.DEBUG, "The API call has been unexpectedly redirected!", ure);
+                Log.d(SampleConstants.LOG_TAG, "The API call has been unexpectedly redirected!", ure);
             }
             return null;
         }
