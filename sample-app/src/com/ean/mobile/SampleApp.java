@@ -188,7 +188,7 @@ public final class SampleApp extends Application {
 
     /**
      * Adds the hotelList to the {@link SampleApp#FOUND_HOTELS} list, optionally clearing the extant contents. Also
-     * applies the cacheKey and cacheLocation from the hotelList
+     * applies the cacheKey and cacheLocation from the hotelList.
      * @param hotelList The list of hotels to add to {@link SampleApp#FOUND_HOTELS}.
      * @param clearOnUpdate Whether or not to clear {@link SampleApp#FOUND_HOTELS}.
      */
