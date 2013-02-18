@@ -22,7 +22,7 @@ import org.json.JSONObject;
  * is in lieu of throwing exceptions since there are potentially unaccounted for address types which may be stored
  * with this object, and there's no need to throw exceptions for partial addresses.
  */
-public abstract class Address {
+public class Address {
 
     /**
      * The country codes wherein a state code is supported and required.

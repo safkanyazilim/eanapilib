@@ -3,12 +3,16 @@
  */
 package com.ean.mobile.hotel.request;
 
+import java.util.Arrays;
+
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.ean.mobile.Address;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Cancellation;
 import com.ean.mobile.hotel.Reservation;
+import com.ean.mobile.hotel.RoomOccupancy;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.request.RequestTestBase;
 
@@ -19,6 +23,8 @@ import static org.junit.Assert.assertThat;
 
 public class CancellationRequestIntTest extends RequestTestBase {
 
+    private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
+    private static final Address ADDRESS = new Address(Arrays.asList("travelnow"), "Seattle", "WA", "US", "98004");
     private static final String EMAIL = "test@expedia.com";
 
     @Test(expected = EanWsError.class)

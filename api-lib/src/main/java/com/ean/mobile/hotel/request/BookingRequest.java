@@ -26,6 +26,7 @@ import com.ean.mobile.Individual;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Reservation;
 import com.ean.mobile.hotel.ReservationRoom;
+import com.ean.mobile.hotel.SupplierType;
 import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.Request;
 
@@ -45,7 +46,7 @@ public final class BookingRequest extends Request<Reservation> {
      * @param address The address associated with the reservationInformation.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
-              final String supplierType, final ReservationRoom room,
+              final SupplierType supplierType, final ReservationRoom room,
               final ReservationInformation reservationInformation, final Address address) {
         this(hotelId, arrivalDate, departureDate, supplierType, Collections.singletonList(room),
                 reservationInformation, address);
@@ -62,9 +63,8 @@ public final class BookingRequest extends Request<Reservation> {
      * @param address The address associated with the reservationInformation.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate, final LocalDate departureDate,
-            final String supplierType, final List<ReservationRoom> roomGroup,
+            final SupplierType supplierType, final List<ReservationRoom> roomGroup,
             final ReservationInformation reservationInformation, final Address address) {
-
         this(hotelId, arrivalDate, departureDate, supplierType, roomGroup, reservationInformation, address, null);
     }
 
@@ -80,13 +80,13 @@ public final class BookingRequest extends Request<Reservation> {
      * @param extraBookingData Any extra parameters (like confirmation extra, etc.) to pass to the booking request.
      */
     public BookingRequest(final Long hotelId, final LocalDate arrivalDate,
-            final LocalDate departureDate, final String supplierType, final List<ReservationRoom> roomGroup,
+            final LocalDate departureDate, final SupplierType supplierType, final List<ReservationRoom> roomGroup,
             final ReservationInformation reservationInformation, final Address address,
             final List<NameValuePair> extraBookingData) {
 
         final List<NameValuePair> rateInformationParameters = Arrays.<NameValuePair>asList(
             new BasicNameValuePair("hotelId", hotelId.toString()),
-            new BasicNameValuePair("supplierType", supplierType)
+            new BasicNameValuePair("supplierType", supplierType.code)
         );
 
         final List<NameValuePair> urlParameters = new ArrayList<NameValuePair>();

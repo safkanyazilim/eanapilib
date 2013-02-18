@@ -69,7 +69,7 @@ public final class SampleApp extends Application {
         CommonParameters.currencyCode = Currency.getInstance(Locale.US).getCurrencyCode();
     }
     public static RoomOccupancy occupancy() {
-        return new RoomOccupancy(SampleApp.numberOfAdults, SampleApp.numberOfChildren);
+        return new RoomOccupancy(numberOfAdults, Collections.nCopies(numberOfChildren, 0));
     }
 
     public static void sendRedirectionToast(final Context context) {

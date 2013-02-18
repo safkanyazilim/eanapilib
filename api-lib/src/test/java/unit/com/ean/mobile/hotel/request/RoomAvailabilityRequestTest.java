@@ -35,7 +35,7 @@ import static org.junit.Assert.assertThat;
 public class RoomAvailabilityRequestTest extends RequestTestBase {
 
     private static final long HOTEL_IN_SEATTLE = 106347L;
-    private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(2, 1);
+    private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(2, Arrays.asList(5));
     private static final LocalDate[] DATES = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
 
     private RoomAvailabilityRequest roomAvailabilityRequest;
@@ -97,10 +97,10 @@ public class RoomAvailabilityRequestTest extends RequestTestBase {
 
     @Test
     public void testGetUriMultipleRooms() throws Exception {
-        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(2, 1));
-        roomAvailabilityRequest = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1]);
-
-        doUriAssertions(roomAvailabilityRequest.getUri(), "&room2=2,0");
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(2, Arrays.asList(4)));
+        roomAvailabilityRequest
+            = new RoomAvailabilityRequest(HOTEL_IN_SEATTLE, occupancies, DATES[0], DATES[1]);
+        doUriAssertions(roomAvailabilityRequest.getUri(), "&room2=2,4");
     }
 
     @Test
@@ -116,7 +116,7 @@ public class RoomAvailabilityRequestTest extends RequestTestBase {
         queryString.append(dateTimeFormatter.print(DATES[0]));
         queryString.append("&departureDate=");
         queryString.append(dateTimeFormatter.print(DATES[1]));
-        queryString.append("&hotelId=106347&includeDetails=true&room1=2,0");
+        queryString.append("&hotelId=106347&includeDetails=true&room1=2,5");
         if (suffix != null) {
             queryString.append(suffix);
         }

@@ -7,10 +7,10 @@ package com.ean.mobile;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 
 /**
  * Holds the data returned from a destination lookup.
@@ -24,44 +24,57 @@ public final class Destination {
         /**
          * Notes that this destination is an airport.
          */
-        AIRPORTS,
+        AIRPORT("AIRPORTS"),
 
         /**
          * Notes that this destination is a city.
          */
-        CITIES,
+        CITY("CITIES"),
 
         /**
          * Notes that this destination is a hotel.
          */
-        HOTELS,
+        HOTEL("HOTELS"),
 
         /**
          * Notes that this destination is a landmark.
          */
-        LANDMARKS,
+        LANDMARK("LANDMARKS"),
 
         /**
          * Notes that this destination is an unknown type. Likely means that the data source has
          * changed and the available set of categories have changed. This indicates that the api-lib
          * (specifically this class) needs to be updated.
          */
-        UNKNOWN;
+        UNKNOWN("UNKNOWN");
+
+
+        private String responseName;
+
+        /**
+         * Constructor for this enum, sets up the response.
+         * @param responseName Name that is returned from the service.
+         */
+        private Category(final String responseName) {
+            this.responseName = responseName;
+        }
 
         /**
          * Safely parses a Category from a string, handling nulls and unknown categories by calling them UNKNOWN.
-         * @param category The string to parse
+         * @param responseName The string to parse
          * @return The appropriate category.
          */
-        public static Category parse(final String category) {
-            if (category == null) {
-                return UNKNOWN;
+        public static Category getByResponseName(final String responseName) {
+            if (responseName != null) {
+                final String responseNameUpperCase = responseName.toUpperCase(Locale.ENGLISH);
+
+                for (Category category : values()) {
+                    if (category.responseName.equals(responseNameUpperCase)) {
+                        return category;
+                    }
+                }
             }
-            try {
-                return Category.valueOf(category.toUpperCase());
-            } catch (IllegalArgumentException iae) {
-                return UNKNOWN;
-            }
+            return UNKNOWN;
         }
     }
 
@@ -94,7 +107,7 @@ public final class Destination {
     public Destination(final JSONObject object) {
         this.id = object.optString("id");
         this.categoryLocalized = object.optString("categoryLocalized");
-        this.category = Category.parse(object.optString("category"));
+        this.category = Category.getByResponseName(object.optString("category"));
         this.name = object.optString("name");
     }
 

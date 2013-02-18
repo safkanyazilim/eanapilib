@@ -20,6 +20,7 @@ import com.ean.mobile.hotel.ConfirmationStatus;
 import com.ean.mobile.hotel.Itinerary;
 import com.ean.mobile.hotel.NightlyRate;
 import com.ean.mobile.hotel.Rate;
+import com.ean.mobile.hotel.SupplierType;
 import com.ean.mobile.request.CommonParameters;
 import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestTestBase;
@@ -119,7 +120,7 @@ public class ItineraryRequestTest extends RequestTestBase {
         Itinerary.HotelConfirmation hotelConfirmation = hotelConfirmations.get(0);
         assertNotNull(hotelConfirmation);
         assertEquals("7220", hotelConfirmation.roomTypeCode);
-        assertEquals(13, hotelConfirmation.supplierId);
+        assertEquals(SupplierType.EXPEDIA, hotelConfirmation.supplierType);
         assertEquals(ConfirmationStatus.CONFIRMED, hotelConfirmation.status);
         assertEquals(DateModifier.getDateFromString("02/07/2013"), hotelConfirmation.arrivalDate);
         assertEquals(DateModifier.getDateFromString("02/10/2013"), hotelConfirmation.departureDate);

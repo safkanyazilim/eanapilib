@@ -12,7 +12,6 @@ import org.joda.time.YearMonth;
 import org.junit.Test;
 
 import com.ean.mobile.Address;
-import com.ean.mobile.BasicAddress;
 import com.ean.mobile.Name;
 import com.ean.mobile.hotel.HotelList;
 import com.ean.mobile.hotel.HotelRoom;
@@ -30,7 +29,7 @@ import static org.junit.Assert.assertThat;
 public class BookingRequestIntTest extends RequestTestBase {
 
     private static final RoomOccupancy OCCUPANCY = new RoomOccupancy(1, null);
-    private static final Address ADDRESS = new BasicAddress("travelnow", "Seattle", "WA", "US", "98004");
+    private static final Address ADDRESS = new Address(Arrays.asList("travelnow"), "Seattle", "WA", "US", "98004");
     private static final String EMAIL = "test@expedia.com";
 
     @Test
@@ -43,7 +42,7 @@ public class BookingRequestIntTest extends RequestTestBase {
     @Test
     public void testBookMultiRoomInSeattle() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(10, 13);
-        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, 3));
+        List<RoomOccupancy> occupancies = Arrays.asList(OCCUPANCY, new RoomOccupancy(1, Arrays.asList(4, 5, 6)));
 
         ListRequest listRequest = new ListRequest("Seattle, WA", occupancies,
             dateTimes[0], dateTimes[1]);

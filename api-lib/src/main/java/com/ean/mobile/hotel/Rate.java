@@ -299,8 +299,25 @@ public final class Rate {
          * @param jsonRoom The JSONObject representing this room.
          */
         public Room(final JSONObject jsonRoom) {
-            this.occupancy = new RoomOccupancy(jsonRoom.optInt("numberOfAdults"), jsonRoom.optInt("numberOfChildren"));
+            this.occupancy = new RoomOccupancy(jsonRoom.optInt("numberOfAdults"),
+                parseChildAgeArray(jsonRoom.optJSONArray("childAges")));
             this.rateKey = jsonRoom.optString("rateKey");
+        }
+
+        /**
+         * This method parses the child ages elements and returns a list.
+         * @param jsonChildAges JSON object to parse child ages from.
+         * @return Parsed list of child ages.
+         */
+        private List<Integer> parseChildAgeArray(final JSONArray jsonChildAges) {
+            if (jsonChildAges != null) {
+                final List<Integer> childAges = new ArrayList<Integer>(jsonChildAges.length());
+                for (int i = 0; i < jsonChildAges.length(); i++) {
+                    childAges.add(jsonChildAges.optInt(i));
+                }
+                return childAges;
+            }
+            return null;
         }
     }
 }
