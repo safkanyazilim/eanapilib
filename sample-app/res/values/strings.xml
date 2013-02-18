@@ -53,4 +53,12 @@
     <string name="loading_more_hotels">Loading more hotels&#8230;</string>
     <string name="complete_booking">Complete Booking</string>
     <string name="load_default_billing_info">Load Default Billing Info</string>
+    <string name="itinerary_id">Itinerary ID</string>
+    <string name="confirmation_numbers">Confirmation Numbers</string>
+    <string name="checkin_instructions">Check-In Instructions</string>
+    <string name="arrival_date">Arrival Date</string>
+    <string name="departure_date">Departure Date</string>
+    <string name="hotel_name">Hotel Name</string>
+    <string name="hotel_address">Hotel Address</string>
+    <string name="room_description">Room Description</string>
 </resources>
