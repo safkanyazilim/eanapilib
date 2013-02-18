@@ -4,11 +4,17 @@
 
 package com.ean.mobile.request;
 
+import java.math.BigInteger;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+
+
+import android.util.Log;
 
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.CommonParameterValidationException;
@@ -27,6 +33,11 @@ public final class CommonParameters {
      * The API key to use for API requests. Required for all API calls.
      */
     public static volatile String apiKey;
+
+    /**
+     * This is signature used to calculate signatures for non-ip authentication.
+     */
+    public static volatile String signatureSecret;
 
     /**
      * The user agent to use for API requests.
@@ -59,6 +70,8 @@ public final class CommonParameters {
      */
     public static volatile String minorRev = Constants.MINOR_REV;
 
+    private static final int MILLISECONDS_PER_SECOND = 1000;
+
     /**
      * Private, no-op constructor to prevent instantiation.
      */
@@ -79,6 +92,9 @@ public final class CommonParameters {
         nameValuePairs.add(new BasicNameValuePair("cid", cid));
         nameValuePairs.add(new BasicNameValuePair("apiKey", apiKey));
 
+        if (signatureSecret != null) {
+            nameValuePairs.add(new BasicNameValuePair("sig", getSignature()));
+        }
         if (customerUserAgent != null) {
             nameValuePairs.add(new BasicNameValuePair("customerUserAgent", customerUserAgent));
         }
@@ -110,6 +126,26 @@ public final class CommonParameters {
             throw new CommonParameterValidationException(
                 "You MUST initialize both the cid and apiKey in CommonParameters before performing any requests!");
         }
+    }
+
+    /**
+     * This generates a signature if a secret is set, otherwise it returns null.
+     * @return Calculated signature.
+     */
+    private static String getSignature() {
+        if (signatureSecret != null) {
+            try {
+                final MessageDigest messageDigest = MessageDigest.getInstance("MD5");
+                final long timeInSeconds = System.currentTimeMillis() / MILLISECONDS_PER_SECOND;
+                final String signatureInput = apiKey + signatureSecret + timeInSeconds;
+
+                messageDigest.update(signatureInput.getBytes());
+                return String.format("%032x", new BigInteger(1, messageDigest.digest()));
+            } catch (NoSuchAlgorithmException e) {
+                Log.e(Constants.LOG_TAG, "Couldn't get MD5 hashing working.", e);
+            }
+        }
+        return null;
     }
 
 }
