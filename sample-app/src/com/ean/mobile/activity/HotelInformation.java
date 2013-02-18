@@ -38,15 +38,23 @@ import com.ean.mobile.hotel.request.RoomAvailabilityRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.ImageDrawableLoaderTask;
 
+/**
+ * The code behind the HotelInformation layout.
+ */
 public class HotelInformation extends Activity {
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void onResume() {
         super.onResume();
         setContentView(R.layout.hotelinformation);
-        Log.d(SampleConstants.DEBUG, "starting HotelInformation");
+        Log.d(SampleConstants.LOG_TAG, "starting HotelInformation");
         final Hotel hotel = SampleApp.selectedHotel;
 
         if (hotel == null) {
-            Log.d(SampleConstants.DEBUG, "hotel info was null");
+            Log.d(SampleConstants.LOG_TAG, "hotel info was null");
             return;
         }
 
@@ -87,7 +95,8 @@ public class HotelInformation extends Activity {
         };
 
         address.setText(SampleApp.selectedHotel.address.toString());
-        final com.ean.mobile.hotel.HotelInformation hotelInformation = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
+        final com.ean.mobile.hotel.HotelInformation hotelInformation
+                = SampleApp.EXTENDED_INFOS.get(SampleApp.selectedHotel.hotelId);
         description.loadData(hotelInformation.longDescription, "text/html", null);
         for (int i = 0; i < smallThumbs.length && i < hotelInformation.images.size(); i++) {
             final HotelImageDrawable thisDrawable = SampleApp.IMAGE_DRAWABLES.get(hotelInformation.images.get(i));
@@ -96,74 +105,6 @@ public class HotelInformation extends Activity {
             } else {
                 new ImageDrawableLoaderTask(smallThumbs[i], false).execute(thisDrawable);
             }
-        }
-    }
-
-    private class AvailabilityInformationLoaderTask extends AsyncTask<Void, Void, List<HotelRoom>> {
-        private final long hotelId;
-        private final int numberOfAdults;
-        private final int numberOfChildren;
-        private final LocalDate arrivalDate;
-        private final LocalDate departureDate;
-
-        public AvailabilityInformationLoaderTask(final long hotelId,
-                final int numberOfAdults,  final int numberOfChildren,
-                final LocalDate arrivalDate, final LocalDate departureDate) {
-            this.hotelId = hotelId;
-            this.numberOfAdults = numberOfAdults;
-            this.numberOfChildren = numberOfChildren;
-            this.arrivalDate = arrivalDate;
-            this.departureDate = departureDate;
-        }
-
-
-        @Override
-        protected List<HotelRoom> doInBackground(final Void... voids) {
-            try {
-                final RoomAvailabilityRequest request
-                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
-                return RequestProcessor.run(request);
-            } catch (EanWsError ewe) {
-                Log.d(SampleConstants.DEBUG, "An error occurred in the api", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final List<HotelRoom> hotelRooms) {
-            super.onPostExecute(hotelRooms);
-            SampleApp.HOTEL_ROOMS.put(hotelId, hotelRooms);
-            populateRateList();
-        }
-    }
-
-    private class ExtendedInformationLoaderTask
-            extends AsyncTask<Void, Integer, com.ean.mobile.hotel.HotelInformation> {
-
-        private final long hotelId;
-
-        public ExtendedInformationLoaderTask(final long hotelId) {
-            this.hotelId = hotelId;
-        }
-
-        @Override
-        protected com.ean.mobile.hotel.HotelInformation doInBackground(final Void... voids) {
-            try {
-                return RequestProcessor.run(new InformationRequest(hotelId));
-            } catch (EanWsError ewe) {
-                Log.d(SampleConstants.DEBUG, "Unexpected error occurred within the api", ewe);
-            } catch (UrlRedirectionException ure) {
-                SampleApp.sendRedirectionToast(getApplicationContext());
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(final com.ean.mobile.hotel.HotelInformation hotelInformation) {
-            SampleApp.EXTENDED_INFOS.put(hotelId, hotelInformation);
-            setExtendedInfoFields();
         }
     }
 
@@ -215,6 +156,74 @@ public class HotelInformation extends Activity {
                 }
             });
             rateList.addView(view);
+        }
+    }
+
+    private class AvailabilityInformationLoaderTask extends AsyncTask<Void, Void, List<HotelRoom>> {
+        private final long hotelId;
+        private final int numberOfAdults;
+        private final int numberOfChildren;
+        private final LocalDate arrivalDate;
+        private final LocalDate departureDate;
+
+        public AvailabilityInformationLoaderTask(final long hotelId,
+                final int numberOfAdults,  final int numberOfChildren,
+                final LocalDate arrivalDate, final LocalDate departureDate) {
+            this.hotelId = hotelId;
+            this.numberOfAdults = numberOfAdults;
+            this.numberOfChildren = numberOfChildren;
+            this.arrivalDate = arrivalDate;
+            this.departureDate = departureDate;
+        }
+
+
+        @Override
+        protected List<HotelRoom> doInBackground(final Void... voids) {
+            try {
+                final RoomAvailabilityRequest request
+                    = new RoomAvailabilityRequest(hotelId, SampleApp.occupancy(), arrivalDate, departureDate);
+                return RequestProcessor.run(request);
+            } catch (EanWsError ewe) {
+                Log.d(SampleConstants.LOG_TAG, "An error occurred in the api", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final List<HotelRoom> hotelRooms) {
+            super.onPostExecute(hotelRooms);
+            SampleApp.HOTEL_ROOMS.put(hotelId, hotelRooms);
+            populateRateList();
+        }
+    }
+
+    private class ExtendedInformationLoaderTask
+            extends AsyncTask<Void, Integer, com.ean.mobile.hotel.HotelInformation> {
+
+        private final long hotelId;
+
+        public ExtendedInformationLoaderTask(final long hotelId) {
+            this.hotelId = hotelId;
+        }
+
+        @Override
+        protected com.ean.mobile.hotel.HotelInformation doInBackground(final Void... voids) {
+            try {
+                return RequestProcessor.run(new InformationRequest(hotelId));
+            } catch (EanWsError ewe) {
+                Log.d(SampleConstants.LOG_TAG, "Unexpected error occurred within the api", ewe);
+            } catch (UrlRedirectionException ure) {
+                SampleApp.sendRedirectionToast(getApplicationContext());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(final com.ean.mobile.hotel.HotelInformation hotelInformation) {
+            SampleApp.EXTENDED_INFOS.put(hotelId, hotelInformation);
+            setExtendedInfoFields();
         }
     }
 }

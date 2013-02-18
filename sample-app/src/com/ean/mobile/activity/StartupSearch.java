@@ -5,6 +5,7 @@
 package com.ean.mobile.activity;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.joda.time.LocalDate;
@@ -47,11 +48,20 @@ import com.ean.mobile.hotel.request.ListRequest;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.task.SuggestionFactory;
 
+/**
+ * The code behind the StartupSearch layout.
+ */
 public class StartupSearch extends Activity {
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
+    private static final long TEN_MEGABYTES = 10 * 1024 * 1024;
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -64,7 +74,8 @@ public class StartupSearch extends Activity {
         setUpPeopleSpinner(R.id.adults_spinner);
         setUpPeopleSpinner(R.id.children_spinner);
 
-        final ArrayAdapter<Destination> suggestionAdapter = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
+        final ArrayAdapter<Destination> suggestionAdapter
+                = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
         final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
 
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
@@ -85,12 +96,18 @@ public class StartupSearch extends Activity {
             System.setProperty("http.keepAlive", "false");
         }
         try {
-            final long httpCacheSize = 10 * 1024 * 1024; // 10 MiB
+            final long httpCacheSize = TEN_MEGABYTES;
             final File httpCacheDir = new File(getCacheDir(), "http");
             Class.forName("android.net.http.HttpResponseCache")
                     .getMethod("install", File.class, long.class)
                     .invoke(null, httpCacheDir, httpCacheSize);
-        } catch (Exception httpResponseCacheNotAvailable) {
+        } catch (ClassNotFoundException cnfe) {
+            //do nothing, just swallow it.
+        } catch (NoSuchMethodException nsme) {
+            //do nothing, just swallow it.
+        } catch (IllegalAccessException iae) {
+            //do nothing, just swallow it.
+        } catch (InvocationTargetException ite) {
             //do nothing, just swallow it.
         }
     }
@@ -101,13 +118,20 @@ public class StartupSearch extends Activity {
     }
 
     private void setUpPeopleSpinner(final int resourceId) {
-        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(getApplicationContext(), R.array.number_of_people_array, android.R.layout.simple_spinner_item);
+        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
+            getApplicationContext(),
+            R.array.number_of_people_array,
+            android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         final Spinner spinner = (Spinner) findViewById(resourceId);
         spinner.setAdapter(spinnerAdapter);
     }
 
+    /**
+     * (Event handler) Handles the clicks on either of the date dialogs.
+     * @param view The view (button) that fired the event.
+     */
     public void showDatePickerDialog(final View view) {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
@@ -149,8 +173,9 @@ public class StartupSearch extends Activity {
 
                 SampleApp.updateFoundHotels(RequestProcessor.run(request), true);
             } catch (EanWsError ewe) {
-                //TODO: This should be handled better. If this exception occurs, it's likely an input error and should be recoverable.
-                Log.d(SampleConstants.DEBUG, "An APILevel Exception occurred.", ewe);
+                //TODO: This should be handled better.
+                // If this exception occurs, it's likely an input error and should be recoverable.
+                Log.d(SampleConstants.LOG_TAG, "An APILevel Exception occurred.", ewe);
             } catch (UrlRedirectionException ure) {
                 SampleApp.sendRedirectionToast(getApplicationContext());
             }
@@ -173,7 +198,7 @@ public class StartupSearch extends Activity {
         }
     }
 
-    public static final class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+    private static final class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 
         private final int pickerId;
 
@@ -194,11 +219,17 @@ public class StartupSearch extends Activity {
                 date = SampleApp.departureDate;
             }
 
-            return new DatePickerDialog(getActivity(), this, date.getYear(), date.getMonthOfYear() - 1, date.getDayOfMonth());
+            return new DatePickerDialog(
+                getActivity(),
+                this,
+                date.getYear(),
+                date.getMonthOfYear() - 1,
+                date.getDayOfMonth());
         }
 
         @Override
-        public void onDateSet(final DatePicker datePicker, final int year, final int monthOfYear, final int dayOfMonth) {
+        public void onDateSet(final DatePicker datePicker, final int year, final int monthOfYear,
+                final int dayOfMonth) {
             final LocalDate chosenDate = new LocalDate(year, monthOfYear + 1, dayOfMonth);
             pickerButton.setText(DATE_TIME_FORMATTER.print(chosenDate));
             switch(pickerId) {
@@ -214,7 +245,7 @@ public class StartupSearch extends Activity {
         }
     }
 
-    private class SuggestionListAdapterClickListener implements AdapterView.OnItemClickListener {
+    private static final class SuggestionListAdapterClickListener implements AdapterView.OnItemClickListener {
 
         private final EditText searchBox;
 
@@ -241,7 +272,7 @@ public class StartupSearch extends Activity {
         }
     }
 
-    private class SearchBoxKeyListener implements View.OnKeyListener {
+    private final class SearchBoxKeyListener implements View.OnKeyListener {
         private final EditText searchBox;
 
         public SearchBoxKeyListener(final EditText searchBox) {
@@ -253,7 +284,9 @@ public class StartupSearch extends Activity {
             // If the event is a key-down event on the "enter" button
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 // Perform action on key press
-                performSearch(searchBox.getText().toString().trim(), ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true));
+                performSearch(
+                    searchBox.getText().toString().trim(),
+                    ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true));
                 return true;
             }
             return false;
@@ -291,6 +324,7 @@ public class StartupSearch extends Activity {
         /**
          * {@inheritDoc}
          */
+        @Override
         public View getView(final int position, final View convertView, final ViewGroup parent) {
             View view = convertView;
             if (view == null) {

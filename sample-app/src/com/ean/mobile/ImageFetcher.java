@@ -70,6 +70,13 @@ public final class ImageFetcher {
         return fetch(url, true);
     }
 
+    /**
+     * Loads a thumbnail image from a {@link HotelImageDrawable} into the passed ImageView automatically.
+     * This method is safe to run on the main thread since it will automatically start an {@link android.os.AsyncTask}
+     * ({@link ImageDrawableLoaderTask} to be exact) to load the image if it hasn't already been downloaded.
+     * @param thumb The drawable into which to load the image.
+     * @param tuple The tuple holding the thumbnail intended to be loaded into thumb.
+     */
     public static void loadThumbnailIntoImageView(final ImageView thumb, final HotelImageTuple tuple) {
         final HotelImageDrawable hotelImageDrawable = SampleApp.IMAGE_DRAWABLES.get(tuple);
         if (tuple.thumbnailUrl != null) {

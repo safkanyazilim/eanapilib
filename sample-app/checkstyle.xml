@@ -72,13 +72,17 @@
         <!-- Checks for Javadoc comments.                     -->
         <!-- See http://checkstyle.sf.net/config_javadoc.html -->
         <module name="JavadocVariable">
-           <property name="scope" value="public"/>
+           <property name="scope" value="protected"/>
         </module>
-        <module name="JavadocMethod"/>
+        <module name="JavadocMethod">
+            <property name="scope" value="protected"/>
+        </module>
         <module name="JavadocStyle">
             <property name="checkEmptyJavadoc" value="true" />
         </module>
-        <module name="JavadocType"/>
+        <module name="JavadocType">
+            <property name="scope" value="protected"/>
+        </module>
 
         <!-- Checks for Naming Conventions.                  -->
         <!-- See http://checkstyle.sf.net/config_naming.html -->
@@ -158,7 +162,9 @@
         <!-- Checks for blocks. You know, those {}'s         -->
         <!-- See http://checkstyle.sf.net/config_blocks.html -->
         <module name="AvoidNestedBlocks"/>
-        <module name="EmptyBlock"/>
+        <module name="EmptyBlock">
+            <property name="option" value="text" />
+        </module>
         <module name="LeftCurly"/>
         <module name="NeedBraces"/>
         <module name="RightCurly"/>
