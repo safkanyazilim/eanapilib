@@ -4,6 +4,7 @@
 
 package com.ean.mobile.activity;
 
+import android.content.Context;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -40,31 +41,33 @@ public class ReservationDisplay extends Activity {
 
         final TableLayout infoList = (TableLayout) findViewById(R.id.reservationInfoList);
 
-        final ViewAdder adder = new ViewAdder(infoList, getLayoutInflater());
+        final ViewAdder adder = new ViewAdder(infoList, getLayoutInflater(), getApplicationContext());
 
-        adder.addKeyValue("Itinerary ID", reservationToDisplay.itineraryId);
-        adder.addKeyValue("Confirmation Numbers", TextUtils.join(",", reservationToDisplay.confirmationNumbers));
-        adder.addKeyValue("Check-In Instructions", reservationToDisplay.checkInInstructions);
-        adder.addKeyValue("Arrival Date", DATE_FORMATTER.print(reservationToDisplay.arrivalDate));
-        adder.addKeyValue("Departure Date", DATE_FORMATTER.print(reservationToDisplay.departureDate));
-        adder.addKeyValue("Hotel Name", reservationToDisplay.hotelName);
-        adder.addKeyValue("Hotel Address", reservationToDisplay.hotelAddress.toString());
-        adder.addKeyValue("Room Description", reservationToDisplay.roomDescription);
+        adder.addKeyValue(R.string.itinerary_id, reservationToDisplay.itineraryId);
+        adder.addKeyValue(R.string.confirmation_numbers, TextUtils.join(",", reservationToDisplay.confirmationNumbers));
+        adder.addKeyValue(R.string.checkin_instructions, reservationToDisplay.checkInInstructions);
+        adder.addKeyValue(R.string.arrival_date, DATE_FORMATTER.print(reservationToDisplay.arrivalDate));
+        adder.addKeyValue(R.string.departure_date, DATE_FORMATTER.print(reservationToDisplay.departureDate));
+        adder.addKeyValue(R.string.hotel_name, reservationToDisplay.hotelName);
+        adder.addKeyValue(R.string.hotel_address, reservationToDisplay.hotelAddress.toString());
+        adder.addKeyValue(R.string.room_description, reservationToDisplay.roomDescription);
 
     }
 
     private static class ViewAdder {
 
         private final TableLayout table;
-
         private final LayoutInflater inflater;
+        private final Context context;
 
-        public ViewAdder(final TableLayout table, final LayoutInflater inflater) {
+        public ViewAdder(final TableLayout table, final LayoutInflater inflater, final Context context) {
             this.table = table;
             this.inflater = inflater;
+            this.context = context;
         }
         
-        public void addKeyValue(final String key, final Object value) {
+        public void addKeyValue(final int keyResId, final Object value) {
+            String key = context.getString(keyResId);
             table.addView(inflateKeyValue(key, value));
         }
 
