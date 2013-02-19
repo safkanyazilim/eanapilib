@@ -2,7 +2,7 @@
  * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
-package com.ean.mobile;
+package com.ean.mobile.app;
 
 import java.io.IOException;
 
@@ -47,7 +47,7 @@ public final class HotelImageDrawable {
 
     /**
      * Gets the thumbnail image as a drawable. If the image hasn't been loaded, will return null.
-     * To load the image, use {@link com.ean.mobile.HotelImageDrawable#loadThumbnailImage()}.
+     * To load the image, use {@link HotelImageDrawable#loadThumbnailImage()}.
      * @return The thumbnail image as a (possibly null) Drawable object.
      */
     public Drawable getThumbnailImage() {
@@ -58,7 +58,7 @@ public final class HotelImageDrawable {
      * Loads the thumbnail image from the thumbnail URL. If already loaded, will simply return that which
      * has been loaded.
      *
-     * Unless {@link com.ean.mobile.HotelImageDrawable#isThumbnailLoaded()} returns true,
+     * Unless {@link HotelImageDrawable#isThumbnailLoaded()} returns true,
      * THIS SHOULD NOT BE RUN ON THE MAIN UI THREAD!! Use concurrency mechanisms such as AsyncTask to call this method.
      * @return An image that can be drawn to the screen using the android SDK
      * @throws java.io.IOException If there is an exception when loading the image.
@@ -80,7 +80,7 @@ public final class HotelImageDrawable {
 
     /**
      * Gets the main image as a drawable. If the image hasn't been loaded, will return null.
-     * To load the image, use {@link com.ean.mobile.HotelImageDrawable#loadMainImage()}.
+     * To load the image, use {@link HotelImageDrawable#loadMainImage()}.
      * @return The main image as a (possibly null) Drawable object.
      */
     public Drawable getMainImage() {

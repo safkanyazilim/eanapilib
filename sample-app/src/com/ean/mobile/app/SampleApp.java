@@ -2,8 +2,10 @@
  * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
-package com.ean.mobile;
+package com.ean.mobile.app;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
@@ -18,9 +20,13 @@ import org.joda.time.LocalDate;
 
 import android.app.Application;
 import android.content.Context;
+import android.net.http.HttpResponseCache;
+import android.os.Build;
+import android.util.Log;
 import android.widget.Toast;
 
-
+import com.ean.mobile.Constants;
+import com.ean.mobile.R;
 import com.ean.mobile.hotel.Hotel;
 import com.ean.mobile.hotel.HotelImageTuple;
 import com.ean.mobile.hotel.HotelInformation;
@@ -119,12 +125,16 @@ public final class SampleApp extends Application {
 
     private static final Set<Reservation> RESERVATIONS = new TreeSet<Reservation>();
 
+
+    private static final long TEN_MEGABYTES = 10 * 1024 * 1024;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void onCreate() {
         super.onCreate();
+        setupHttpConnectionStuff();
         CommonParameters.cid = "55505";
         CommonParameters.apiKey = "cbrzfta369qwyrm9t5b8y8kf";
         CommonParameters.customerUserAgent = "Android";
@@ -218,4 +228,22 @@ public final class SampleApp extends Application {
     public static Reservation getLatestReservation() {
         return RESERVATIONS.size() == 0 ? null : RESERVATIONS.iterator().next();
     }
+
+
+    private void setupHttpConnectionStuff() {
+        // exists due to advice found at http://android-developers.blogspot.com/2011/09/androids-http-clients.html.
+        // HTTP connection reuse which was buggy pre-froyo
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
+            System.setProperty("http.keepAlive", "false");
+        }
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            try {
+                final File httpCacheDir = new File(getCacheDir(), "http");
+                HttpResponseCache.install(httpCacheDir, TEN_MEGABYTES);
+            } catch (IOException ioe) {
+                Log.e(Constants.LOG_TAG, "Could not install http cache on this device.");
+            }
+        }
+    }
+
 }

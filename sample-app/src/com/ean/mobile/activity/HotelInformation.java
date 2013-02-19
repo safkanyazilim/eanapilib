@@ -23,12 +23,12 @@ import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.ean.mobile.HotelImageDrawable;
-import com.ean.mobile.ImageFetcher;
 import com.ean.mobile.R;
-import com.ean.mobile.SampleApp;
-import com.ean.mobile.SampleConstants;
-import com.ean.mobile.StarRating;
+import com.ean.mobile.app.HotelImageDrawable;
+import com.ean.mobile.app.ImageFetcher;
+import com.ean.mobile.app.SampleApp;
+import com.ean.mobile.app.SampleConstants;
+import com.ean.mobile.app.StarRating;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.Hotel;

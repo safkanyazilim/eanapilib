@@ -37,8 +37,8 @@ import android.widget.TextView;
 
 import com.ean.mobile.Address;
 import com.ean.mobile.R;
-import com.ean.mobile.SampleApp;
-import com.ean.mobile.SampleConstants;
+import com.ean.mobile.app.SampleApp;
+import com.ean.mobile.app.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.Hotel;

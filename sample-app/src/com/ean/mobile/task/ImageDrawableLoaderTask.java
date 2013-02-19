@@ -11,8 +11,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ImageView;
 
-import com.ean.mobile.HotelImageDrawable;
-import com.ean.mobile.SampleConstants;
+import com.ean.mobile.app.HotelImageDrawable;
+import com.ean.mobile.app.SampleConstants;
 
 /**
  * A task that will load one of the images represented in a {@link HotelImageDrawable} (as specified by loadMain)
@@ -51,7 +51,7 @@ public final class ImageDrawableLoaderTask extends AsyncTask<HotelImageDrawable,
 
     /**
      * Sets the drawable image in the {@link ImageView} passed during construction to that loaded during
-     * {@link ImageDrawableLoaderTask#doInBackground(com.ean.mobile.HotelImageDrawable...)}.
+     * {@link ImageDrawableLoaderTask#doInBackground(com.ean.mobile.app.HotelImageDrawable...)}.
      * {@inheritDoc}
      */
     @Override
