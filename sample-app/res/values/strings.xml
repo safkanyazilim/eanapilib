@@ -2,6 +2,8 @@
 <resources>
     <string name="app_name">Dakkar</string>
     <string name="search_bar_autotext">Search for hotels in a destination.</string>
+    <string name="search_for_hotels">Search For Hotels</string>
+    <string name="change_the_date">Change the date</string>
     <string name="from">from</string>
     <string name="loading_address">loading address…</string>
     <string name="loading_descriptions">loading description…</string>

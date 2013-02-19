@@ -4,7 +4,6 @@
 
 package com.ean.mobile.task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import android.os.AsyncTask;
@@ -76,17 +75,15 @@ public final class SuggestionFactory {
         @Override
         protected void onPostExecute(final List<Destination> destinations) {
             if (destinations != null) {
-                final List<Destination> cities = new ArrayList<Destination>();
+                suggestionAdapter.clear();
                 for (Destination destination : destinations) {
                     if (destination.category == Destination.Category.CITY) {
-                        cities.add(destination);
-                        if (cities.size() >= NUMBER_OF_CITIES_TO_DISPLAY) {
+                        suggestionAdapter.add(destination);
+                        if (suggestionAdapter.getCount() >= NUMBER_OF_CITIES_TO_DISPLAY) {
                             break;
                         }
                     }
                 }
-                suggestionAdapter.clear();
-                suggestionAdapter.addAll(cities);
                 suggestionAdapter.notifyDataSetChanged();
             }
         }

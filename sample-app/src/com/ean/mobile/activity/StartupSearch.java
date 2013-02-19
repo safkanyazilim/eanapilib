@@ -8,6 +8,8 @@ import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -71,15 +73,12 @@ public class StartupSearch extends Activity {
         setUpDateButton(R.id.arrival_date_picker, SampleApp.arrivalDate);
         setUpDateButton(R.id.departure_date_picker, SampleApp.departureDate);
 
-        setUpPeopleSpinner(R.id.adults_spinner);
-        setUpPeopleSpinner(R.id.children_spinner);
-
         final ArrayAdapter<Destination> suggestionAdapter
                 = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
         final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
 
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
-        searchBox.setOnKeyListener(new SearchBoxKeyListener(searchBox));
+        searchBox.setOnKeyListener(new SearchBoxKeyListener());
         searchBox.addTextChangedListener(watcher);
 
         final ListView suggestions = (ListView) findViewById(R.id.suggestionsView);
@@ -117,17 +116,6 @@ public class StartupSearch extends Activity {
         dateButton.setText(DATE_TIME_FORMATTER.print(date));
     }
 
-    private void setUpPeopleSpinner(final int resourceId) {
-        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
-            getApplicationContext(),
-            R.array.number_of_people_array,
-            android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        final Spinner spinner = (Spinner) findViewById(resourceId);
-        spinner.setAdapter(spinnerAdapter);
-    }
-
     /**
      * (Event handler) Handles the clicks on either of the date dialogs.
      * @param view The view (button) that fired the event.
@@ -136,7 +124,15 @@ public class StartupSearch extends Activity {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
 
-    private void performSearch(final String searchQuery, final ProgressDialog searchingDialog) {
+    /**
+     * (Event handler) Handles the events that cause the search to commence.
+     * @param view The view parameter for the event handler.
+     */
+    public void performSearch(final View view) {
+        final EditText searchBox = (EditText) findViewById(R.id.searchBox);
+        final String searchQuery = searchBox.getText().toString().trim();
+        final ProgressDialog searchingDialog
+                = ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true);
         SuggestionFactory.killSuggestDestinationTask();
         SampleApp.clearSearch();
 
@@ -152,6 +148,24 @@ public class StartupSearch extends Activity {
         SampleApp.numberOfChildren = Integer.parseInt((String) childSpinner.getSelectedItem());
         
         new PerformSearchTask(searchingDialog).execute((Void) null);
+    }
+
+    /**
+     * (Event handler) Adds a child to the list.
+     * @param view The button used to fire this event.
+     */
+    public void addChild(final View view) {
+        final TableLayout childAges = (TableLayout) findViewById(R.id.child_ages_table);
+        final View childAgeSpinnerView = getLayoutInflater().inflate(R.layout.childagespinnerlayout, null);
+        final TableRow childTableRow;
+        if (childAges.getChildCount() == 0
+                || ((TableRow)childAges.getChildAt(childAges.getChildCount() - 1)).getChildCount() == 2) {
+            childTableRow = new TableRow(StartupSearch.this);
+            childAges.addView(childTableRow);
+        } else {
+            childTableRow = (TableRow) childAges.getChildAt(childAges.getChildCount() - 1);
+        }
+        childTableRow.addView(childAgeSpinnerView);
     }
 
     private final class PerformSearchTask extends AsyncTask<Void, Integer, Void> {
@@ -273,20 +287,13 @@ public class StartupSearch extends Activity {
     }
 
     private final class SearchBoxKeyListener implements View.OnKeyListener {
-        private final EditText searchBox;
-
-        public SearchBoxKeyListener(final EditText searchBox) {
-            this.searchBox = searchBox;
-        }
 
         public boolean onKey(final View v, final int keyCode, final KeyEvent event) {
             // Only hears hardware keys and enter per OnKeyListener's javadoc.
             // If the event is a key-down event on the "enter" button
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 // Perform action on key press
-                performSearch(
-                    searchBox.getText().toString().trim(),
-                    ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true));
+                performSearch(v);
                 return true;
             }
             return false;
