@@ -36,10 +36,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.ean.mobile.Address;
-import com.ean.mobile.BasicAddress;
 import com.ean.mobile.R;
-import com.ean.mobile.SampleApp;
-import com.ean.mobile.SampleConstants;
+import com.ean.mobile.app.SampleApp;
+import com.ean.mobile.app.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.Hotel;
@@ -245,7 +244,7 @@ public class BookingSummary extends Activity {
             SampleApp.occupancy());
 
         final Address reservationAddress
-            = new BasicAddress(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
+            = new Address(Arrays.asList(addressLine1, addressLine2), city, state, country, zip);
 
         final BookingRequest request = new BookingRequest(
             SampleApp.selectedHotel.hotelId,

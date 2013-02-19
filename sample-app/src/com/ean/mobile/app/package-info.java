@@ -5,4 +5,4 @@
 /**
  *  This package holds all of the basic files for the app, including the Application class, and other helper classes.
  */
-package com.ean.mobile;
+package com.ean.mobile.app;

@@ -2,7 +2,7 @@
  * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
-package com.ean.mobile;
+package com.ean.mobile.app;
 
 /**
  * A class for holding simple constants to be used through the entire app.

@@ -4,8 +4,6 @@
 
 package com.ean.mobile.activity;
 
-import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 import org.joda.time.LocalDate;
@@ -20,7 +18,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -40,8 +37,8 @@ import android.widget.TextView;
 
 import com.ean.mobile.Destination;
 import com.ean.mobile.R;
-import com.ean.mobile.SampleApp;
-import com.ean.mobile.SampleConstants;
+import com.ean.mobile.app.SampleApp;
+import com.ean.mobile.app.SampleConstants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 import com.ean.mobile.hotel.request.ListRequest;
@@ -55,8 +52,6 @@ public class StartupSearch extends Activity {
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
-
-    private static final long TEN_MEGABYTES = 10 * 1024 * 1024;
 
     /**
      * {@inheritDoc}
@@ -85,31 +80,6 @@ public class StartupSearch extends Activity {
         final ListView suggestions = (ListView) findViewById(R.id.suggestionsView);
         suggestions.setAdapter(suggestionAdapter);
         suggestions.setOnItemClickListener(new SuggestionListAdapterClickListener(searchBox, watcher));
-
-        setupHttpConnectionStuff();
-    }
-
-    private void setupHttpConnectionStuff() {
-        // exists due to advice found at http://android-developers.blogspot.com/2011/09/androids-http-clients.html.
-        // HTTP connection reuse which was buggy pre-froyo
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
-            System.setProperty("http.keepAlive", "false");
-        }
-        try {
-            final long httpCacheSize = TEN_MEGABYTES;
-            final File httpCacheDir = new File(getCacheDir(), "http");
-            Class.forName("android.net.http.HttpResponseCache")
-                    .getMethod("install", File.class, long.class)
-                    .invoke(null, httpCacheDir, httpCacheSize);
-        } catch (ClassNotFoundException cnfe) {
-            //do nothing, just swallow it.
-        } catch (NoSuchMethodException nsme) {
-            //do nothing, just swallow it.
-        } catch (IllegalAccessException iae) {
-            //do nothing, just swallow it.
-        } catch (InvocationTargetException ite) {
-            //do nothing, just swallow it.
-        }
     }
 
     private void setUpDateButton(final int resourceId, final LocalDate date) {

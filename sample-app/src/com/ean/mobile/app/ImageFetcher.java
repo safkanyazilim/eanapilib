@@ -2,7 +2,7 @@
  * Copyright (c) 2013 EAN.com, L.P. All rights reserved.
  */
 
-package com.ean.mobile;
+package com.ean.mobile.app;
 
 import java.io.IOException;
 import java.io.InputStream;
