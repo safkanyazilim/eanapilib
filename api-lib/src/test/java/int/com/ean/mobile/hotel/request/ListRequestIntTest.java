@@ -38,6 +38,20 @@ public class ListRequestIntTest extends RequestTestBase {
         assertEquals(10, results.hotels.size());
     }
 
+    @Test
+    public void testSearchForHotelsHappyWithListChildAges() throws Exception {
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
+
+        RoomOccupancy roomOccupancy = new RoomOccupancy(1, Arrays.asList(1, 2, 3));
+
+        ListRequest listRequest = new ListRequest("rome, it", roomOccupancy, dateTimes[0],
+            dateTimes[1]);
+
+        HotelList results = RequestProcessor.run(listRequest);
+
+        assertEquals(10, results.hotels.size());
+    }
+
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsCauseError() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, -3);
@@ -47,6 +61,17 @@ public class ListRequestIntTest extends RequestTestBase {
 
         RequestProcessor.run(listRequest);
     }
+
+    @Test(expected = DataValidationException.class)
+    public void testSearchForHotelsArrivalDatePriorToTodayCauseError() throws Exception {
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(-1, +3);
+
+        ListRequest listRequest
+            = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
+
+        RequestProcessor.run(listRequest);
+    }
+
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {

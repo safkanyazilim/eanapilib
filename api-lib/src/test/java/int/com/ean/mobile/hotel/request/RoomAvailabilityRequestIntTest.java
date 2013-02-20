@@ -64,6 +64,14 @@ public class RoomAvailabilityRequestIntTest extends RequestTestBase {
     }
 
     @Test(expected = DataValidationException.class)
+    public void testGetAvailabilityDateInThePast() throws Exception {
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(-1, 3);
+        RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
+            HOTEL_IN_SEATTLE, OCCUPANCY, dateTimes[0], dateTimes[1]);
+        RequestProcessor.run(roomAvailabilityRequest);
+    }
+
+    @Test(expected = DataValidationException.class)
     public void testGetAvailabilityBadHotel() throws Exception {
         LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(1, 3);
         RoomAvailabilityRequest roomAvailabilityRequest = new RoomAvailabilityRequest(
