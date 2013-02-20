@@ -54,7 +54,7 @@ public final class SampleApp extends Application {
     /**
      * The number of children intended for the room searched for with {@link SampleApp#searchQuery}.
      */
-    public static int numberOfChildren;
+    public static List<Integer> childAges;
 
     /**
      * The date intended for arrival at the destination searched for with {@link SampleApp#searchQuery}.
@@ -145,10 +145,10 @@ public final class SampleApp extends Application {
     /**
      * Gets the number of adults and children represented as a RoomOccupancy for easy use in the api.
      * @return The room occupancy directly representing the
-     *          {@link SampleApp#numberOfAdults} and {@link SampleApp#numberOfChildren}.
+     *          {@link SampleApp#numberOfAdults} and {@link SampleApp#childAges}.
      */
     public static RoomOccupancy occupancy() {
-        return new RoomOccupancy(numberOfAdults, Collections.nCopies(numberOfChildren, 0));
+        return new RoomOccupancy(numberOfAdults, childAges);
     }
 
     /**
@@ -174,7 +174,7 @@ public final class SampleApp extends Application {
     public static void clearSearch() {
         searchQuery = null;
         numberOfAdults = 0;
-        numberOfChildren = 0;
+        childAges = null;
         resetDates();
         FOUND_HOTELS.clear();
         selectedHotel = null;

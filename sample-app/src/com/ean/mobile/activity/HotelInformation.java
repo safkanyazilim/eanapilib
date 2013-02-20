@@ -67,8 +67,7 @@ public class HotelInformation extends Activity {
             populateRateList();
         } else {
             new AvailabilityInformationLoaderTask(
-                hotel.hotelId, SampleApp.numberOfAdults, SampleApp.numberOfChildren,
-                SampleApp.arrivalDate, SampleApp.departureDate).execute((Void) null);
+                hotel.hotelId, SampleApp.arrivalDate, SampleApp.departureDate).execute((Void) null);
         }
 
         ImageFetcher.loadThumbnailIntoImageView(
@@ -161,17 +160,12 @@ public class HotelInformation extends Activity {
 
     private class AvailabilityInformationLoaderTask extends AsyncTask<Void, Void, List<HotelRoom>> {
         private final long hotelId;
-        private final int numberOfAdults;
-        private final int numberOfChildren;
         private final LocalDate arrivalDate;
         private final LocalDate departureDate;
 
         public AvailabilityInformationLoaderTask(final long hotelId,
-                final int numberOfAdults,  final int numberOfChildren,
                 final LocalDate arrivalDate, final LocalDate departureDate) {
             this.hotelId = hotelId;
-            this.numberOfAdults = numberOfAdults;
-            this.numberOfChildren = numberOfChildren;
             this.arrivalDate = arrivalDate;
             this.departureDate = departureDate;
         }

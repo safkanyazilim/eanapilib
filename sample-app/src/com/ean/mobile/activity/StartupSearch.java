@@ -4,10 +4,13 @@
 
 package com.ean.mobile.activity;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
-import android.widget.TableLayout;
-import android.widget.TableRow;
+import android.widget.*;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -28,14 +31,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.ean.mobile.Destination;
 import com.ean.mobile.R;
@@ -54,6 +49,8 @@ public class StartupSearch extends Activity {
 
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
+
+    private static final List<Spinner> childAgeSpinners = new LinkedList<Spinner>();
 
     /**
      * {@inheritDoc}
@@ -109,13 +106,18 @@ public class StartupSearch extends Activity {
         final Button arrivalDatePicker = (Button) findViewById(R.id.arrival_date_picker);
         final Button departureDatePicker = (Button) findViewById(R.id.departure_date_picker);
         final Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
-        final Spinner childSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        List<Integer> childAges = new LinkedList<Integer>();
+        final TableLayout childAgesTable = (TableLayout) findViewById(R.id.child_ages_table);
+        for (Spinner childAgeSpinner : childAgeSpinners) {
+            childAges.add(Integer.parseInt((String) childAgeSpinner.getSelectedItem()));
+        }
+
 
         SampleApp.searchQuery = searchQuery;
         SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(arrivalDatePicker.getText().toString());
         SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(departureDatePicker.getText().toString());
         SampleApp.numberOfAdults = Integer.parseInt((String) adultsSpinner.getSelectedItem());
-        SampleApp.numberOfChildren = Integer.parseInt((String) childSpinner.getSelectedItem());
+        SampleApp.childAges = Collections.unmodifiableList(childAges);
         
         new PerformSearchTask(searchingDialog).execute((Void) null);
     }
@@ -124,7 +126,7 @@ public class StartupSearch extends Activity {
      * (Event handler) Adds a child to the list.
      * @param view The button used to fire this event.
      */
-    public void addChild(final View view) {
+    public void addChildAge(final View view) {
         final TableLayout childAges = (TableLayout) findViewById(R.id.child_ages_table);
         final View childAgeSpinnerView = getLayoutInflater().inflate(R.layout.childagespinnerlayout, null);
         final TableRow childTableRow;
@@ -135,6 +137,24 @@ public class StartupSearch extends Activity {
         } else {
             childTableRow = (TableRow) childAges.getChildAt(childAges.getChildCount() - 1);
         }
+        Spinner childAgeSpinner = (Spinner) childAgeSpinnerView.findViewById(R.id.child_age_spinner);
+        childAgeSpinners.add(childAgeSpinner);
+        childAgeSpinner.setSelection(1);
+        childAgeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //parent is the spinner!!
+                if (position == 0) {
+                    childAgeSpinners.remove((Spinner) parent);
+                    ((TableRow) parent.getParent().getParent()).removeView((LinearLayout) parent.getParent());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // implemented for the interface.
+            }
+        });
         childTableRow.addView(childAgeSpinnerView);
     }
 
@@ -154,7 +174,6 @@ public class StartupSearch extends Activity {
                     SampleApp.occupancy(),
                     SampleApp.arrivalDate,
                     SampleApp.departureDate);
-
                 SampleApp.updateFoundHotels(RequestProcessor.run(request), true);
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better.
