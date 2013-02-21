@@ -139,7 +139,11 @@ public final class HotelRoom {
      */
     public BigDecimal getTaxesAndFees() {
         // TODO: Make this actually get the taxes and fees.
-        return BigDecimal.ZERO;
+        BigDecimal taxesAndFees =  BigDecimal.ZERO;
+        for (BigDecimal surcharge : rate.chargeable.surcharges.values()) {
+            taxesAndFees = taxesAndFees.add(surcharge);
+        }
+        return taxesAndFees;
     }
 
     /**
