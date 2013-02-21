@@ -31,7 +31,21 @@
                source="1.6" />
     </presetdef>
 
-    <target name="compile" depends="ivy.resolve.dependencies, checkstyle.check">
+    <target name="java.uptodate">
+        <uptodate property="java.uptodate" targetfile="${dist.jar}">
+            <srcfiles dir="${main.dir}" includes="**.*" />
+        </uptodate>
+    </target>
+
+    <target name="test.uptodate">
+        <uptodate property="test.uptodate" targetfile="${dist.jar}">
+            <srcfiles dir="${testsrc.dir}" includes="**.*" />
+        </uptodate>
+    </target>
+
+    <target name="compile"
+            depends="java.uptodate, ivy.resolve.dependencies, checkstyle.check, checkstyle.check.warnings"
+            unless="java.uptodate">
         <depend srcDir="${src.dir}"
                 destDir="${build.dir}/"
                 cache="${build.dir}/.depend"/>
@@ -42,13 +56,13 @@
         </main.javac>
     </target>
 
-    <target name="jar" depends="compile">
+    <target name="jar" depends="compile" unless="java.uptodate">
         <jar destfile="${dist.jar}" filesetmanifest="mergewithoutmain">
           <zipfileset dir="${classes.dir}" excludes="android/,**/*.iml"/>
         </jar>
     </target>
 
-    <target name="jar.full" depends="compile, javadoc">
+    <target name="jar.full" depends="compile, javadoc" unless="java.uptodate">
         <jar destfile="${dist.full.jar}" filesetmanifest="mergewithoutmain">
             <zipfileset dir="${classes.dir}" excludes="android/"/>
             <zipfileset dir="${doc.dir}" prefix="doc"/>
@@ -56,7 +70,7 @@
         </jar>
     </target>
 
-    <target name="compile.test" depends="compile">
+    <target name="compile.test" depends="compile, test.uptodate" unless="test.uptodate">
         <mkdir dir="${tests.dir}"/>
         <main.javac destdir="${tests.dir}">
             <src path="${testsrc.dir}" />
@@ -66,7 +80,7 @@
         </copy>
     </target>
 
-    <target name="test" depends="compile, compile.test">
+    <target name="test" depends="compile, compile.test" unless="test.uptodate">
         <mkdir dir="${test.reports.dir}" />
 
         <junit printsummary="true"
@@ -94,7 +108,9 @@
     </target>
 
     <target name="clean">
-        <delete dir="${build.dir}" />
+        <delete includeemptydirs="true">
+            <fileset dir="${build.dir}" includes="**/*" excludes="*.jar" />
+        </delete>
     </target>
 
     <target name="with.clover">
@@ -121,7 +137,7 @@
 
     <target name="instrumented.test" depends="clean, with.clover, test, clover.report" description="Runs build with clover instrumentation"/>
 
-    <target name="javadoc">
+    <target name="javadoc" depends="java.uptodate" unless="java.uptodate">
         <mkdir dir="${doc.dir}"/>
         <copyright.year />
         <property name="javadoc.title" value="EAN Mobile ${ant.project.name} Docs"/>

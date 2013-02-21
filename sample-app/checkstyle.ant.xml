@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="checkstyle">
     <property file="ant.properties" />
-    <property name="checkstyle.xml"         location="checkstyle.xml"/>
-    <property name="checkstyle.xsl"         location="checkstyle.xsl"/>
-    <property name="checkstyle.dir"         location="${out.absolute.dir}/checkstyle"/>
-    <property name="checkstyle.output"      location="${checkstyle.dir}/checkstyle_errors" />
-    <property name="checkstyle.output.xml"  location="${checkstyle.output}.xml" />
-    <property name="checkstyle.output.html" location="${checkstyle.output}.html" />
+    <property name="checkstyle.xml"                     location="checkstyle.xml"/>
+    <property name="checkstyle.xsl"                     location="checkstyle.xsl"/>
+    <property name="checkstyle.dir"                     location="${out.absolute.dir}/checkstyle" />
 
-    <target name="check">
-        <!-- We add a depend so that if the source hasn't changed, then we don't have to run the check. -->
+    <property name="checkstyle.xml"                     location="checkstyle.xml"/>
+    <property name="checkstyle.output"                  location="${checkstyle.dir}/checkstyle_errors" />
+    <property name="checkstyle.output.html"             location="${checkstyle.output}.html" />
+    <property name="checkstyle.output.xml"              location="${checkstyle.output}.xml" />
 
+    <property name="checkstyle-warnings.xml"            location="checkstyle-warnings.xml"/>
+    <property name="checkstyle-warnings.output"         location="${checkstyle.dir}/checkstyle_warnings" />
+    <property name="checkstyle-warnings.output.html"    location="${checkstyle-warnings.output}.html" />
+    <property name="checkstyle-warnings.output.xml"     location="${checkstyle-warnings.output}.xml" />
+
+    <target name="checkstyle.taskdef">
+        <!-- The task must be defined in a task so the jar can be loaded at first run -->
         <taskdef resource="checkstyletask.properties">
             <classpath>
                 <fileset dir="${jar.libs.absolute.dir}/checkstyle">
@@ -18,8 +24,10 @@
                 </fileset>
             </classpath>
         </taskdef>
-
         <mkdir dir="${checkstyle.dir}" />
+    </target>
+
+    <target name="check" depends="checkstyle.taskdef">
         <tstamp>
             <format property="copyrightYear" pattern="yyyy" />
         </tstamp>
@@ -48,10 +56,29 @@
             <formatter type="xml" toFile="${checkstyle.output.xml}" />
         </checkstyle>
 
-        <xslt basedir="${checkstyle.dir}"
-              destdir="${checkstyle.dir}"
-              style="${checkstyle.xsl}"
-              includes="*.xml" />
+        <xslt style="${checkstyle.xsl}"
+              in="${checkstyle.output.xml}"
+              out="${checkstyle.output.html}" />
         <fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>
+    </target>
+
+    <target name="check.warnings" depends="checkstyle.taskdef">
+        <checkstyle config="${checkstyle-warnings.xml}"
+                    failureProperty="checkstyle.warning"
+                    failOnViolation="false">
+            <classpath>
+                <fileset dir="${jar.libs.absolute.dir}">
+                    <include name="**/*.jar"/>
+                </fileset>
+                <path location="${checkstyle.dir}"/>
+            </classpath>
+            <fileset dir="${source.absolute.dir}" includes="**/*.java" excludes="stubs/"/>
+            <formatter type="xml" toFile="${checkstyle-warnings.output.xml}" />
+        </checkstyle>
+
+        <xslt style="${checkstyle.xsl}"
+              in="${checkstyle-warnings.output.xml}"
+              out="${checkstyle-warnings.output.html}" />
+        <echo message="Warnings found as errors: ${checkstyle.warning} Please see ${checkstyle-warnings.output.html}"/>
     </target>
 </project>

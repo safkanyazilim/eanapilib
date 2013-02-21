@@ -4,11 +4,11 @@
 
 package com.ean.mobile.activity;
 
-import android.content.Context;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -67,7 +67,7 @@ public class ReservationDisplay extends Activity {
         }
         
         public void addKeyValue(final int keyResId, final Object value) {
-            String key = context.getString(keyResId);
+            final String key = context.getString(keyResId);
             table.addView(inflateKeyValue(key, value));
         }
 
