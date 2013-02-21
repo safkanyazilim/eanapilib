@@ -22,6 +22,7 @@ import com.ean.mobile.request.DateModifier;
 import com.ean.mobile.request.RequestProcessor;
 import com.ean.mobile.request.RequestTestBase;
 
+import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasItems;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
@@ -72,6 +73,9 @@ public class BookingRequestIntTest extends RequestTestBase {
         // TODO: some assertions here on hotel/date/occupancy, etc.
         assertEquals(occupancies.size(), reservation.confirmationNumbers.size());
         assertThat(reservation.confirmationNumbers, hasItems(1234L, 1234L));
+        assertThat(reservation.arrivalDate, equalTo(dateTimes[0]));
+        assertThat(reservation.departureDate, equalTo(dateTimes[1]));
+        assertEquals(reservation.hotelName, hotelList.hotels.get(0).name);
     }
 
     /**
