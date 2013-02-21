@@ -127,8 +127,6 @@ public class HotelList extends Activity {
 
             ImageFetcher.loadThumbnailIntoImageView(thumb, hotel.mainHotelImageTuple);
 
-            //TODO: INCLUDE THE DRRPROMO WHEN APPROPRIATE
-
             return view;
         }
 
