@@ -36,7 +36,7 @@
                     android:layout_width="wrap_content"
                     android:layout_weight="5"
                     android:layout_height="0dip"
-                    android:text="Change the date"
+                    android:text="@string/change_the_date"
                     android:layout_gravity="bottom"
                     android:onClick="showDatePickerDialog"/>
         </LinearLayout>
@@ -54,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_weight="5"
                     android:layout_height="0dip"
-                    android:text="Change the date"
+                    android:text="@string/change_the_date"
                     android:layout_gravity="bottom"
                     android:onClick="showDatePickerDialog"/>
 
@@ -65,7 +65,7 @@
                   android:layout_height="wrap_content">
         <TextView android:id="@+id/adult_label"
                   android:layout_width="0dip"
-                  android:layout_weight="2"
+                  android:layout_weight="40"
                   android:layout_height="wrap_content"
                   android:text="@string/adults"
                   android:gravity="right"
@@ -73,25 +73,45 @@
         <Spinner android:id="@+id/adults_spinner"
                  android:layout_width="0dip"
                  android:layout_height="wrap_content"
-                 android:layout_weight="5"
+                 android:layout_weight="97"
                  android:prompt="@string/number_of_adults_prompt"
-                 android:spinnerMode="dropdown"/>
+                 android:spinnerMode="dropdown"
+                 android:entries="@array/number_of_adults_array"/>
     </LinearLayout>
     <LinearLayout android:layout_width="fill_parent"
                   android:layout_height="wrap_content">
         <TextView android:id="@+id/child_label"
                   android:layout_width="0dip"
-                  android:layout_weight="2"
+                  android:layout_weight="9"
                   android:layout_height="wrap_content"
                   android:text="@string/children"
                   android:gravity="right"
                   android:textColor="@color/text"/>
-        <Spinner android:id="@+id/children_spinner"
-                 android:layout_width="0dip"
-                 android:layout_height="wrap_content"
-                 android:layout_weight="5"
-                 android:prompt="@string/number_of_children_prompt"
-                 android:spinnerMode="dropdown"/>
+
+        <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+"
+                android:id="@+id/child_adder_button"
+                android:layout_gravity="center_horizontal|bottom"
+                android:layout_weight="1"
+                android:onClick="addChildAge"/>
+
+        <TableLayout
+                android:layout_width="0dip"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal|top"
+                android:layout_weight="20"
+                android:id="@+id/child_ages_table">
+        </TableLayout>
     </LinearLayout>
+
+    <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/search_for_hotels"
+            android:id="@+id/button"
+            android:layout_gravity="center"
+            android:onClick="performSearch"/>
 
 </LinearLayout>

@@ -4,8 +4,13 @@
 
 package com.ean.mobile.activity;
 
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
+import android.widget.*;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -26,14 +31,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
-import android.widget.ListView;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.ean.mobile.Destination;
 import com.ean.mobile.R;
@@ -53,6 +50,8 @@ public class StartupSearch extends Activity {
     private static final String DATE_FORMAT_STRING = "MM/dd/yyyy";
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormat.forPattern(DATE_FORMAT_STRING);
 
+    private static final List<Spinner> childAgeSpinners = new LinkedList<Spinner>();
+
     /**
      * {@inheritDoc}
      */
@@ -66,15 +65,12 @@ public class StartupSearch extends Activity {
         setUpDateButton(R.id.arrival_date_picker, SampleApp.arrivalDate);
         setUpDateButton(R.id.departure_date_picker, SampleApp.departureDate);
 
-        setUpPeopleSpinner(R.id.adults_spinner);
-        setUpPeopleSpinner(R.id.children_spinner);
-
         final ArrayAdapter<Destination> suggestionAdapter
                 = new DestinationSuggestionAdapter(getApplicationContext(), R.id.suggestionsView);
         final SearchBoxTextWatcher watcher = new SearchBoxTextWatcher(suggestionAdapter);
 
         final EditText searchBox = (EditText) findViewById(R.id.searchBox);
-        searchBox.setOnKeyListener(new SearchBoxKeyListener(searchBox));
+        searchBox.setOnKeyListener(new SearchBoxKeyListener());
         searchBox.addTextChangedListener(watcher);
 
         final ListView suggestions = (ListView) findViewById(R.id.suggestionsView);
@@ -87,17 +83,6 @@ public class StartupSearch extends Activity {
         dateButton.setText(DATE_TIME_FORMATTER.print(date));
     }
 
-    private void setUpPeopleSpinner(final int resourceId) {
-        final ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(
-            getApplicationContext(),
-            R.array.number_of_people_array,
-            android.R.layout.simple_spinner_item);
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        final Spinner spinner = (Spinner) findViewById(resourceId);
-        spinner.setAdapter(spinnerAdapter);
-    }
-
     /**
      * (Event handler) Handles the clicks on either of the date dialogs.
      * @param view The view (button) that fired the event.
@@ -106,22 +91,71 @@ public class StartupSearch extends Activity {
         new DatePickerFragment(view.getId(), (Button) view).show(getFragmentManager(), "StartupSearchDatePicker");
     }
 
-    private void performSearch(final String searchQuery, final ProgressDialog searchingDialog) {
+    /**
+     * (Event handler) Handles the events that cause the search to commence.
+     * @param view The view parameter for the event handler.
+     */
+    public void performSearch(final View view) {
+        final EditText searchBox = (EditText) findViewById(R.id.searchBox);
+        final String searchQuery = searchBox.getText().toString().trim();
+        final ProgressDialog searchingDialog
+                = ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true);
         SuggestionFactory.killSuggestDestinationTask();
         SampleApp.clearSearch();
 
         final Button arrivalDatePicker = (Button) findViewById(R.id.arrival_date_picker);
         final Button departureDatePicker = (Button) findViewById(R.id.departure_date_picker);
         final Spinner adultsSpinner = (Spinner) findViewById(R.id.adults_spinner);
-        final Spinner childSpinner = (Spinner) findViewById(R.id.adults_spinner);
+        List<Integer> childAges = new LinkedList<Integer>();
+        final TableLayout childAgesTable = (TableLayout) findViewById(R.id.child_ages_table);
+        for (Spinner childAgeSpinner : childAgeSpinners) {
+            childAges.add(Integer.parseInt((String) childAgeSpinner.getSelectedItem()));
+        }
+
 
         SampleApp.searchQuery = searchQuery;
         SampleApp.arrivalDate = DATE_TIME_FORMATTER.parseLocalDate(arrivalDatePicker.getText().toString());
         SampleApp.departureDate = DATE_TIME_FORMATTER.parseLocalDate(departureDatePicker.getText().toString());
         SampleApp.numberOfAdults = Integer.parseInt((String) adultsSpinner.getSelectedItem());
-        SampleApp.numberOfChildren = Integer.parseInt((String) childSpinner.getSelectedItem());
+        SampleApp.childAges = Collections.unmodifiableList(childAges);
         
         new PerformSearchTask(searchingDialog).execute((Void) null);
+    }
+
+    /**
+     * (Event handler) Adds a child to the list.
+     * @param view The button used to fire this event.
+     */
+    public void addChildAge(final View view) {
+        final TableLayout childAges = (TableLayout) findViewById(R.id.child_ages_table);
+        final View childAgeSpinnerView = getLayoutInflater().inflate(R.layout.childagespinnerlayout, null);
+        final TableRow childTableRow;
+        if (childAges.getChildCount() == 0
+                || ((TableRow)childAges.getChildAt(childAges.getChildCount() - 1)).getChildCount() == 2) {
+            childTableRow = new TableRow(StartupSearch.this);
+            childAges.addView(childTableRow);
+        } else {
+            childTableRow = (TableRow) childAges.getChildAt(childAges.getChildCount() - 1);
+        }
+        Spinner childAgeSpinner = (Spinner) childAgeSpinnerView.findViewById(R.id.child_age_spinner);
+        childAgeSpinners.add(childAgeSpinner);
+        childAgeSpinner.setSelection(1);
+        childAgeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                //parent is the spinner!!
+                if (position == 0) {
+                    childAgeSpinners.remove((Spinner) parent);
+                    ((TableRow) parent.getParent().getParent()).removeView((LinearLayout) parent.getParent());
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // implemented for the interface.
+            }
+        });
+        childTableRow.addView(childAgeSpinnerView);
     }
 
     private final class PerformSearchTask extends AsyncTask<Void, Integer, Void> {
@@ -140,7 +174,6 @@ public class StartupSearch extends Activity {
                     SampleApp.occupancy(),
                     SampleApp.arrivalDate,
                     SampleApp.departureDate);
-
                 SampleApp.updateFoundHotels(RequestProcessor.run(request), true);
             } catch (EanWsError ewe) {
                 //TODO: This should be handled better.
@@ -243,20 +276,13 @@ public class StartupSearch extends Activity {
     }
 
     private final class SearchBoxKeyListener implements View.OnKeyListener {
-        private final EditText searchBox;
-
-        public SearchBoxKeyListener(final EditText searchBox) {
-            this.searchBox = searchBox;
-        }
 
         public boolean onKey(final View v, final int keyCode, final KeyEvent event) {
             // Only hears hardware keys and enter per OnKeyListener's javadoc.
             // If the event is a key-down event on the "enter" button
             if (event.getAction() == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
                 // Perform action on key press
-                performSearch(
-                    searchBox.getText().toString().trim(),
-                    ProgressDialog.show(StartupSearch.this, "", getString(R.string.searching), true));
+                performSearch(v);
                 return true;
             }
             return false;
