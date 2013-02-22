@@ -12,6 +12,7 @@ import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
+import android.widget.*;
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
 import org.joda.time.format.DateTimeFormat;
@@ -29,11 +30,6 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.ean.mobile.Address;
 import com.ean.mobile.R;
@@ -228,10 +224,26 @@ public class BookingSummary extends Activity {
         final String cardSecurityCode
             = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
 
-        //TODO: handle bad user input here.
-        final int cardExpirationFullYear
-            = Integer.parseInt(cardExpirationYear.length() == 2 ? "20" + cardExpirationYear : cardExpirationYear);
-        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, Integer.parseInt(cardExpirationMonth));
+        if (cardExpirationYear == null
+                || cardExpirationYear.length() != 2
+                || !cardExpirationYear.matches("\\d\\d")) {
+            Toast
+                .makeText(getApplicationContext(), getString(R.string.incorrect_expiration_year), Toast.LENGTH_LONG)
+                .show();
+            return;
+        }
+        if (cardExpirationMonth == null
+                || cardExpirationMonth.length() != 2
+                || !cardExpirationMonth.matches("(0[1-9])|(11)|(12)")) {
+            Toast
+                .makeText(getApplicationContext(), getString(R.string.incorrect_expiration_month), Toast.LENGTH_LONG)
+                .show();
+            return;
+        }
+
+        final int cardExpirationFullYear = Integer.parseInt("20" + cardExpirationYear);
+        final int cardExpirationFullMonth = Integer.parseInt(cardExpirationMonth);
+        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, cardExpirationFullMonth);
 
 
         final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(

@@ -136,7 +136,7 @@ public final class SampleApp extends Application {
         super.onCreate();
         setupHttpConnectionStuff();
         CommonParameters.cid = "55505";
-        CommonParameters.apiKey = "";
+        CommonParameters.apiKey = "cbrzfta369qwyrm9t5b8y8kf";
         CommonParameters.customerUserAgent = "Android";
         CommonParameters.locale = Locale.US.toString();
         CommonParameters.currencyCode = Currency.getInstance(Locale.US).getCurrencyCode();
