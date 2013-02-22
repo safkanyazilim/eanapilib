@@ -91,7 +91,6 @@ public final class RoomAvailabilityRequest extends Request<List<HotelRoom>> {
 
         final JSONObject response = jsonObject.getJSONObject("HotelRoomAvailabilityResponse");
 
-        // TODO: handler EanWsError objects, such as sold out rooms
         if (response.has("EanWsError")) {
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
