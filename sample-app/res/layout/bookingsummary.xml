@@ -308,21 +308,23 @@
                         <EditText android:id="@+id/billingInformationCCNum"
                                   android:layout_width="0dip"
                                   android:layout_height="wrap_content"
-                                  android:layout_weight="8"
+                                  android:layout_weight="20"
                                   android:hint="@string/billing_cc_num"
                                   android:inputType="number"/>
-                        <EditText android:id="@+id/billingInformationCCExpMo"
+                        <Spinner android:id="@+id/billingInformationCCExpMo"
                                   android:layout_width="0dip"
                                   android:layout_height="wrap_content"
-                                  android:layout_weight="2"
+                                  android:layout_weight="8"
                                   android:hint="@string/billing_cc_expmo"
-                                  android:inputType="number" />
-                        <EditText android:id="@+id/billingInformationCCExpYr"
+                                  android:inputType="number" android:entries="@array/credit_card_months"
+                                  android:focusableInTouchMode="true"/>
+                        <Spinner android:id="@+id/billingInformationCCExpYr"
                                   android:layout_width="0dip"
                                   android:layout_height="wrap_content"
-                                  android:layout_weight="2"
+                                  android:layout_weight="12"
                                   android:hint="@string/billing_cc_expyr"
-                                  android:inputType="number" />
+                                  android:inputType="number" android:focusable="false"
+                                  android:entries="@array/credit_card_years"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="fill_parent"
                                   android:layout_height="wrap_content">

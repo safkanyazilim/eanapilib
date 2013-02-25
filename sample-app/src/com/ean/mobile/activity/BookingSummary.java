@@ -218,33 +218,17 @@ public class BookingSummary extends Activity {
         final String cardType = ((Spinner) findViewById(R.id.billingInformationCCType)).getSelectedItem().toString();
         final String cardNumber = ((EditText) findViewById(R.id.billingInformationCCNum)).getText().toString();
         final String cardExpirationMonth
-            = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
+            = ((Spinner) findViewById(R.id.billingInformationCCExpMo)).getSelectedItem().toString();
         final String cardExpirationYear
-            = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
+            = ((Spinner) findViewById(R.id.billingInformationCCExpYr)).getSelectedItem().toString();
         final String cardSecurityCode
             = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
 
-        if (cardExpirationYear == null
-                || cardExpirationYear.length() != 2
-                || !cardExpirationYear.matches("\\d\\d")) {
-            Toast
-                .makeText(getApplicationContext(), getString(R.string.incorrect_expiration_year), Toast.LENGTH_LONG)
-                .show();
-            return;
-        }
-        if (cardExpirationMonth == null
-                || cardExpirationMonth.length() != 2
-                || !cardExpirationMonth.matches("(0[1-9])|(11)|(12)")) {
-            Toast
-                .makeText(getApplicationContext(), getString(R.string.incorrect_expiration_month), Toast.LENGTH_LONG)
-                .show();
-            return;
-        }
 
-        final int cardExpirationFullYear = Integer.parseInt("20" + cardExpirationYear);
+        final int cardExpirationFullYear = Integer.parseInt(cardExpirationYear);
         final int cardExpirationFullMonth = Integer.parseInt(cardExpirationMonth);
-        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, cardExpirationFullMonth);
 
+        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, cardExpirationFullMonth);
 
         final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(
             email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);
