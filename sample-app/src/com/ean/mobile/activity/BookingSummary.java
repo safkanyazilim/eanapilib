@@ -12,7 +12,8 @@ import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
-import android.widget.*;
+
+
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
 import org.joda.time.format.DateTimeFormat;
@@ -30,6 +31,11 @@ import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 
 import com.ean.mobile.Address;
 import com.ean.mobile.R;
