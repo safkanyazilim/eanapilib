@@ -75,7 +75,7 @@ public class BookingRequestIntTest extends RequestTestBase {
         assertThat(reservation.confirmationNumbers, hasItems(1234L, 1234L));
         assertThat(reservation.arrivalDate, equalTo(dateTimes[0]));
         assertThat(reservation.departureDate, equalTo(dateTimes[1]));
-        assertEquals(reservation.hotelName, hotelList.hotels.get(0).name);
+        assertEquals(hotelList.hotels.get(0).name, reservation.hotelName);
     }
 
     /**

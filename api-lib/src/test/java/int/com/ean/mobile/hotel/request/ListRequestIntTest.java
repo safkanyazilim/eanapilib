@@ -64,14 +64,13 @@ public class ListRequestIntTest extends RequestTestBase {
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsArrivalDatePriorToTodayCauseError() throws Exception {
-        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(-1, +3);
+        LocalDate[] dateTimes = DateModifier.getAnArrayOfLocalDatesWithOffsets(-1, 3);
 
         ListRequest listRequest
             = new ListRequest("rome, it", OCCUPANCY, dateTimes[0], dateTimes[1]);
 
         RequestProcessor.run(listRequest);
     }
-
 
     @Test(expected = DataValidationException.class)
     public void testSearchForHotelsLocationException() throws Exception {
