@@ -112,13 +112,11 @@ public final class BookingRequest extends Request<Reservation> {
         final JSONObject response = jsonObject.getJSONObject("HotelRoomReservationResponse");
 
         if (response.has("EanWsError")) {
-            //TODO: THIS HAS TO BE HANDLED DIFFERENTLY.
             throw EanWsError.fromJson(response.getJSONObject("EanWsError"));
         }
 
         CommonParameters.customerSessionId = response.optString("customerSessionId");
 
-        //TODO: make itinerary objects, cache them, and some logic handling the reservationStatusCode.
         return new Reservation(response);
     }
 

@@ -54,6 +54,13 @@
     <string name="searching">Searching</string>
     <string name="loading_more_hotels">Loading more hotels&#8230;</string>
     <string name="complete_booking">Complete Booking</string>
+    <string name="incorrect_expiration_year">
+        Incorrect credit card expiration year detected. Ensure that you use a
+        two-digit number for the year.</string>
+    <string name="incorrect_expiration_month">
+        Incorrect credit card expiration month detected. Ensure that you use
+        a two-digit month between 01 and 12.
+    </string>
     <string name="load_default_billing_info">Load Default Billing Info</string>
     <string name="itinerary_id">Itinerary ID</string>
     <string name="confirmation_numbers">Confirmation Numbers</string>

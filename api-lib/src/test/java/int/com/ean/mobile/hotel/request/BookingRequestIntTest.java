@@ -70,7 +70,6 @@ public class BookingRequestIntTest extends RequestTestBase {
             hotelList.hotels.get(0).supplierType, bookingRooms, resInfo, ADDRESS);
         Reservation reservation = RequestProcessor.run(bookingRequest);
 
-        // TODO: some assertions here on hotel/date/occupancy, etc.
         assertEquals(occupancies.size(), reservation.confirmationNumbers.size());
         assertThat(reservation.confirmationNumbers, hasItems(1234L, 1234L));
         assertThat(reservation.arrivalDate, equalTo(dateTimes[0]));

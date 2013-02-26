@@ -12,6 +12,8 @@ import java.util.Currency;
 import java.util.LinkedList;
 import java.util.List;
 
+
+
 import org.joda.time.LocalDate;
 import org.joda.time.YearMonth;
 import org.joda.time.format.DateTimeFormat;
@@ -222,17 +224,17 @@ public class BookingSummary extends Activity {
         final String cardType = ((Spinner) findViewById(R.id.billingInformationCCType)).getSelectedItem().toString();
         final String cardNumber = ((EditText) findViewById(R.id.billingInformationCCNum)).getText().toString();
         final String cardExpirationMonth
-            = ((EditText) findViewById(R.id.billingInformationCCExpMo)).getText().toString();
+            = ((Spinner) findViewById(R.id.billingInformationCCExpMo)).getSelectedItem().toString();
         final String cardExpirationYear
-            = ((EditText) findViewById(R.id.billingInformationCCExpYr)).getText().toString();
+            = ((Spinner) findViewById(R.id.billingInformationCCExpYr)).getSelectedItem().toString();
         final String cardSecurityCode
             = ((EditText) findViewById(R.id.billingInformationCCSecurityCode)).getText().toString();
 
-        //TODO: handle bad user input here.
-        final int cardExpirationFullYear
-            = Integer.parseInt(cardExpirationYear.length() == 2 ? "20" + cardExpirationYear : cardExpirationYear);
-        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, Integer.parseInt(cardExpirationMonth));
 
+        final int cardExpirationFullYear = Integer.parseInt(cardExpirationYear);
+        final int cardExpirationFullMonth = Integer.parseInt(cardExpirationMonth);
+
+        final YearMonth expirationDate = new YearMonth(cardExpirationFullYear, cardExpirationFullMonth);
 
         final BookingRequest.ReservationInformation reservationInfo = new BookingRequest.ReservationInformation(
             email, firstName, lastName, phone, null, cardType, cardNumber, cardSecurityCode, expirationDate);

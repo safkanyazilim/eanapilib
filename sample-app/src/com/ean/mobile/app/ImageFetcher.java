@@ -47,7 +47,6 @@ public final class ImageFetcher {
         }
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.GINGERBREAD) {
-            //TODO: This could do with some transparent gzipping maybe?
             final HttpClient httpClient = new DefaultHttpClient();
             final HttpGet request = new HttpGet(url.toString());
             final HttpResponse response = httpClient.execute(request);
