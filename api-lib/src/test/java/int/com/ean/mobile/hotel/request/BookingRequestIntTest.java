@@ -36,7 +36,6 @@ public class BookingRequestIntTest extends RequestTestBase {
     @Test
     public void testBookSingularRoomInSeattle() throws Exception {
         Reservation reservation = getTestReservation();
-        // TODO: some assertions here on hotel/date/occupancy, etc.
         assertEquals((Long) 1234L, reservation.confirmationNumbers.get(0));
     }
 
