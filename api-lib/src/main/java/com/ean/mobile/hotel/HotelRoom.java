@@ -138,7 +138,7 @@ public final class HotelRoom {
      * @return Taxes and fees.
      */
     public BigDecimal getTaxesAndFees() {
-        BigDecimal taxesAndFees =  BigDecimal.ZERO;
+        BigDecimal taxesAndFees = BigDecimal.ZERO;
         for (BigDecimal surcharge : rate.chargeable.surcharges.values()) {
             taxesAndFees = taxesAndFees.add(surcharge);
         }
