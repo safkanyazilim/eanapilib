@@ -91,6 +91,8 @@ To build without publishing, just run the default ant target `ant`.
 
 More assistance can be found on our [wiki for this project] [git-project-wiki] and our [developer hub] [dev-hub].
 
+For a step by step overview of the library and sample app, as well as a guided tutorial on creating an Android app using the library, visit the [docs] directory of the project.
+
 [EAN]: http://www.expediaaffiliate.com/ "Expedia Affiliate Network"
 [dev-hub]: http://developer.ean.com "EAN Developer Hub"
 [git-project]: http://ExpediaInc/ean-android/ean-android.git "ean-android project"
@@ -98,3 +100,4 @@ More assistance can be found on our [wiki for this project] [git-project-wiki] a
 [java]: http://www.oracle.com/technetwork/java/javase/downloads/index.html "Java"
 [apache-ant]: http://ant.apache.org/bindownload.cgi "Apache Ant"
 [android-sdk]: http://developer.android.com/sdk/index.html "Android SDK"
+[docs]: https://github.com/ExpediaInc/ean-android/tree/master/docs "ean-android/docs"
