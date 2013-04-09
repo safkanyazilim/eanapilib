@@ -70,6 +70,17 @@ public abstract class Request<T> {
     public abstract URI getUri() throws URISyntaxException;
 
     /**
+     * Signifies if the particular implementation is tolerant of Uri Redirections. If the implementation
+     * is tolerant of this case, RequestProcessor.run will not throw UriRedirectionExceptions and instead
+     * return the data anyway. The implementation of consume should then be tolerant of strange inputs and
+     * not throw deserialization exceptions, even in cases where completely unexpected data is returned.
+     * @return Whether or not this implementation is tolerant of uri redirection. Default is false.
+     */
+    public boolean isTolerantOfUriRedirections() {
+        return false;
+    }
+
+    /**
      * Return true if the implemented request should use a secure connection.
      * @return true if secure, false if not
      */

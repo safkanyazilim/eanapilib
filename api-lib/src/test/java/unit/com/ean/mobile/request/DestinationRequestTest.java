@@ -26,9 +26,9 @@
 package com.ean.mobile.request;
 
 import java.net.URI;
+import java.util.Collections;
 import java.util.List;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,9 +54,9 @@ public class DestinationRequestTest {
         destinationRequest = new DestinationRequest("sea");
     }
 
-    @Test(expected = JSONException.class)
+    @Test
     public void testConsumeEmptyJson() throws Exception {
-        destinationRequest.consume(new JSONObject());
+        assertEquals(Collections.<Destination>emptyList(), destinationRequest.consume(new JSONObject()));
     }
 
     @Test
@@ -96,7 +96,7 @@ public class DestinationRequestTest {
     private static void doUriAssertions(final URI uri) {
         assertEquals("http", uri.getScheme());
         assertEquals("www.travelnow.com", uri.getHost());
-        assertEquals("/templates/349176/destination", uri.getPath());
+        assertEquals("/templates/" + CommonParameters.cid + "/destination", uri.getPath());
     }
 
 }

@@ -103,8 +103,9 @@ public final class RequestProcessor {
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             //before we go further, we must check to see if we were redirected.
-            if (!request.getUri().getHost().equals(connection.getURL().getHost())) {
-                // then we were redirected!!
+            if (!request.getUri().getHost().equals(connection.getURL().getHost())
+                    && !request.isTolerantOfUriRedirections()) {
+                // then we were redirected and we can't tolerate it!!
                 throw new UrlRedirectionException();
             }
             final StringBuilder jsonBuilder = new StringBuilder();
