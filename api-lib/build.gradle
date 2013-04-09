@@ -26,6 +26,7 @@
 apply plugin: 'checkstyle'
 apply plugin: 'clover'
 apply plugin: 'java'
+apply from: 'publish.gradle'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
