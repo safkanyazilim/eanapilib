@@ -1,0 +1,26 @@
+{
+    "standard-promo": {
+        "@promo": true,
+        "@rate": "104.50",
+        "@baseRate": "204.50",
+        "promoType": "Standard"
+    },
+    "mobile-promo": {
+        "@promo": true,
+        "@rate": "104.50",
+        "@baseRate": "204.50",
+        "promoType": "MOBILE"
+    },
+    "non-promo": {
+        "@promo": false,
+        "@rate": "104.50",
+        "@baseRate": "104.50",
+        "promoType": "could be anything, don't care"
+    },
+    "unrecognized-promo": {
+        "@promo": true,
+        "@rate": "104.50",
+        "@baseRate": "204.50",
+        "promoType": "could be anything, this should fail"
+    }
+}

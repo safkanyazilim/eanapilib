@@ -29,6 +29,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -39,9 +40,45 @@ import org.json.JSONObject;
 public final class NightlyRate {
 
     /**
+     * The type of promotion returned by the api for this nightly rate, either standard or mobile.
+     */
+    public enum PromoType {
+        /**
+         * Standard promotion. This is for all promos besides mobile-specific promos.
+         */
+        STANDARD,
+
+        /**
+         * Mobile specific promotions.
+         */
+        MOBILE;
+
+        /**
+         * Gets a promotype from a capital case (or otherwise) string.
+         * @param value The promo type to get.
+         * @return The promo type represented by the string, or null if there are no matching promo types.
+         */
+        public static PromoType fromString(final String value) {
+            if (value == null) {
+                return null;
+            }
+            try {
+                return PromoType.valueOf(value.toUpperCase(Locale.ENGLISH));
+            } catch (IllegalArgumentException iae) {
+                return null;
+            }
+        }
+    }
+
+    /**
      * Whether or not this rate is a promotional rate.
      */
     public final boolean promo;
+
+    /**
+     * The type of promo that this nightly rate has, either standard or mobile.
+     */
+    public final PromoType promoType;
 
     /**
      * The actual rate for this nightly rate.
@@ -61,6 +98,11 @@ public final class NightlyRate {
         this.promo = nightlyRateJson.optBoolean("@promo");
         this.rate = new BigDecimal(nightlyRateJson.optString("@rate"));
         this.baseRate = new BigDecimal(nightlyRateJson.optString("@baseRate"));
+        if (this.promo) {
+            this.promoType = PromoType.fromString(nightlyRateJson.optString("promoType"));
+        } else {
+            this.promoType = null;
+        }
     }
 
     /**
