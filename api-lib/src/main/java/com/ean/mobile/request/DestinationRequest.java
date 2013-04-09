@@ -28,6 +28,7 @@ package com.ean.mobile.request;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.http.NameValuePair;
@@ -61,7 +62,11 @@ public final class DestinationRequest extends Request<List<Destination>> {
      */
     @Override
     public List<Destination> consume(final JSONObject jsonObject) throws JSONException, EanWsError {
-        return Destination.getDestinations(jsonObject.getJSONArray("items"));
+        try {
+            return Destination.getDestinations(jsonObject.getJSONArray("items"));
+        } catch (JSONException jse) {
+            return Collections.emptyList();
+        }
     }
 
     /**
@@ -69,7 +74,8 @@ public final class DestinationRequest extends Request<List<Destination>> {
      */
     @Override
     public URI getUri() throws URISyntaxException {
-        return new URI("http", "www.travelnow.com", "/templates/349176/destination", getQueryString(), null);
+        final String uriPath = "/templates/" + CommonParameters.cid + "/destination";
+        return new URI("http", "www.travelnow.com", uriPath, getQueryString(), null);
     }
 
     /**
@@ -80,4 +86,12 @@ public final class DestinationRequest extends Request<List<Destination>> {
         return false;
     }
 
+    /**
+     * Overridden to true to indicate tolerance for uri redirections.
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isTolerantOfUriRedirections() {
+        return true;
+    }
 }
