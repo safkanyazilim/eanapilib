@@ -42,7 +42,7 @@
         <dependency conf="build" org="ean-android" name="api-lib" rev="latest.integration">
             <artifact name="api-lib" type="jar" />
         </dependency>
-        <dependency conf="build" org="joda-time" name="joda-time" rev="2.1"/>
+        <dependency conf="build" org="joda-time" name="joda-time" rev="2.2"/>
         <dependency conf="checkstyle" org="com.puppycrawl.tools" name="checkstyle" rev="5.6"/>
     </dependencies>
 </ivy-module>

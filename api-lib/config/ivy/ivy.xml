@@ -44,7 +44,7 @@
         <dependency conf="build" org="org.apache.httpcomponents" name="httpclient" rev="4.2.1"/>
         <dependency conf="build" org="org.apache.httpcomponents" name="httpcore" rev="4.2.2"/>
         <dependency conf="build" org="org.json" name="json" rev="20090211"/>
-        <dependency conf="build" org="joda-time" name="joda-time" rev="2.1"/>
+        <dependency conf="build" org="joda-time" name="joda-time" rev="2.2"/>
 
         <dependency conf="JUnit" org="junit" name="junit" rev="4.10">
             <exclude org="org.hamcrest"/>
