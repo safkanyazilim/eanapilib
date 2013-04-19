@@ -32,7 +32,7 @@ apply plugin: 'signing'
 /******************************************************************************/
 //Publishing stuff
 group = 'com.ean.mobile'
-version = '0.7'
+version = '1.0.0'
 
 task javadocJar(type: Jar, dependsOn: javadoc) {
     classifier = 'javadoc'
@@ -101,7 +101,7 @@ uploadArchives {
                 break;
             default:
                 mavenDeployer {
-                    beforeDeployment { MavenDeployment deployment -> signPom(deployment) }
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
                     repository(url: sonatypeRepositoryUrl) {
                         authentication(userName: sonatypeUsername, password: sonatypePassword)
