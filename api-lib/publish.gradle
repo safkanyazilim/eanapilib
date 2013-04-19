@@ -1,0 +1,143 @@
+/*
+ * Copyright (c) 2013, Expedia Affiliate Network
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that redistributions of source code
+ * retain the above copyright notice, these conditions, and the following
+ * disclaimer.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * The views and conclusions contained in the software and documentation are those
+ * of the authors and should not be interpreted as representing official policies,
+ * either expressed or implied, of the Expedia Affiliate Network or Expedia Inc.
+ */
+
+// This file created with advice from: http://jedicoder.blogspot.com/2011/11/automated-gradle-project-deployment-to.html
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+
+/******************************************************************************/
+//Publishing stuff
+group = 'com.ean.mobile'
+version = '1.0.0'
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+enum BuildType {
+    DEV, CI, RELEASE
+}
+
+def buildType
+
+def sonatypeRepositoryUrl
+
+//set build variables based on build type (release, continuous integration, development)
+if(hasProperty("release")) {
+    buildType = BuildType.RELEASE
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+} else if (hasProperty("ci")) {
+    buildType = BuildType.CI
+    version += "-SNAPSHOT"
+    sonatypeRepositoryUrl = "https://oss.sonatype.org/content/repositories/snapshots/"
+} else {
+    buildType = BuildType.DEV
+    sonatypeRepositoryUrl = ''
+}
+
+//********* artifact signing *********
+if(buildType == BuildType.RELEASE) {
+    signing {
+        sign configurations.archives
+    }
+} else {
+    // we've got to blank signArchives otherwise it'll try to sign things and fail.
+    task signArchives {
+        // do nothing
+    }
+}
+
+artifacts {
+    archives jar
+    archives javadocJar
+    archives sourcesJar
+}
+
+// This section relies on some properties being set either on the command line or in ~/.gradle/gradle.properties
+// These properties only need to be set on machines which upload to Sonatype. Normal development machines
+// should not need these pieces of information.
+//signing.keyId=<The id>
+//signing.password=<the password for the referenced key above>
+//signing.secretKeyRingFile=<The keyring file, for windows, C:/users/<username>/AppData/Roaming/gnupg/secring.gpg>
+//
+//sonatypeUsername=<The username of a user that can manage the project in sonatype, the host for MavenCentral>
+//sonatypePassword=<The password of the sonatype user>
+
+uploadArchives {
+    repositories {
+        switch (buildType) {
+            case BuildType.DEV:
+                mavenLocal()
+                break;
+            default:
+                mavenDeployer {
+                    beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+
+                    repository(url: sonatypeRepositoryUrl) {
+                        authentication(userName: sonatypeUsername, password: sonatypePassword)
+                    }
+
+                    pom.project {
+                        name 'api-lib'
+                        packaging 'jar'
+                        description 'A project to aid integration with the EAN Hotels api in Android projects.'
+                        url 'https://github.com/ExpediaInc/ean-android'
+                        inceptionYear = 2011
+
+                        def githubConnectionUrl = 'scm:git@github.com:ExpediaInc/ean-android.git'
+
+                        scm {
+                            url githubConnectionUrl
+                            connection githubConnectionUrl
+                            developerConnection githubConnectionUrl
+                        }
+
+                        licenses {
+                            license {
+                                name 'Modified BSD-Style license'
+                                url 'https://github.com/ExpediaInc/ean-android/blob/master/LICENSE.txt'
+                                distribution 'repo'
+                            }
+                        }
+
+                        developers {
+                            developer(id: 'aaronklor', name: 'Aaron Klor')
+                            developer(id: 'benjamindow', name: 'Benjamin Dow')
+                            developer(id: 'halhogue', name: 'Hal Hogue')
+                        }
+                    }
+                }
+                break;
+        }
+    }
+}
