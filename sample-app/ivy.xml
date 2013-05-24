@@ -39,7 +39,7 @@
         At this time, this is the case for this example -->
     </publications>
     <dependencies>
-        <dependency conf="build" org="ean-android" name="api-lib" rev="latest.integration">
+        <dependency conf="build" org="com.ean.mobile" name="api-lib" rev="latest.integration">
             <artifact name="api-lib" type="jar" />
         </dependency>
         <dependency conf="build" org="joda-time" name="joda-time" rev="2.2"/>

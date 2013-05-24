@@ -7,7 +7,7 @@ This project contains two components:
 
 ##Downloading
 The output jars are hosted in Maven Central:
- 
+
     group: com.ean.mobile
     artifact: api-lib
 
