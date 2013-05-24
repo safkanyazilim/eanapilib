@@ -5,6 +5,12 @@ This project contains two components:
 - api-lib: An Android optimized java library to handle making calls to [Expedia Affiliate Network API] [EAN].
 - sample-app: A sample Android app that uses the api-lib to make all of its calls.
 
+##Downloading
+The output jars are hosted in Maven Central:
+
+    group: com.ean.mobile
+    artifact: api-lib
+
 ##Building both the Library and the App
 It is possible to build the library and the app in a single step using the build.xml at the root of the project. This will build the library, publish it to a local artifactory repository, then resolve the dependencies of the Android project and fix up the local Android files and build the debug configuration of sample-app. 
 

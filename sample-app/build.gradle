@@ -23,10 +23,8 @@
  * either expressed or implied, of the Expedia Affiliate Network or Expedia Inc.
  */
 
+apply plugin: 'android'
 apply plugin: 'checkstyle'
-apply plugin: 'clover'
-apply plugin: 'java'
-apply from: 'publish.gradle'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
@@ -37,61 +35,37 @@ buildscript {
     }
 
     dependencies {
-        classpath 'org.gradle.api.plugins:gradle-clover-plugin:0.6'
+        classpath 'com.android.tools.build:gradle:0.3'
     }
 }
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
-
-sourceSets.main.java.srcDir 'src/stubs/java'
 
 dependencies {
-    clover 'com.cenqua.clover:clover:3.1.10'
-    clover 'commons-cli:commons-cli:1.2'
-
-    compile 'commons-logging:commons-logging:1.1.1'
-    compile 'org.apache.httpcomponents:httpclient:4.2.3'
-    compile 'org.json:json:20090211'
     compile 'joda-time:joda-time:2.2'
-
-    testCompile 'org.hamcrest:hamcrest-all:1.3'
-    testCompile 'org.powermock:powermock-module-junit4:1.5'
-    testCompile 'org.powermock:powermock-api-mockito:1.5'
-    testCompile 'junit:junit:4.10'
 }
 
-jar {
-    exclude "android/"
-    exclude '**/package-info.class'
-}
-
-
-javadoc {
-    def copyrightYear = String.format('%1$tY', System.currentTimeMillis())
-    title = "EAN Mobile ${project.name} Docs"
-    exclude 'android'
-    options {
-        bottom = "<i>Copyright &#169; ${copyrightYear} EAN.com, L.P. All Rights Reserved.</i>"
-        use = true
+android {
+    sourceSets {
+        main {
+            manifest {
+                srcFile 'AndroidManifest.xml'
+            }
+            java {
+                srcDir 'src'
+            }
+            res {
+                srcDir 'res'
+            }
+            assets {
+                srcDir 'assets'
+            }
+            resources {
+                srcDir 'src'
+            }
+        }
     }
-}
-
-/******************************************************************************/
-//Clover stuff
-clover {
-    report {
-        html = true
-    }
-}
-
-/******************************************************************************/
-// Checkstyle stuff
-checkstyleMain {
-    classpath += configurations.compile
-}
-
-checkstyleTest {
-    classpath += configurations.compile
 }
