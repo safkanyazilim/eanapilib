@@ -35,12 +35,11 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.log4j.Logger;
 import org.joda.time.LocalDate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.util.Log;
 
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.hotel.Hotel;
@@ -53,7 +52,8 @@ import com.ean.mobile.request.Request;
  * The most useful method gets the List of hotels based on the search parameters, particularly the destination passed.
  */
 public final class ListRequest extends Request<HotelList> {
-
+	private static final Logger logger = Logger.getLogger(ListRequest.class);
+	
     private static final String NUMBER_OF_RESULTS = "10";
 
     /**
@@ -146,7 +146,7 @@ public final class ListRequest extends Request<HotelList> {
             try {
                 newHotels.add(new Hotel(newHotelJson.getJSONObject(i)));
             } catch (MalformedURLException me) {
-                Log.e("Unable to process JSON", me.getMessage());
+                logger.error("Unable to process JSON\n" + me.getMessage());
             }
         }
 

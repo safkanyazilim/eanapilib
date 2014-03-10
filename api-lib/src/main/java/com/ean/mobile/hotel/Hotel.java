@@ -32,7 +32,6 @@ import java.net.MalformedURLException;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.text.Html;
 
 import com.ean.mobile.LatLongAddress;
 
@@ -103,11 +102,11 @@ public final class Hotel {
      * @throws MalformedURLException If the thumbnail url is not correctly formatted.
      */
     public Hotel(final JSONObject hotelSummary) throws JSONException, MalformedURLException {
-        this.name = Html.fromHtml(hotelSummary.optString("name")).toString();
+        this.name = hotelSummary.optString("name");
         this.hotelId = hotelSummary.optLong("hotelId");
         this.address = new LatLongAddress(hotelSummary);
-        this.shortDescription =  Html.fromHtml(hotelSummary.optString("shortDescription")).toString();
-        this.locationDescription = Html.fromHtml(hotelSummary.optString("locationDescription")).toString();
+        this.shortDescription =  hotelSummary.optString("shortDescription");
+        this.locationDescription = hotelSummary.optString("locationDescription");
         this.starRating = parseStarRating(hotelSummary.optString("hotelRating"));
         final String thumbnailString = hotelSummary.optString("thumbNailUrl").replace("_t.jpg", "_n.jpg");
         this.mainHotelImageTuple = new HotelImageTuple(thumbnailString, null, null);

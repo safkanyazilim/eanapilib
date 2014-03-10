@@ -32,10 +32,10 @@ import java.net.HttpURLConnection;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import android.util.Log;
 
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
@@ -45,7 +45,7 @@ import com.ean.mobile.exception.UrlRedirectionException;
  * Responsible for the logic that executes requests through the EAN API.
  */
 public final class RequestProcessor {
-
+	private static final Logger logger = LogManager.getLogger(RequestProcessor.class);
     /**
      * Constructor to prevent instantiation.
      */
@@ -66,11 +66,11 @@ public final class RequestProcessor {
             final JSONObject jsonResponse = performApiRequest(request);
             return request.consume(jsonResponse);
         } catch (JSONException jsone) {
-            Log.e(Constants.LOG_TAG, "Unable to process JSON", jsone);
+            logger.error("Unable to process JSON", jsone);
         } catch (IOException ioe) {
-            Log.e(Constants.LOG_TAG, "Could not read response from API", ioe);
+        	logger.error("Could not read response from API", ioe);
         } catch (URISyntaxException use) {
-            Log.e(Constants.LOG_TAG, "Improper URI syntax", use);
+        	logger.error("Improper URI syntax", use);
         }
         return null;
     }
@@ -98,7 +98,7 @@ public final class RequestProcessor {
         // force application/json
         connection.setRequestProperty("Accept", "application/json, */*");
 
-        Log.d(Constants.LOG_TAG, "request endpoint: " + connection.getURL().getHost());
+        logger.debug("request endpoint: " + connection.getURL().getHost());
         final String jsonString;
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -119,7 +119,7 @@ public final class RequestProcessor {
             ((HttpURLConnection) connection).disconnect();
         }
         final long timeTaken = System.currentTimeMillis() - startTime;
-        Log.d(Constants.LOG_TAG, "Took " + timeTaken + " milliseconds.");
+        logger.debug("Took " + timeTaken + " milliseconds.");
         return jsonString;
     }
 

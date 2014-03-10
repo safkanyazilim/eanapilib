@@ -33,9 +33,7 @@ import java.util.List;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
-
-
-import android.util.Log;
+import org.apache.log4j.Logger;
 
 import com.ean.mobile.Constants;
 import com.ean.mobile.exception.CommonParameterValidationException;
@@ -44,7 +42,8 @@ import com.ean.mobile.exception.CommonParameterValidationException;
  * Contains elements that (1) are common to all requests and (2) typically remain the same across multiple requests.
  */
 public final class CommonParameters {
-
+	private static final Logger logger = Logger.getLogger(CommonParameters.class);
+	
     /**
      * The CID to use for API requests. Required for all API calls.
      */
@@ -163,7 +162,7 @@ public final class CommonParameters {
                 messageDigest.update(signatureInput.getBytes());
                 return String.format("%032x", new BigInteger(1, messageDigest.digest()));
             } catch (NoSuchAlgorithmException e) {
-                Log.e(Constants.LOG_TAG, "Couldn't get MD5 hashing working.", e);
+                logger.error("Couldn't get MD5 hashing working.", e);
             }
         }
         return null;
