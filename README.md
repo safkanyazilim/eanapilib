@@ -1,3 +1,7 @@
+Forked from: https://github.com/ExpediaInc/ean-android
+
+--------------
+
 #ean-android
 
 This project contains two components:
