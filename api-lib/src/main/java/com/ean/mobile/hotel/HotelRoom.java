@@ -85,7 +85,14 @@ public final class HotelRoom {
      * @param arrivalDate The arrival date of the room. Used to calculate the cancellation policy.
      */
     public HotelRoom(final JSONObject roomRateDetail, final LocalDate arrivalDate) {
-        this.description = roomRateDetail.optString("roomTypeDescription");
+        String roomDescription = roomRateDetail.optString("roomTypeDescription", null);
+        
+        if (roomDescription == null) {
+        	roomDescription = roomRateDetail.optString("roomDescription");
+        }
+        
+        this.description = roomDescription;
+        
         this.rateCode = roomRateDetail.optString("rateCode");
         this.roomTypeCode = roomRateDetail.optString("roomTypeCode");
         this.promoDescription = roomRateDetail.optString("promoDescription");

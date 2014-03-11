@@ -6,7 +6,7 @@
 	<classpathentry kind="lib" path="lib/build/httpclient-4.2.1.jar"/>
 	<classpathentry kind="lib" path="lib/build/httpcore-4.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/build/joda-time-2.2.jar"/>
-	<classpathentry kind="lib" path="lib/build/json-20090211.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/build/json-20090211.jar"/>
 	<classpathentry kind="lib" path="lib/build/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

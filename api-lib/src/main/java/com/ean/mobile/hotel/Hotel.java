@@ -25,15 +25,24 @@
 
 package com.ean.mobile.hotel;
 
+import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
+import java.util.Collections;
+import java.util.List;
 
+import org.joda.time.LocalDate;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 
+
+
+
 import com.ean.mobile.LatLongAddress;
+import com.ean.mobile.hotel.request.ListRequest;
 
 /**
  * The holder for information about a particular hotel.
@@ -95,6 +104,7 @@ public final class Hotel {
      */
     public final BigDecimal lowPrice;
 
+    public final List<HotelRoom> hotelRooms;
     /**
      * The constructor that constructs the hotel info from a JSONObject.
      * @param hotelSummary The object holding the hotel's info.
@@ -114,6 +124,36 @@ public final class Hotel {
         this.lowPrice = new BigDecimal(hotelSummary.getDouble("lowRate")).setScale(2, RoundingMode.HALF_EVEN);
         this.currencyCode = hotelSummary.optString("rateCurrencyCode");
         this.supplierType = SupplierType.getByCode(hotelSummary.optString("supplierType"));
+        
+        if (hotelSummary.has("RoomRateDetailsList")) {
+            // we know that it has RoomRateDetailsList, just don't know if it'll be
+            // parsed as an object or as an array. If there's only one in the collection,
+            // it'll be parsed as a singular object, otherwise it'll be an array.
+        	String arrivalDateString = hotelSummary.optString("arrivalDate");
+        	final LocalDate arrivalDate;
+        	
+        	if (arrivalDateString != null && !arrivalDateString.isEmpty()) {
+        		arrivalDate = LocalDate.parse(arrivalDateString, ListRequest.DATE_TIME_FORMATTER);
+        	} else {
+        		arrivalDate = null;
+        	}
+        	JSONObject roomRateDetailsListObj = hotelSummary.optJSONObject("RoomRateDetailsList");
+        	
+        	if (roomRateDetailsListObj != null) {
+        		if (roomRateDetailsListObj.optJSONArray("RoomRateDetails") != null) {
+                    final JSONArray hotelRoomResponse = roomRateDetailsListObj.optJSONArray("RoomRateDetails");
+                    hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse, arrivalDate);
+                } else {
+                    final JSONObject hotelRoomResponse = roomRateDetailsListObj.optJSONObject("RoomRateDetails");
+                    hotelRooms = HotelRoom.parseRoomRateDetails(hotelRoomResponse, arrivalDate);
+                }
+        	} else {
+        		hotelRooms = Collections.emptyList();
+        	}
+            
+        } else {
+            hotelRooms = Collections.emptyList();
+        }
     }
 
     /**
