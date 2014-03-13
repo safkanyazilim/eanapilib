@@ -27,7 +27,7 @@
 <ivy-module version="2.0"
             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
             xsi:noNamespaceSchemaLocation="http://ant.apache.org/ivy/schemas/ivy.xsd">
-    <info organisation="com.ean.mobile" module="api-lib"/>
+    <!--<info organisation="com.ean.mobile" module="api-lib"/>-->
     <configurations defaultconfmapping="*->default">
         <conf name="build" description="Dependencies that go in the root of the lib directory" transitive="false" visibility="private"/>
         <conf name="JUnit" description="Dependencies needed for our tests" visibility="private"/>
