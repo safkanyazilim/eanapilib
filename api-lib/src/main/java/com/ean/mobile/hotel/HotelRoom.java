@@ -98,7 +98,7 @@ public final class HotelRoom {
         this.promoDescription = roomRateDetail.optString("promoDescription");
         this.smokingPreference = roomRateDetail.optString("smokingPreferences");
         this.bedTypes = extractBedTypesFromJsonObject(roomRateDetail);
-        this.rate = Rate.parseFromRateInformations(roomRateDetail).get(0);
+        this.rate = Rate.parseRates(roomRateDetail).get(0);
         this.cancellationPolicy = new CancellationPolicy(roomRateDetail, arrivalDate);
     }
 
