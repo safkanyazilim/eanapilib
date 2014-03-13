@@ -37,7 +37,6 @@ import org.apache.log4j.Logger;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.ean.mobile.Constants;
 import com.ean.mobile.exception.EanWsError;
 import com.ean.mobile.exception.UrlRedirectionException;
 
@@ -83,7 +82,7 @@ public final class RequestProcessor {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @throws URISyntaxException thrown if the URI cannot be built
      */
-    private static String performApiRequestForString(final Request request)
+    private static String performApiRequestForString(@SuppressWarnings("rawtypes") final Request request)
             throws IOException, UrlRedirectionException, URISyntaxException {
         //Build the url
         final URLConnection connection;
@@ -133,7 +132,7 @@ public final class RequestProcessor {
      * @throws UrlRedirectionException If the network connection was unexpectedly redirected.
      * @throws URISyntaxException thrown if the URI cannot be built
      */
-    private static JSONObject performApiRequest(final Request request)
+    private static JSONObject performApiRequest(@SuppressWarnings("rawtypes") final Request request)
             throws IOException, JSONException, EanWsError, UrlRedirectionException, URISyntaxException {
         final JSONObject response = new JSONObject(performApiRequestForString(request));
         if (response.has("EanWsError")) {

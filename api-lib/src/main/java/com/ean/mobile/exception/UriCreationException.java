@@ -31,6 +31,11 @@ package com.ean.mobile.exception;
  */
 public final class UriCreationException extends RuntimeException {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1070887328393551865L;
+
+	/**
      * The main constructor.
      * @param message The message to pass.
      * @param cause The cause of this error, if applicable.

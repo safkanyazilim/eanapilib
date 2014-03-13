@@ -33,6 +33,11 @@ import org.json.JSONObject;
 public class EanWsError extends Exception {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = 8674636470290749209L;
+
+	/**
      * The category of error. Often "RECOVERABLE".
      */
     public final String category;

@@ -32,6 +32,11 @@ package com.ean.mobile.exception;
 public final class UrlRedirectionException extends Exception {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2703821181680804162L;
+
+	/**
      * Sets the exception's message to note that the connection was redirected and is likely a connection issue.
      */
     public UrlRedirectionException() {

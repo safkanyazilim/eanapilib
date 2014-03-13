@@ -31,6 +31,11 @@ package com.ean.mobile.exception;
 public class CommonParameterValidationException extends RuntimeException {
 
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -358024208168014546L;
+
+	/**
      * Primary constructor.
      *
      * @param message a brief message that describes the problem.

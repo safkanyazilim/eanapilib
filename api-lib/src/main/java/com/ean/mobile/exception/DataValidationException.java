@@ -31,6 +31,11 @@ package com.ean.mobile.exception;
  */
 public final class DataValidationException extends EanWsError {
     /**
+	 * 
+	 */
+	private static final long serialVersionUID = -9184837246902140982L;
+
+	/**
      * The main constructor. The verbose message is used as the exception's main message.
      * @param verboseMessage The message for the exception.
      * @param category The "category" of the error.

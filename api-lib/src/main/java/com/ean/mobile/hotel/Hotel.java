@@ -25,7 +25,6 @@
 
 package com.ean.mobile.hotel;
 
-import java.awt.datatransfer.StringSelection;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
