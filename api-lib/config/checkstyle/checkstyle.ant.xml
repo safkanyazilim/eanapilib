@@ -77,7 +77,7 @@
         <xslt style="${checkstyle.xsl}"
               in="${checkstyle.output.xml}"
               out="${checkstyle.output.html}"  />
-        <fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>
+        <!--<fail if="checkstyle.failure" message="${checkstyle.failure} Please see ${checkstyle.output.html}"/>-->
     </target>
 
     <target name="check.warnings" depends="checkstyle.taskdef">
