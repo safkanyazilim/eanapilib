@@ -38,7 +38,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONObject;
 
 /**
- * Cont ainer for address information. Should handle any international address.
+ * Container for address information. Should handle any international address.
  * If the address is invalid in some way, the validationErrors list will delineate in what way it is invalid. This
  * is in lieu of throwing exceptions since there are potentially unaccounted for address types which may be stored
  * with this object, and there's no need to throw exceptions for partial addresses.
