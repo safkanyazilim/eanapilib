@@ -206,9 +206,11 @@ public final class Rate {
                 }
             } else if (rate.optJSONObject("Surcharges") != null) {
                 final JSONObject jsonSurcharge = rate.optJSONObject("Surcharges").optJSONObject("Surcharge");
-                localSurcharges.put(
-                    jsonSurcharge.optString("@type"),
-                    new BigDecimal(jsonSurcharge.optString("@amount")));
+                if(jsonSurcharge != null) {
+	                localSurcharges.put(
+	                    jsonSurcharge.optString("@type"),
+	                    new BigDecimal(jsonSurcharge.optString("@amount")));
+                }
             }
 
             currencyCode = rate.optString("@currencyCode");
