@@ -38,8 +38,18 @@ import org.json.JSONObject;
  * The data holder for information about a particular hotel room.
  */
 public final class HotelRoom {
-
-    /**
+	
+	/**
+     * Maximum room occupancy.
+     */
+	public final String maxRoomOccupancy;
+    
+	/**
+     * Quoted room occupancy.
+     */
+	public final String quotedRoomOccupancy;
+	
+	/**
      * The description of the room.
      */
     public final String description;
@@ -92,7 +102,8 @@ public final class HotelRoom {
         }
         
         this.description = roomDescription;
-        
+        this.maxRoomOccupancy = roomRateDetail.optString("maxRoomOccupancy");
+        this.quotedRoomOccupancy = roomRateDetail.optString("quotedRoomOccupancy");
         this.rateCode = roomRateDetail.optString("rateCode");
         this.roomTypeCode = roomRateDetail.optString("roomTypeCode");
         this.promoDescription = roomRateDetail.optString("promoDescription");
